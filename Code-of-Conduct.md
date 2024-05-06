@@ -12,12 +12,14 @@ The Scrum Master is Nick Ridder.<br>
 The Client communication manager is Lisa Aldera.<br>
 The Repository manager is Martin Dimitrov.<br>
 The internal product owner is Stoyan Hristozov.<br>
+The documentation manager is Hyeri Lee <br>
+The code quality manager is Filip Krylecki <br>
 
 ## Communication:
 Team members experiencing challenges are encouraged to communicate openly with the team, seeking assistance to
 prevent project slowdowns. Additionally, proactive communication should extend to sharing insights, updates, and
 potential roadblocks.
-Team members are expected to be available on discord from at least 10:00 - 12:00 & 13:00 - 15:00 on working days. Any official team communication will take place on discord or in person.
+Team members are expected to be available on discord from at least 10:00 - 12:00 & 13:00 - 15:00 on working days (this rule does not apply for days where people have work). Any official team communication will take place on discord or in person. Team members will meet every Wednesday at 18:30 and Friday at 19.
 
 ## Strike System:
 In addition to any rules set by the teacher(s) for the subject, each team member agrees to the following (additional) rules:
