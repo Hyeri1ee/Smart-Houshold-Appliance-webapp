@@ -12,8 +12,8 @@ The Scrum Master is Nick Ridder.<br>
 The Client communication manager is Lisa Aldera.<br>
 The Repository manager is Martin Dimitrov.<br>
 The internal product owner is Stoyan Hristozov.<br>
-The documentation manager is Hyeri Lee <br>
-The code quality manager is Filip Krylecki <br>
+The documentation manager is Hyeri Lee. <br>
+The code quality manager is Filip Krylecki. <br>
 
 ## Communication:
 Team members experiencing challenges are encouraged to communicate openly with the team, seeking assistance to
