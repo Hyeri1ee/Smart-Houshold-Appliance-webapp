@@ -2,26 +2,18 @@
   "name": "smart-household-appliances",
   "version": "1.0.0",
   "description": "",
-  "main": "scripting/index.js",
+  "main": "./server/app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "http-server -p 1337",
-    "dev": "live-server --port=1337"
+    "start": "node ./server/app.js",
+    "dev": "nodemon ./server/app.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://gitlab.com/saxion.nl/hbo-ict/2.4-hbo-it-corp/50.git"
-  },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://gitlab.com/saxion.nl/hbo-ict/2.4-hbo-it-corp/50/issues"
-  },
-  "homepage": "https://gitlab.com/saxion.nl/hbo-ict/2.4-hbo-it-corp/50#readme",
+  "author": "Doom Toaster",
+  "license": "none",
   "dependencies": {
-    "http-server": "^14.1.1"
+    "express": "^4.19.2"
   },
   "devDependencies": {
-    "live-server": "^1.2.2"
+    "nodemon": "^3.1.0"
   }
 }
