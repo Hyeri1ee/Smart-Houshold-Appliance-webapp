@@ -1,0 +1,9 @@
+image: alpine:3.14
+pages:
+  script:
+    - ":"
+  artifacts:
+    paths:
+      - public
+  rules:
+    # - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
