@@ -1,0 +1,27 @@
+{
+  "name": "smart-household-appliances",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "http-server -p 1337",
+    "dev": "live-server --port=1337"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/saxion.nl/hbo-ict/2.4-hbo-it-corp/50.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/saxion.nl/hbo-ict/2.4-hbo-it-corp/50/issues"
+  },
+  "homepage": "https://gitlab.com/saxion.nl/hbo-ict/2.4-hbo-it-corp/50#readme",
+  "dependencies": {
+    "http-server": "^14.1.1"
+  },
+  "devDependencies": {
+    "live-server": "^1.2.2"
+  }
+}
