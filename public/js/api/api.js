@@ -1,7 +1,11 @@
-const token = 1;
+const token = window.sessionStorage.token;
+
+let haId = 0;
+
+const base_url = "https://simulator.home-connect.com/api/"
 
 const getDevices = async () => {
-  const response = await fetch('/homeappliances', {
+  const response = await fetch(`${base_url}/homeappliances`, {
     headers: { 'Authorization': `Bearer ${token}` }
   });
   const data = await response.json();
@@ -9,7 +13,7 @@ const getDevices = async () => {
 }
 
 const getAvailableDevices = async () => {
-  const response = await fetch('/api/available-devices', {
+  const response = await fetch(`${base_url}/homeappliances/${haId}/programs/available`, {
     headers: { 'Authorization': `Bearer ${token}` }
   });
   const data = await response.json();
@@ -17,7 +21,7 @@ const getAvailableDevices = async () => {
 }
 
 const getActiveProgram = async () => {
-  const response = await fetch('/api/active-program', {
+  const response = await fetch(`${base_url}/homeappliances/${haId}/active`, {
     headers: { 'Authorization': `Bearer ${token}` }
   });
   const data = await response.json();
@@ -25,8 +29,8 @@ const getActiveProgram = async () => {
 }
 
 const activateProgram = async (program) => {
-  const response = await fetch('/api/change-program', {
-    method: 'POST',
+  const response = await fetch(`${base_url}/homeappliances/${haId}/active`, {
+    method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
@@ -38,8 +42,8 @@ const activateProgram = async (program) => {
 }
 
 const stopActiveProgram = async () => {
-  const response = await fetch('/api/stop-program', {
-    method: 'POST',
+  const response = await fetch('${base_url}/homeappliances/${haId}/active', {
+    method: 'DELETE',
     headers: { 'Authorization': `Bearer ${token}` }
   });
   const data = await response.json();
