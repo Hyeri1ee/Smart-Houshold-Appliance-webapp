@@ -28,6 +28,15 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public/index.html"));
 });
 
+app.get("/login/success", (req, res) => {
+  res.sendFile(path.join(__dirname, "../public/html/login-success.html"));
+})
+
+app.get("/login/failed", (req, res) => {
+  res.sendFile(path.join(__dirname, "../public/html/login-failed.html"));
+})
+
+
 app.listen(httpPort, () => {
   console.log(`App listening on port ${httpPort}`);
 });
