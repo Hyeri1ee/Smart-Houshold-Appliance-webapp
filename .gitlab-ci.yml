@@ -1,9 +1,10 @@
 image: alpine:3.14
 pages:
   script:
-    - ":"
+    - mkdir public
+    - cp -r ./* public
   artifacts:
     paths:
-      - .
+      - public
   rules:
     # - if: $CI_COMMIT_REF_NAME == $CI_DEFAULT_BRANCH
