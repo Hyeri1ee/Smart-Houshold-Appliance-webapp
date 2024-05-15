@@ -1,8 +1,9 @@
 image: alpine:3.14
 pages:
   script:
-    - mkdir public
-    - mv . public
+    - mkdir .public
+    - cp -r * .public
+    - mv .public public
   artifacts:
     paths:
       - public
