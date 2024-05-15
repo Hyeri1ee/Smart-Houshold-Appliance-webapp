@@ -2,11 +2,11 @@
   "name": "smart-household-appliances",
   "version": "1.0.0",
   "description": "",
-  "main": "public/index.js",
+  "main": "scripting/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "http-server public -p 1337",
-    "dev": "live-server open=public --port=1337"
+    "start": "http-server -p 1337",
+    "dev": "live-server --port=1337"
   },
   "repository": {
     "type": "git",
