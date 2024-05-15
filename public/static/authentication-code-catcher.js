@@ -42,6 +42,7 @@ const getCode = async () => {
 
   try {
     window.sessionStorage.token = data.access_token;
+    window.sessionStorage.auth = null;
     window.localStorage.refresh_token = data.refresh_token;
   } catch (e) {
     redirect(false);
