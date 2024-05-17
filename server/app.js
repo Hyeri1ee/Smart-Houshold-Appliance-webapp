@@ -2,6 +2,7 @@ const express = require("express");
 const path = require("path");
 const fs = require("fs");
 const https = require("https");
+const broker = require("./data/mqtt-broker.js");
 
 const httpPort = 80;
 const httpsPort = 443;
@@ -36,6 +37,9 @@ app.get("/login/failed", (req, res) => {
   res.sendFile(path.join(__dirname, "../public/html/login-failed.html"));
 })
 
+app.get("/api/data/live", (req, res) => {
+  broker.getLatestData(req, res);
+});
 
 app.listen(httpPort, () => {
   console.log(`App listening on port ${httpPort}`);

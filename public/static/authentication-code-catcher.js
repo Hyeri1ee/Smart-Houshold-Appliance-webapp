@@ -37,20 +37,18 @@ const getCode = async () => {
   try {
     data = await resp.json();
   } catch (e) {
-    redirect(false);
+    await redirect(false);
   }
 
   try {
     window.sessionStorage.token = data.access_token;
-    window.sessionStorage.auth = null;
+    window.sessionStorage.removeItem("auth");
     window.localStorage.refresh_token = data.refresh_token;
   } catch (e) {
-    redirect(false);
-    console.log("data invalid");
-    console.log(data);
+    await redirect(false);
   }
 
-  redirect(true);
+  await redirect(true);
 }
 
 const redirect = async (wasSuccessful) => {

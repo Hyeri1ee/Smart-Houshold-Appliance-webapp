@@ -12,17 +12,60 @@
 </head>
 
 <script defer src="js/sw/pwa.js"></script>
+<script defer src="js/ux/get-live-data.js"></script>
 <script defer type=module src="js/ux/button-functionality.js"></script>
 
 <body>
-  <h1>All logs are in console. This is a POC</h1>
+  <h1 id="title">All logs are in console. This is a POC</h1>
 
-  <button id="sign-in">Sign in</button>
-  <button id="show-all-devices">Show all devices</button>
-  <button id="show-available-devices">Show all available devices</button>
-  <button id="get-active-program">Get active program</button>
-  <button id="change-active-program">Change active program</button>
-  <button id="stop-active-program">Stop active program</button>
+  <div id="buttons">
+    <button id="sign-in">Sign in</button>
+    <button id="show-all-devices">Show all devices</button>
+    <button id="show-available-devices">Show all available devices</button>
+    <button id="get-active-program">Get active program</button>
+    <button id="change-active-program">Change active program</button>
+    <button id="stop-active-program">Stop active program</button>
+  </div>
+
+  <hr>
+  <div id="live-stats">
+    <div class="live-stat-item">
+      <p>Current time:</p>
+      <div id="current-time">Unknown</div>
+    </div>
+    <div class="live-stat-item">
+      <p>Active Tariff:</p>
+      <div id="active-tariff">Unknown</div>
+    </div>
+    <div class="live-stat-item">
+      <p>Current electricity delivered:</p>
+      <div id="electricity-delivered">Unknown</div>
+    </div>
+    <div class="live-stat-item">
+      <p>Current electricity usage:</p>
+      <div id="electricity-usage">Unknown</div>
+    </div>
+    <div class="live-stat-item">
+      <p>Electricity delivered 1:</p>
+      <div id="electricity-delivered-1">Unknown</div>
+    </div>
+    <div class="live-stat-item">
+      <p>Electricity delivered 2:</p>
+      <div id="electricity-delivered-2">Unknown</div>
+    </div>
+    <div class="live-stat-item">
+      <p>Electricity used 1:</p>
+      <div id="electricity-used-1">Unknown</div>
+    </div>
+    <div class="live-stat-item">
+      <p>Electricity used 2:</p>
+      <div id="electricity-used-2">Unknown</div>
+    </div>
+    <div class="live-stat-item">
+      <p>Gas:</p>
+      <div id="gas">Unknown</div>
+    </div>
+  </div>
 </body>
 
 </html>
