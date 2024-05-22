@@ -7,7 +7,7 @@ if ("serviceWorker" in navigator) {
   })
 }
 
-function App() {
+const App = () => {
   return (
     <div className="app">
       <header className="app-header">
