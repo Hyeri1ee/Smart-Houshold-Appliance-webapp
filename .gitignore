@@ -3,6 +3,10 @@
 # dependencies
 front/node_modules
 server/node_modules
+node_modules
+
+server/config.json
+
 */.pnp
 .pnp.js
 
