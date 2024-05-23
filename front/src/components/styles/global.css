@@ -1,15 +1,11 @@
 :root {
-  --text: #fefcfb;
-  --background: #222;
-  --primary: #E8751A;
-  --secondary: #FDA403;
-  --accent: #898121;
+    --text: #fefcfb;
+    --background: #120a07;
+    --primary: #cf9681;
+    --secondary: #21120d;
+    --accent: #b56345;
 
-  font-family: Inter, sans-serif;
-  color: var(--text);
-  background-color: var(--background);
-}
-
-a {
-  color: var(--primary);
+    font-family: Inter, sans-serif;
+    color: var(--text);
+    background-color: var(--background);
 }
