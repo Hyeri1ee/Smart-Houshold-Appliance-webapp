@@ -1,12 +1,13 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
 import "../styles/global.css";
 import "../styles/schedule/schedule-page-style.css";
 
+const daysOfWeek = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
+
 function SchedulePage() {
     const [showModal, setShowModal] = useState(false);
-    const [date, setDate] = useState("");
+    const [selectedDays, setSelectedDays] = useState([]);
     const [time, setTime] = useState("");
     const navigate = useNavigate();
 
@@ -24,15 +25,24 @@ function SchedulePage() {
     };
 
     const handleSaveTimeslot = () => {
-        console.log("Date:", date);
+        console.log("Selected Days:", selectedDays);
         console.log("Time:", time);
         setShowModal(false);
     };
 
+    const toggleDay = (day) => {
+        setSelectedDays((prevSelectedDays) =>
+            prevSelectedDays.includes(day)
+                ? prevSelectedDays.filter((d) => d !== day)
+                : [...prevSelectedDays, day]
+        );
+    };
+
     return (
         <div className="app-container">
+            <h2 className="fixed-header">When would you like to run your washing machine?</h2>
             <div className={`schedule-container ${showModal ? 'blurred' : ''}`}>
-                <h2>When would you like to run your washing machine?</h2>
+                {/* Content that can be blurred */}
             </div>
             <div className="button-container">
                 <button type="button" onClick={handleAddTimeslot}>Add Timeslot</button>
@@ -43,13 +53,16 @@ function SchedulePage() {
                     <div className="modal">
                         <h3>Add Timeslot</h3>
                         <form>
-                            <div>
-                                <label>Date:</label>
-                                <input
-                                    type="date"
-                                    value={date}
-                                    onChange={(e) => setDate(e.target.value)}
-                                />
+                            <div className="day-selector">
+                                {daysOfWeek.map((day) => (
+                                    <div
+                                        key={day}
+                                        className={`day-circle ${selectedDays.includes(day) ? 'selected' : ''}`}
+                                        onClick={() => toggleDay(day)}
+                                    >
+                                        {day}
+                                    </div>
+                                ))}
                             </div>
                             <div>
                                 <label>Time:</label>
