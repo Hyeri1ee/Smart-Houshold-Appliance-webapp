@@ -8,7 +8,7 @@ function RegisterPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
-    const [firstName, serFirstName] = useState(""); // New state for username
+    const [firstName, setFirstName] = useState("");
     const navigate = useNavigate();
 
     const handleSubmit = (e) => {
@@ -19,7 +19,7 @@ function RegisterPage() {
         }
         // Implement registration logic here
         console.log("Email:", email);
-        console.log("FirstName:", firstName); // Log username
+        console.log("FirstName:", firstName);
         console.log("Password:", password);
         navigate("/login");
     };
@@ -37,11 +37,11 @@ function RegisterPage() {
                     />
                 </div>
                 <div>
-                    <label>First Name:</label> {/* New field for username */}
+                    <label>First Name:</label>
                     <input
                         type="text"
                         value={firstName}
-                        onChange={(e) => serFirstName(e.target.value)}
+                        onChange={(e) => setFirstName(e.target.value)}
                     />
                 </div>
                 <div>
@@ -60,7 +60,10 @@ function RegisterPage() {
                         onChange={(e) => setConfirmPassword(e.target.value)}
                     />
                 </div>
-                <button type="submit">Register</button>
+                <div className="auth-options">
+                    <button type="submit">Register</button>
+                    <p>Already a user? <a href="/login">Log in</a></p>
+                </div>
             </form>
         </div>
     );
