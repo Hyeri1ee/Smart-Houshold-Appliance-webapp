@@ -16,18 +16,25 @@ const getDataSource = async (settings) => {
     type: settings.type,
     host: settings.host,
     port: settings.port,
-    username: settings.dbUsername,
-    password: settings.dbPassword,
+    username: settings.username,
+    password: settings.password,
     database: settings.dbName,
-    entities: [],
-    synchronize: true,
+    entities: [
+      // "db/entities/*js"
+    ],
+    synchronize: settings.synchronize,
+    logging: settings.logging,
   })
 }
 
 export const handleConnection = async () => {
   try {
+    console.log("Starting db connection");
     const settings = await getSettings();
-    return await getDataSource(settings);
+    const dataSource = await getDataSource(settings);
+    await dataSource.initialize();
+    console.log("db source done");
+    return dataSource;
   } catch (e) {
     console.error(e);
   }

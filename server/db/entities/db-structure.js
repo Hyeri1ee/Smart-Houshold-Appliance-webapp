@@ -2,7 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, PrimaryColumn, ManyToOne, JoinC
 
 @Entity()
 export class User {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
   user_id: number;
 
   @PrimaryColumn()
