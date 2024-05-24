@@ -24,6 +24,27 @@ body {
   z-index: 1;
 }
 
+.selected-days-container {
+  position: fixed;
+  top: calc(50% + 2vh); /* Adjusting the position to be below the fixed header */
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  z-index: 1;
+}
+
+.day-box {
+  background-color: var(--secondary);
+  color: var(--text);
+  padding: 10px;
+  border-radius: 5px;
+  width: 150px;
+  text-align: center;
+}
+
 .schedule-container {
   text-align: center;
   width: 100%;
