@@ -121,6 +121,10 @@ button:hover {
   margin-bottom: 15px;
 }
 
+.modal-button-container_2{
+  display: flex;
+  justify-content: space-between;
+}
 .modal-button-container {
   display: flex;
   justify-content: space-between;

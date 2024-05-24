@@ -21,6 +21,7 @@ function SchedulePage() {
     const [dayTimeSlots, setDayTimeSlots] = useState({});
     const [currentDay, setCurrentDay] = useState(null);
     const [timeSlots, setTimeSlots] = useState([]);
+    const [allDay, setAllDay] = useState(false); //  for tracking "All Day" selection
     const navigate = useNavigate();
 
     const handleAddTimeslot = () => {
@@ -48,10 +49,18 @@ function SchedulePage() {
     };
 
     const handleSaveTimeslot = () => {
-        setDayTimeSlots((prevDayTimeSlots) => ({
-            ...prevDayTimeSlots,
-            [currentDay]: timeSlots,
-        }));
+        // If "All Day" is marked, save "All Day" instead of time slots
+        if (allDay) {
+            setDayTimeSlots((prevDayTimeSlots) => ({
+                ...prevDayTimeSlots,
+                [currentDay]: "All Day",
+            }));
+        } else {
+            setDayTimeSlots((prevDayTimeSlots) => ({
+                ...prevDayTimeSlots,
+                [currentDay]: timeSlots,
+            }));
+        }
         setShowTimeModal(false);
     };
 
@@ -79,13 +88,34 @@ function SchedulePage() {
         setShowTimeModal(true);
     };
 
+    function handleAllDay() {
+        setAllDay((prevAllDay) => !prevAllDay); // Toggle "All Day" state
+        if (!allDay) {
+            setTimeSlots([]);
+        } else {
+            setTimeSlots(dayTimeSlots[currentDay] || []);
+        }
+    }
+
     return (
         <div className="app-container">
             <h2 className="fixed-header">When would you like to run your washing machine?</h2>
             <div className="selected-days-container">
                 {selectedDays.map((day) => (
                     <div key={day} className="day-box" onClick={() => handleDayModal(day)}>
-                        {daysOfWeek.find(d => d.short === day).full}
+                        <div className="primary-color">{daysOfWeek.find(d => d.short === day).full}</div>
+                        <div className="separator"></div>
+                        {dayTimeSlots[day] && typeof dayTimeSlots[day] === 'string' ? (
+                            <div className="time-slot-display secondary-color">
+                                {dayTimeSlots[day]}
+                            </div>
+                        ) : (
+                            dayTimeSlots[day] && dayTimeSlots[day].map((slot, index) => (
+                                <div key={index} className="time-slot-display secondary-color">
+                                    {`${slot.startTime} - ${slot.endTime}`}
+                                </div>
+                            ))
+                        )}
                     </div>
                 ))}
             </div>
@@ -126,7 +156,7 @@ function SchedulePage() {
                         <h3>Add Timeslot</h3>
                         <form>
                             <div className="time-slots">
-                                {timeSlots.map((slot, index) => (
+                                {!allDay && timeSlots.map((slot, index) => (
                                     <div key={index} className="time-slot">
                                         <label>Start Time:</label>
                                         <input
@@ -143,7 +173,13 @@ function SchedulePage() {
                                     </div>
                                 ))}
                             </div>
-                            <button type="button" onClick={handleAddTimeSlot}>+</button>
+
+                            <div className="modal-button-container_2">
+                                <button type="button" onClick={handleAddTimeSlot}>+</button>
+                                <button type="button" onClick={handleAllDay}>{allDay ? "Unmark All Day" : "Mark All Day"}</button>
+                            </div>
+
+
                             <div className="modal-button-container">
                                 <button type="button" onClick={handleSaveTimeslot}>Save</button>
                                 <button type="button" onClick={handleCloseTimeModal}>Cancel</button>
