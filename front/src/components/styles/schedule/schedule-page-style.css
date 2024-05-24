@@ -121,16 +121,16 @@ button:hover {
   margin-bottom: 15px;
 }
 
-.modal-button-container_2{
+.modal-timeslot-management{
   display: flex;
   justify-content: space-between;
 }
-.modal-button-container {
+.modal-submit-buttons {
   display: flex;
   justify-content: space-between;
 }
 
-.modal-button-container button {
+.modal-submit-buttons button {
   width: 45%;
 }
 
