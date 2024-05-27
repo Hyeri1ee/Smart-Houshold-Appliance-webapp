@@ -13,9 +13,7 @@ paths:
       tags:
         - Auth
       summary: 'Register into the system'
-      operationId: d0db4b93-08e1-4140-8420-7b5d63ef02b0
-      security:
-        - BearerAuth: []
+      operationId: 47976b44-3df7-4b70-a00e-ef416f2c5e85
       requestBody:
         description: 'User registration data'
         required: true
@@ -58,9 +56,7 @@ paths:
       tags:
         - Auth
       summary: 'Login to the system'
-      operationId: ddf28c4b-de11-4486-ac2a-60f5164160ce
-      security:
-        - BearerAuth: []
+      operationId: 16bce8a2-9240-48ef-b533-96512d7a0b66
       requestBody:
         description: 'User login data'
         required: true
@@ -92,22 +88,20 @@ paths:
       tags:
         - Auth
       summary: 'Logout from the system'
-      operationId: 1d142b00-64c5-4ba7-b9af-c78f3c4ceacb
+      operationId: 4b32f07c-e395-496e-9ae8-424ec0a025ca
       security:
         - BearerAuth: []
       responses:
         '204':
           description: 'User logged out successfully'
-  /api/user/{user_id}/location:
+  /api/user/location:
     post:
       tags:
         - Location
       summary: "Upload user's location"
       security:
         - BearerAuth: []
-      operationId: fc324fe8-dddc-48eb-b958-6cad44d6c1f8
-      parameters:
-        - $ref: '#/components/parameters/user_id_param'
+      operationId: 7dbc6fbb-e288-49fd-919d-afcdb05a908d
       requestBody:
         description: 'Location data'
         required: true
@@ -136,9 +130,7 @@ paths:
       summary: "Get user's location"
       security:
         - BearerAuth: []
-      operationId: 74d05635-abca-4963-a3f6-2158d742e65c
-      parameters:
-        - $ref: '#/components/parameters/user_id_param'
+      operationId: 10bdae83-4ce7-4b48-a231-405cc7549340
       responses:
         '200':
           description: 'Success response'
@@ -150,16 +142,14 @@ paths:
                 type: object
         '404':
           description: 'Not found'
-  /api/user/{user_id}/schedule:
+  /api/schedule:
     post:
       tags:
         - Schedule
-      summary: 'Upload schedule'
+      summary: 'Upload schedule with times'
       security:
         - BearerAuth: []
-      operationId: d8da3f40-ece5-4e12-8a00-b06b2c374d5b
-      parameters:
-        - $ref: '#/components/parameters/user_id_param'
+      operationId: 6e7b2889-1a5e-4362-bf46-96e290aad399
       requestBody:
         description: 'Schedule data'
         required: true
@@ -168,47 +158,40 @@ paths:
             schema:
               required:
                 - weekday
+                - times
               properties:
-                schedule_id:
-                  type: integer
-                user_id:
-                  type: integer
                 weekday:
                   type: integer
+                  format: int32
+                  example: 2
+                times:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      start_time:
+                        type: integer
+                        format: int64
+                        description: 'Epoch timestamp for the start time'
+                        example: 1622559600
+                      end_time:
+                        type: integer
+                        format: int64
+                        description: 'Epoch timestamp for the end time'
+                        example: 1622584800
               type: object
       responses:
         '200':
-          description: 'Success response'
+          description: 'Schedule created successfully'
+        '400':
+          description: 'Invalid data'
     get:
       tags:
         - Schedule
       summary: "Get all user's schedules"
       security:
         - BearerAuth: []
-      operationId: 427fa846-aeb6-4864-b67b-70338e1a7f19
-      parameters:
-        - $ref: '#/components/parameters/user_id_param'
-      responses:
-        '200':
-          description: 'Success response'
-          content:
-            application/json:
-              schema:
-                properties:
-                  data: { $ref: '#/components/schemas/ScheduleResource' }
-                type: object
-        '404':
-          description: 'Not found'
-  /api/schedule/{schedule_id}/time:
-    get:
-      tags:
-        - Schedule
-      summary: "Get all schedule's times"
-      security:
-        - BearerAuth: []
-      operationId: getAllTimesForSchedule
-      parameters:
-        - $ref: '#/components/parameters/schedule_id_param'
+      operationId: 051ca7b6-b055-45da-b354-116c2d4d47fa
       responses:
         '200':
           description: 'Success response'
@@ -217,123 +200,96 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/TimeResource'
+                  $ref: '#/components/schemas/ScheduleResource'
         '404':
-          description: 'Schedule not found'
-    post:
-      tags:
-        - Schedule
-      summary: 'Upload a new time for a schedule'
-      security:
-        - BearerAuth: []
-      operationId: createTimeForSchedule
-      parameters:
-        - $ref: '#/components/parameters/schedule_id_param'
-      requestBody:
-        description: 'Time data'
-        required: true
-        content:
-          application/json:
-            schema:
-              required:
-                - start_time
-                - end_time
-              properties:
-                start_time:
-                  type: string
-                  format: time
-                  example: '08:00:00'
-                end_time:
-                  type: string
-                  format: time
-                  example: '18:00:00'
-              type: object
-      responses:
-        '201':
-          description: 'Time created successfully'
-        '400':
-          description: 'Invalid data'
-  /api/schedule/{schedule_id}/time/{time_id}:
+          description: 'Not found'
+  /api/schedule/{schedule_id}:
     get:
       tags:
         - Schedule
-      summary: 'Get a specific time'
+      summary: 'Get specific schedule'
       security:
         - BearerAuth: []
-      operationId: getTimeByIdForSchedule
+      operationId: 25df81b4-5ae5-4c75-a380-a897b4782a31
       parameters:
         - $ref: '#/components/parameters/schedule_id_param'
-        - $ref: '#/components/parameters/time_id_param'
       responses:
         '200':
           description: 'Success response'
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TimeResource'
+                $ref: '#/components/schemas/ScheduleResource'
         '404':
-          description: 'Time not found'
+          description: 'Schedule not found'
     put:
       tags:
         - Schedule
-      summary: 'Update a specific time'
+      summary: 'Update a specific schedule with times'
       security:
         - BearerAuth: []
-      operationId: updateTimeByIdForSchedule
+      operationId: 0e1982f4-0e79-4519-8666-f743010c8fce
       parameters:
         - $ref: '#/components/parameters/schedule_id_param'
-        - $ref: '#/components/parameters/time_id_param'
       requestBody:
-        description: 'Updated time data'
+        description: 'Updated schedule data'
         required: true
         content:
           application/json:
             schema:
               required:
-                - start_time
-                - end_time
+                - weekday
+                - times
               properties:
-                start_time:
-                  type: string
-                  format: time
-                  example: '08:00:00'
-                end_time:
-                  type: string
-                  format: time
-                  example: '18:00:00'
+                weekday:
+                  type: integer
+                  format: int32
+                  example: 2
+                times:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      start_time:
+                        type: integer
+                        format: int64
+                        description: 'Epoch timestamp for the start time'
+                        example: 1622559600
+                      end_time:
+                        type: integer
+                        format: int64
+                        description: 'Epoch timestamp for the end time'
+                        example: 1622584800
               type: object
       responses:
         '200':
-          description: 'Time updated successfully'
+          description: 'Schedule updated successfully'
         '404':
-          description: 'Time not found'
+          description: 'Schedule not found'
         '400':
           description: 'Invalid data'
     delete:
       tags:
         - Schedule
-      summary: 'Delete a specific time'
+      summary: 'Delete a specific schedule'
       security:
         - BearerAuth: []
-      operationId: deleteTimeByIdForSchedule
+      operationId: bc931cd0-6ad3-4023-a2b2-0cc61bc0b362
       parameters:
         - $ref: '#/components/parameters/schedule_id_param'
-        - $ref: '#/components/parameters/time_id_param'
       responses:
         '200':
-          description: 'Time deleted successfully'
+          description: 'Schedule deleted successfully'
         '404':
-          description: 'Time not found'
-  /api/user/{user_id}/solar:
+          description: 'Schedule not found'
+  /api/solar:
     post:
       tags:
         - Solar
       summary: "Upload solar setup for a user"
       security:
         - BearerAuth: []
-      operationId: d86d658c-c054-47e6-99a6-11a808460c22
-      parameters:
-        - $ref: '#/components/parameters/user_id_param'
+      operationId: 0e63ebbb-96ef-47e7-9c33-a737167e786f
       requestBody:
         description: 'Solar setup data'
         required: true
@@ -374,9 +330,7 @@ paths:
       summary: "Get user's solar setup"
       security:
         - BearerAuth: []
-      operationId: getUserSolarSetup
-      parameters:
-        - $ref: '#/components/parameters/user_id_param'
+      operationId: c7af7655-71cd-450a-95d6-e5c5ac9b2745
       responses:
         '200':
           description: 'Success response'
@@ -452,6 +406,10 @@ components:
           type: integer
           format: int32
           example: 2
+        times:
+          type: array
+          items:
+            $ref: '#/components/schemas/TimeResource'
       type: object
     SolarResource:
       title: SolarResource
@@ -499,49 +457,19 @@ components:
           type: integer
           format: int32
         start_time:
-          type: string
-          format: time
-          example: '08:00:00'
+          type: integer
+          format: int64
+          description: 'Epoch timestamp for the start time'
+          example: 1622559600
         end_time:
-          type: string
-          format: time
-          example: '18:00:00'
+          type: integer
+          format: int64
+          description: 'Epoch timestamp for the end time'
+          example: 1622584800
       type: object
   parameters:
-    user_id_param:
-      name: user_id
-      in: path
-      required: true
-      schema:
-        type: integer
-        format: int64
-        example: 1
-    location_id_param:
-      name: location_id
-      in: path
-      required: true
-      schema:
-        type: integer
-        format: int64
-        example: 1
-    solar_id_param:
-      name: solar_id
-      in: path
-      required: true
-      schema:
-        type: integer
-        format: int64
-        example: 1
     schedule_id_param:
       name: schedule_id
-      in: path
-      required: true
-      schema:
-        type: integer
-        format: int64
-        example: 1
-    time_id_param:
-      name: time_id
       in: path
       required: true
       schema:
