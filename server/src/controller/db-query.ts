@@ -1,6 +1,6 @@
 import { Pool, QueryResult } from 'pg';
 
-const pool = new Pool({
+export const pool = new Pool({
   user: 'postgres',
   host: 'localhost',
   database: 'hboict',
@@ -26,7 +26,5 @@ export const queryDatabase = async (query: string): Promise<QueryResult> => {
     } catch (err) {
       console.error(err);
       throw err;
-    } finally {
-      await pool.end();
-    }
+    } 
   };
