@@ -1,8 +1,9 @@
 {
-  "type": "postgres",
   "host": "localhost",
   "port": 5432,
-  "dbUsername": "postgres",
-  "dbPassword": "",
-  "dbName": ""
+  "username": "postgres",
+  "password": "",
+  "dbName": "",
+  "synchronize": true,
+  "logging": true
 }
