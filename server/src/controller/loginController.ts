@@ -1,31 +1,37 @@
-import express, { Request, Response } from 'express';
-import { Router } from 'express';
-import { queryDatabase } from './db-query';
-
+import express, { Request, Response, Router } from 'express';
+import bcrypt from 'bcrypt'; // bcrypt 라이브러리 임포트
+import jwt from 'jsonwebtoken'; // JWT 라이브러리 임포트
+import { User } from '../db/entities/user'; // user model import
+import { Revoked_token } from '../db/entities/revoked_token';
 const router: Router = express.Router();
 
-router.post('/', async (req: Request, res: Response) => {
-  //1. get email, password
-  const email = req.body.email;
-  const password = req.body.password;
-  //console.log(user);
-  const user = {password,email};
+router.post('/login', async (req: Request, res: Response) => {
+  const { email, password } = req.body;
 
   try {
-    //2. check if the data exists in the database user table
-    const result = await queryDatabase(`SELECT * FROM public.user WHERE email = '${user.email}' AND password = '${user.password}'`);
-    const userData = result.rows;
-    //console.log(userData);
+    // find user by email
+    const user = await User.findOne({ where: { email } });
 
-    //3. if exists, return success
-    if (userData.length > 0) {
-      return res.status(204).json({ status: 204, message: 'User logged in successfully' });
+    if (!user) {
+      return res.status(401).json({ message: 'Invalid email or password' });
     }
-    return res.status(422).json({ status: 422, message: 'Validation error' });
+
+    // compare password
+    const isValidPassword = await bcrypt.compare(password, user.password);
+
+    if (!isValidPassword) {
+      return res.status(422).json({ message: 'Invalid email or password' });
+    }
+
+    // generate token
+    const token = jwt.sign({ userId: user.id, firstName: user.firstName, email:user.email }, process.env.JWT_SECRET!, { expiresIn: '1h' });
+
+
+    return res.status(200).json({ authorization: `${token}` });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ status: 500, message: 'server error' });
+    return res.status(500).json({ message: 'Server error' });
   }
 });
 
-module.exports = router;
+export default router;
