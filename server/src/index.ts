@@ -1,18 +1,19 @@
-import express,{Router} from "express";
+import express from "express";
 import * as dbConnect from "./db/db-connect"
+import { solarRoute } from "./routers/solar-route"
 
-const router: Router = express.Router();
 const app = express();
-const port = 1338;
+const port = 1337;
+
 dbConnect.handleConnection();
+
 app.use(express.json());
-app.get("/", (req, res) => {
-  res.send('Hello World!')
-});
+
 //routing section
+app.use("/api/solar", solarRoute);
 app.use("/api/login", require("./controller/loginController"));
 
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
+  console.log(`Server running on port ${port}`)
 });
