@@ -54,3 +54,4 @@ export const checkUserExist = async (req: Request, res: Response): Promise<void>
     res.status(500).json({ error: 'Server error' });
   }
 };
+
