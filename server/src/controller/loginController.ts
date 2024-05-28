@@ -7,6 +7,7 @@ import { User } from '../db/entities/user';
 import { getDataSource } from '../db/db-connect';
 import { UserJwtPayload } from './jwt-helper';
 import dotenv from 'dotenv';
+import { Revoked_token } from '../db/entities/revoked_token';
 
 dotenv.config();
 
@@ -39,16 +40,24 @@ export const checkUserExist = async (req: Request, res: Response): Promise<void>
       res.status(401).json({ error: 'Invalid email or password' });
       return;
     }
-    // 3. JWT 토큰 발급
+    // 3. JWT token generation
     const payload: UserJwtPayload = {
       user_id: user.user_id,
       first_name: user.first_name,
       email: user.email
-    };
-    const token = jwt.sign(payload, process.env.JWT_SECRET!, { expiresIn: '1h' });
 
-    // 4. 성공 응답 반환
-    res.status(200).json({ "token" : token });
+
+    };
+    const secretKey:string = process.env.JWT_SECRET_KEY ||"jwt-secret-key";
+    const token = jwt.sign(payload, secretKey);
+    const generatedTime = new Date();
+    //4. put in the revoked token table
+    const revokedTokenRepository = dataSource.getRepository(Revoked_token);
+    const revokedToken = new Revoked_token();
+    revokedToken.token = token;
+    await revokedTokenRepository.save(revokedToken);
+    // 5. success response
+    res.status(200).json({ "token": token, "generatedTime": generatedTime});
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
