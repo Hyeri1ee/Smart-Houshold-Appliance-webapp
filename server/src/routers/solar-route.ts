@@ -1,6 +1,6 @@
-import express, { Request, Response } from "express";
+import express from "express";
 
-import { handleGet, handlePost } from "../handlers/solar-handler";
+import { handleGet, handlePost } from "../controller/solar-controller";
 
 export const solarRoute = express.Router();
 
