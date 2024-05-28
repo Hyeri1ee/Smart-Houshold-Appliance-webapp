@@ -1,15 +1,16 @@
 import express from "express";
 import * as dbConnect from "./db/db-connect"
+import { solarRoute } from "./routers/solar-route"
 
 const app = express();
 const port = 1337;
 
-dbConnect.handleConnection();
+if (dbConnect.handleConnection() === undefined) {
+  throw new Error("DataSource is undefined.");
+}
 
-app.get("/", (req, res) => {
-  res.send('Hello World!')
-});
+app.use("/api/solar", solarRoute);
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`)
+  console.log(`Server running on port ${port}`)
 });

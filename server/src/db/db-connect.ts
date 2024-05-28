@@ -17,6 +17,8 @@ interface Settings {
   logging: boolean;
 }
 
+let dataSource;
+
 const getSettings = async (): Promise<Settings> => {
   try {
     const data = await fs.readFile("config.json", "utf8");
@@ -27,7 +29,7 @@ const getSettings = async (): Promise<Settings> => {
   }
 }
 
-const getDataSource = async (settings: Settings): Promise<DataSource> => {
+const generateDataSource = async (settings: Settings): Promise<DataSource> => {
   return new DataSource({
     type: "postgres",
     host: settings.host,
@@ -48,14 +50,13 @@ const getDataSource = async (settings: Settings): Promise<DataSource> => {
   });
 }
 
-export const handleConnection = async (): Promise<DataSource | undefined> => {
+export const handleConnection = async (): Promise<void> => {
   try {
-    console.log("Starting db connection");
+    console.log("Starting database connection...");
     const settings = await getSettings();
-    const dataSource = await getDataSource(settings);
+    dataSource = await generateDataSource(settings);
     await dataSource.initialize();
-    console.log("db source done");
-    return dataSource;
+    console.log("Database connected.");
   } catch (e) {
     console.error(e);
   }
