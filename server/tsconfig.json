@@ -9,7 +9,8 @@
     "skipLibCheck": true,
     "strictPropertyInitialization": false,
     "outDir": "./dist",
-    "rootDir": "./src"
+    "rootDir": "./src",
+    "moduleResolution": "node"
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules"]

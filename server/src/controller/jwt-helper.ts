@@ -1,13 +1,17 @@
 import { Request } from "express";
-import {JwtPayload, UserJwtPayload, verify} from "jsonwebtoken";
-
-declare module "jsonwebtoken" {
-  export interface UserJwtPayload extends JwtPayload {
-    user_id: number;
-    first_name: string;
-    email: string;
-  }
-}
+import {JwtPayload, verify} from "jsonwebtoken";
+ declare module "jsonwebtoken" {
+   export interface UserJwtPayload extends JwtPayload {
+     user_id: number;
+     first_name: string;
+     email: string;
+   }
+ }
+export interface UserJwtPayload extends JwtPayload {
+      user_id: number;
+      first_name: string;
+      email: string;
+    }
 
 export const handleJwt = (req: Request): JwtPayload => {
   // Check if authorization header is present

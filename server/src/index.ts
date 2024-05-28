@@ -1,6 +1,7 @@
 import express from "express";
 import * as dbConnect from "./db/db-connect"
 import { solarRoute } from "./routers/solar-route"
+import { loginRoute } from "./routers/login-route"
 
 const app = express();
 const port = 1337;
@@ -11,7 +12,7 @@ app.use(express.json());
 
 //routing section
 app.use("/api/solar", solarRoute);
-app.use("/api/login", require("./controller/loginController"));
+app.use("/api/login", loginRoute);
 
 
 app.listen(port, () => {
