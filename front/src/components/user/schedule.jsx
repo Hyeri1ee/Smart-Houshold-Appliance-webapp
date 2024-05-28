@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import "../styles/global.css";
 import "../styles/schedule/schedule-page-style.css";
 
+//All Day mark has a bug sometimes needs further investigation
+
 const daysOfWeek = [
     { short: "Mo", full: "Monday" },
     { short: "Tu", full: "Tuesday" },
@@ -142,7 +144,7 @@ function SchedulePage() {
                                     </div>
                                 ))}
                             </div>
-                            <div className="modal-button-container">
+                            <div className="modal-submit-buttons">
                                 <button type="button" onClick={handleSaveDays}>Save</button>
                                 <button type="button" onClick={handleCloseDaysModal}>Cancel</button>
                             </div>
@@ -174,13 +176,13 @@ function SchedulePage() {
                                 ))}
                             </div>
 
-                            <div className="modal-button-container_2">
+                            <div className="modal-timeslot-management">
                                 <button type="button" onClick={handleAddTimeSlot}>+</button>
                                 <button type="button" onClick={handleAllDay}>{allDay ? "Unmark All Day" : "Mark All Day"}</button>
                             </div>
 
 
-                            <div className="modal-button-container">
+                            <div className="modal-submit-buttons">
                                 <button type="button" onClick={handleSaveTimeslot}>Save</button>
                                 <button type="button" onClick={handleCloseTimeModal}>Cancel</button>
                             </div>
