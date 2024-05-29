@@ -17,7 +17,7 @@ interface Settings {
   logging: boolean;
 }
 
-let dataSource;
+let dataSource: DataSource | null = null;
 
 const getSettings = async (): Promise<Settings> => {
   try {
@@ -60,4 +60,19 @@ export const handleConnection = async (): Promise<void> => {
   } catch (e) {
     console.error(e);
   }
+}
+export const getDataSource = async (): Promise<DataSource> => {
+  if (!dataSource) {
+    try {
+      console.log("Starting database connection...");
+      const settings = await getSettings();
+      dataSource = await generateDataSource(settings);
+      await dataSource.initialize();
+      console.log("Database connected.");
+    } catch (e) {
+      console.error(e);
+      throw e;
+    }
+  }
+  return dataSource;
 }
