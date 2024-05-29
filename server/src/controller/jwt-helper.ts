@@ -1,12 +1,6 @@
 import { Request } from "express";
 import {JwtPayload, verify} from "jsonwebtoken";
- declare module "jsonwebtoken" {
-   export interface UserJwtPayload extends JwtPayload {
-     user_id: number;
-     first_name: string;
-     email: string;
-   }
- }
+
 export interface UserJwtPayload extends JwtPayload {
       user_id: number;
       first_name: string;
