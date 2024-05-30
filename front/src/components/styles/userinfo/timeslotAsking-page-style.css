@@ -1,0 +1,51 @@
+#command {
+    color: #097969;
+    text-align: center;
+  
+    font-size: 28px;
+  }
+  html {
+    width: 375px;
+    height: 667px;
+    background-color: #f2f2f7;
+  }
+  .background {
+    position: relative;
+    top: 100px;
+  }
+  #add {
+    position: relative;
+    left: 30px;
+  
+    color: #097969;
+    width: 140px;
+    height: 50px;
+    border-radius: 10px;
+    font-size: 17px;
+    font-weight: bold;
+    background-color: #ffffff;
+    border-color: #097969;
+    font-style: 'Inter';
+  
+    position: absolute;
+    top: 500px;
+    left : -5px;
+  }
+  #edit {
+    position: relative;
+    left: 30px;
+  
+    color: #ffffff;
+    width: 140px;
+    height: 50px;
+    border-radius: 10px;
+    font-size: 17px;
+    font-weight: bold;
+    background-color: #097969;
+    border-color: #097969;
+    font-style: 'Inter';
+  
+    position: absolute;
+    top: 500px;
+    margin-left: 150px;
+  }
