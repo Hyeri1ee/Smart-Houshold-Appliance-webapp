@@ -2,21 +2,28 @@
   "name": "server",
   "version": "1.0.0",
   "description": "",
-  "main": "app.jsx",
-  "type": "module",
+  "main": "src/index.ts",
   "scripts": {
-    "start": "node app.jsx",
-    "dev": "nodemon app.jsx"
+    "start": "ts-node src/index.ts",
+    "dev": "nodemon src/index.ts"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@types/jsonwebtoken": "^9.0.6",
+    "bcrypt": "^5.1.1",
     "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
     "pg": "^8.11.5",
     "reflect-metadata": "^0.2.2",
     "typeorm": "^0.3.20"
   },
   "devDependencies": {
-    "nodemon": "^3.1.0"
+    "@types/bcrypt": "^5.0.2",
+    "@types/express": "^4.17.21",
+    "@types/pg": "^8.11.6",
+    "nodemon": "^3.1.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5"
   }
 }
