@@ -8,7 +8,7 @@ server/node_modules
 # keys
 *.key
 *.key.pub
-server/src/jwt.env
+server/.env
 
 # testing
 front/coverage
@@ -32,5 +32,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+.vscode
 */.idea
 /.idea
+front/cert/

@@ -4,15 +4,11 @@ import jwt from 'jsonwebtoken';
 import {User} from '../db/entities/user';
 import {getDataSource} from '../db/db-connect';
 import {UserJwtPayload} from './jwt-helper';
-
-const hashing = async (password: string) => {
-  const saltRound = 10;
-  const salt = await bcrypt.genSalt(saltRound);
-  return await bcrypt.hash(password, salt);
-}
+import 'dotenv/config'
 
 export const checkUserExist = async (req: Request, res: Response): Promise<void> => {
   const { email, password } = req.body;
+  console.log(req.body);
   try {
     // 1. find user by email
     const dataSource = await getDataSource(); // get data source
@@ -25,10 +21,8 @@ export const checkUserExist = async (req: Request, res: Response): Promise<void>
       return;
     }
 
-    const hashedUserPassword = await hashing(user.password);
-
     // 2-2. compare with hashed password
-    if (!(await bcrypt.compare(password, hashedUserPassword))) {
+    if (!(await bcrypt.compare(password, user.password))) {
       res.status(401).json({ error: 'Invalid email or password' });
       return;
     }
@@ -40,9 +34,16 @@ export const checkUserExist = async (req: Request, res: Response): Promise<void>
       email: user.email,
       iat: new Date().getTime(),
     };
-    // @ts-ignore
-    const secretKey: string = process.env.PRIVATE_KEY;
-    const token = jwt.sign(payload, secretKey);
+
+    const secretKey: string | undefined = process.env.PRIVATE_KEY;
+    if (secretKey === undefined) {
+      console.error("Server is missing private key!!!");
+      res
+        .sendStatus(500);
+      return;
+    }
+
+    const token = jwt.sign(payload, secretKey, {alg: "rs256"});
 
     // 5. success response
     res.status(200).json({ "token": token });

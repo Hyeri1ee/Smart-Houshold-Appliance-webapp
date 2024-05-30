@@ -1,15 +1,8 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import LoginPage from './components/auth/login';
-import RegisterPage from './components/auth/register';
-import AskTimeslotPage from './components/userinfo/timeslotAsking';
-import AddTimeslot from './components/userinfo/addtimeslot';
-import {Route, Navigate, Routes} from 'react-router-dom';
+import {Navigate, Route, Routes} from 'react-router-dom';
 import Login from './components/auth/login';
 import Register from './components/auth/register';
-import {Route, Navigate, Routes} from 'react-router-dom';
-import Login from './components/auth/login';
-import Register from './components/auth/register';
+import Schedule from "./components/user/schedule";
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", async () => {
@@ -21,11 +14,12 @@ function App() {
   return (
     <>
       <Routes>
-        <Route index element={ <Navigate to="/register" />} />
-        <Route path="login" element={ <Login />} />
-        <Route path="register" element={ <Register />} />
-        <Route path="/userinfo/timeslotAsking" element={<AskTimeslotPage/>}/>
-        <Route path="/userinfo/addTimeslot" element={<AddTimeslot/>}/>
+        <Route index element={<Navigate to="/register"/>}/>
+        <Route path="login" element={<Login/>}/>
+        <Route path="register" element={<Register/>}/>
+        <Route path="user/schedule" element={<Schedule/>}/>
+        {/*<Route path="/userinfo/timeslotAsking" element={<AskTimeslotPage/>}/>*/}
+        {/*<Route path="/userinfo/addTimeslot" element={<AddTimeslot/>}/>*/}
       </Routes>
     </>
   );

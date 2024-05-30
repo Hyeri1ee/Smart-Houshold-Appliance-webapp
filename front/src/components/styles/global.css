@@ -6,6 +6,6 @@
     --accent: #898121;
 
     font-family: Inter, sans-serif;
-    /*color: var(--text);
-    background-color: var(--background);*/
+    color: var(--text);
+    background-color: var(--background);
 }
