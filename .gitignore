@@ -1,12 +1,14 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
 # dependencies
 front/node_modules
 server/node_modules
-node_modules
 
 */.pnp
 .pnp.js
+
+# keys
+*.key
+*.key.pub
+server/src/jwt.env
 
 # testing
 front/coverage
@@ -14,7 +16,10 @@ server/coverage
 
 # production
 front/build
-/build
+front/dist
+
+server/build
+server/dist
 
 # misc
 .DS_Store
@@ -29,6 +34,3 @@ yarn-error.log*
 
 */.idea
 /.idea
-
-/public/cert/*
-!/public/cert/.gitkeep
