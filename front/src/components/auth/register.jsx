@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from 'axios';
 
 import "../styles/global.css";
 import "../styles/auth/auth-page-style.css";
@@ -15,11 +16,14 @@ function RegisterPage() {
             alert("Passwords do not match");
             return;
         }
-        // Implement registration logic here
-        console.log("Email:", email);
-        console.log("FirstName:", firstName);
-        console.log("Password:", password);
-        window.Location("./login");
+        axios.post('/api/register', {
+            first_name: firstName,
+            email,
+            password,
+            password_confirmation: confirmPassword
+        }).catch((error) => {
+            console.log(error);
+        });
     };
 
     return (

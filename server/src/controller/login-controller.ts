@@ -43,7 +43,7 @@ export const checkUserExist = async (req: Request, res: Response): Promise<void>
       return;
     }
 
-    const token = jwt.sign(payload, secretKey, {alg: "rs256"});
+    const token = jwt.sign(payload, secretKey);
 
     // 5. success response
     res.status(200).json({ "token": token });

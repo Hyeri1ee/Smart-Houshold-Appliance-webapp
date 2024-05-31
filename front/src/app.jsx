@@ -3,6 +3,10 @@ import {Navigate, Route, Routes} from 'react-router-dom';
 import Login from './components/auth/login';
 import Register from './components/auth/register';
 import Schedule from "./components/user/schedule";
+import axios from 'axios';
+
+axios.defaults.baseURL = 'http://localhost:1337';
+axios.defaults.withCredentials = true;
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", async () => {
