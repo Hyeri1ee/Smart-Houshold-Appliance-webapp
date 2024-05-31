@@ -3,6 +3,7 @@ import * as dbConnect from './db/db-connect';
 import { solarRoute } from './routers/solar-route';
 import { loginRoute } from './routers/login-route';
 import { registerRoute } from './routers/register-route';
+import { scheduleRoute } from "./routers/schedule-route"
 
 var cors = require('cors');
 
@@ -23,6 +24,7 @@ app.use(express.json());
 app.use('/api/register', registerRoute);
 app.use('/api/login', loginRoute);
 app.use('/api/solar', solarRoute);
+app.use('/api/schedule', scheduleRoute);
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
