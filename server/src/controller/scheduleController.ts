@@ -30,7 +30,6 @@ export const checkSchedule = async (req: Request, res: Response): Promise<void> 
       .andWhere('t.end_time >= :timeNow', { timeNow })
       .getMany();
 
-   
     const futureRunningData = await scheduleRepository.createQueryBuilder('s')
       .innerJoinAndSelect('s.times', 't')
       .innerJoin('s.user', 'u') 
