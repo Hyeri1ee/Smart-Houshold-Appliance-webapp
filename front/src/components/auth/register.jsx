@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import axios from 'axios';
 
 import "../styles/global.css";
 import "../styles/auth/auth-page-style.css";
@@ -9,7 +9,6 @@ function RegisterPage() {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [firstName, setFirstName] = useState("");
-    const navigate = useNavigate();
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -17,11 +16,14 @@ function RegisterPage() {
             alert("Passwords do not match");
             return;
         }
-        // Implement registration logic here
-        console.log("Email:", email);
-        console.log("FirstName:", firstName);
-        console.log("Password:", password);
-        navigate("/login");
+        axios.post('/api/register', {
+            first_name: firstName,
+            email,
+            password,
+            password_confirmation: confirmPassword
+        }).catch((error) => {
+            console.log(error);
+        });
     };
 
     return (

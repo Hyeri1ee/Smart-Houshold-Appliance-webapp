@@ -1,26 +1,31 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import LoginPage from './components/auth/login';
-import RegisterPage from './components/auth/register';
-import SchedulePage from "./components/user/schedule";
+import {Navigate, Route, Routes} from 'react-router-dom';
+import Login from './components/auth/login';
+import Register from './components/auth/register';
+import Schedule from "./components/user/schedule";
+import axios from 'axios';
+
+axios.defaults.baseURL = 'http://localhost:1337';
+axios.defaults.withCredentials = true;
 
 if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("progressive-web-app/sw.js");
+  window.addEventListener("load", async () => {
+    await navigator.serviceWorker.register("progressive-web-app/sw.js");
   });
 }
 
 function App() {
   return (
-    <Router>
+    <>
       <Routes>
-        <Route path="/" element={<Navigate to="/register" />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/schedule" element={<SchedulePage />} />
-
+        <Route index element={<Navigate to="/register"/>}/>
+        <Route path="login" element={<Login/>}/>
+        <Route path="register" element={<Register/>}/>
+        <Route path="user/schedule" element={<Schedule/>}/>
+        {/*<Route path="/userinfo/timeslotAsking" element={<AskTimeslotPage/>}/>*/}
+        {/*<Route path="/userinfo/addTimeslot" element={<AddTimeslot/>}/>*/}
       </Routes>
-    </Router>
+    </>
   );
 }
 
