@@ -2,8 +2,8 @@
   "host": "localhost",
   "port": 5432,
   "username": "postgres",
-  "password": "",
-  "dbName": "",
+  "password": "sudo",
+  "dbName": "doom-toaster",
   "synchronize": true,
-  "logging": true
+  "logging": false
 }

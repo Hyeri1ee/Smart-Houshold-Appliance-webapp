@@ -1,7 +1,11 @@
+:root {
+  margin: 0 auto 0 auto;
+}
+
 body {
   display: flex;
   flex-direction: column;
-  justify-content: space-between; /* Distribute content evenly vertically */
+  justify-content: flex-start;
   align-items: center;
   height: 100vh;
   padding: 2%;

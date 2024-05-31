@@ -1,7 +1,8 @@
 // src/controller/register-controller.ts
 import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
-import jwt, { UserJwtPayload } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
+import {UserJwtPayload} from './jwt-helper';
 import { getDataSource } from '../db/db-connect';
 import { User } from '../db/entities/user';
 import dotenv from 'dotenv';

@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, {useState} from "react";
+import {useNavigate} from "react-router-dom";
 import "../styles/global.css";
 import "../styles/schedule/schedule-page-style.css";
 
-//All Day mark has a bug sometimes needs further investigation
+// All Day mark has a bug sometimes needs further investigation
 
 const daysOfWeek = [
     { short: "Mo", full: "Monday" },
