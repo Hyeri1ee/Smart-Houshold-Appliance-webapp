@@ -5,7 +5,7 @@ import { loginRoute } from './routers/login-route';
 import { registerRoute } from './routers/register-route';
 import { scheduleRoute } from "./routers/schedule-route"
 
-var cors = require('cors');
+import cors from 'cors';
 
 const app = express();
 const port = 1337;
@@ -19,6 +19,7 @@ app.use(cors({
   credentials: true
 }));
 
+app.use(cors());
 app.use(express.json());
 
 app.use('/api/register', registerRoute);

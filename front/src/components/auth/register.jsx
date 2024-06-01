@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import axios from 'axios';
 
 import "../styles/global.css";
 import "../styles/auth/auth-page-style.css";
@@ -10,21 +9,28 @@ function RegisterPage() {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [firstName, setFirstName] = useState("");
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (password !== confirmPassword) {
             alert("Passwords do not match");
             return;
         }
-        axios.post('/api/register', {
-            first_name: firstName,
-            email,
-            password,
-            password_confirmation: confirmPassword
-        }).catch((error) => {
-            console.log(error);
+
+        await fetch('http://localhost:1337/api/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                first_name: firstName,
+                email: email,
+                password: password,
+                password_confirmation: confirmPassword
+            })
         });
-    };
+        location.href="/dashboard";
+
+    }
 
     return (
         <div>

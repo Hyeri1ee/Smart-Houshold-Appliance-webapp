@@ -20,7 +20,7 @@ export const handleJwt = (req: Request): JwtPayload => {
 }
 
 const jwtVerification = (auth: string) => {
-  let returnValue = <UserJwtPayload> verify(auth, process.env.PUBLIC_KEY!);
+  let returnValue = <UserJwtPayload> verify(auth, process.env.JWT_KEY!);
   return {
     user_id: returnValue.user_id,
     first_name: returnValue.first_name,

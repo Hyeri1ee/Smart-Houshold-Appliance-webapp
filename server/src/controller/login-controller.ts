@@ -7,7 +7,10 @@ import {UserJwtPayload} from './jwt-helper';
 import 'dotenv/config'
 
 export const checkUserExist = async (req: Request, res: Response): Promise<void> => {
-  const { email, password } = req.body;
+  const { email } = req.body;
+  let { password } = req.body;
+
+  password = password.toString();
   console.log(req.body);
   try {
     // 1. find user by email
@@ -22,6 +25,7 @@ export const checkUserExist = async (req: Request, res: Response): Promise<void>
     }
 
     // 2-2. compare with hashed password
+    console.log("password: %s\nuser.password: %s\ncum: %s", password, user.password, await bcrypt.hash(password, 10));
     if (!(await bcrypt.compare(password, user.password))) {
       res.status(401).json({ error: 'Invalid email or password' });
       return;
@@ -35,15 +39,15 @@ export const checkUserExist = async (req: Request, res: Response): Promise<void>
       iat: new Date().getTime(),
     };
 
-    const secretKey: string | undefined = process.env.PRIVATE_KEY;
-    if (secretKey === undefined) {
-      console.error("Server is missing private key!!!");
+    const jwtKey: string | undefined = process.env.JWT_KEY;
+    if (jwtKey === undefined) {
+      console.error("Server is missing JWT key! Please run make-key.sh.");
       res
         .sendStatus(500);
       return;
     }
 
-    const token = jwt.sign(payload, secretKey);
+    const token = jwt.sign(payload, jwtKey);
 
     // 5. success response
     res.status(200).json({ "token": token });
