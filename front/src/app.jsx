@@ -1,7 +1,7 @@
-import React from 'react';
 import {Route, Navigate, Routes} from 'react-router-dom';
 import Login from './components/auth/login';
 import Register from './components/auth/register';
+import PanelsInfoPage from './PanelsinfoPage';
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", async () => {
@@ -15,7 +15,8 @@ function App() {
       <Routes>
         <Route index element={ <Navigate to="/register" />} />
         <Route path="login" element={ <Login />} />
-        <Route path="register" element={ <Register />} />
+        <Route path="register" element={<Register />} />
+        <Route path="panelsinfo" element={<PanelsInfoPage />} />
       </Routes>
     </>
   );
