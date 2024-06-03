@@ -20,7 +20,7 @@ export class User {
   @Column({ type: 'varchar', length: 255, nullable: false })
   email: string;
 
-  @Column({ type: 'varchar', length: 255, nullable: false })
+  @Column({ type: 'varchar', length: 60, nullable: false })
   password: string;
 
   @OneToOne(() => Location)

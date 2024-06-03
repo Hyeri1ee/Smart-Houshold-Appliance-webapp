@@ -47,7 +47,8 @@ function SchedulePage() {
 
     const handleConfirm = () => {
         console.log("Confirm button clicked");
-        navigate("/confirmation");
+        // navigate("/confirmation");
+        navigate("/dashboard");
     };
 
     const handleSaveTimeslot = () => {

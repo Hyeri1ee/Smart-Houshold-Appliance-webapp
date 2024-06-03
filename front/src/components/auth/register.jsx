@@ -16,7 +16,7 @@ function RegisterPage() {
             return;
         }
 
-        await fetch('http://localhost:1337/api/register', {
+        const resp = await fetch('http://localhost:1337/api/register', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -28,8 +28,15 @@ function RegisterPage() {
                 password_confirmation: confirmPassword
             })
         });
-        location.href="/dashboard";
 
+        if (!resp.ok) {
+            console.error("Login failed!");
+            return;
+        }
+
+        const data = await resp.json();
+        document.cookie = `authorization=${data.token}`;
+        location.href="/dashboard";
     }
 
     return (

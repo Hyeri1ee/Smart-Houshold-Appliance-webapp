@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 import "../styles/global.css";
 import "../styles/auth/auth-page-style.css";
@@ -11,7 +10,7 @@ function LoginPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    await fetch('http://localhost:1337/api/login', {
+    const resp = await fetch('http://localhost:1337/api/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -21,6 +20,14 @@ function LoginPage() {
         password: password,
       })
     });
+
+    if (!resp.ok) {
+      console.error("Login failed!");
+      return;
+    }
+
+    const data = await resp.json();
+    document.cookie = `authorization=${data.token}`;
     location.href="/dashboard";
   }
 
