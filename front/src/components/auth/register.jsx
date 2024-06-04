@@ -9,18 +9,35 @@ function RegisterPage() {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [firstName, setFirstName] = useState("");
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (password !== confirmPassword) {
             alert("Passwords do not match");
             return;
         }
-        // Implement registration logic here
-        console.log("Email:", email);
-        console.log("FirstName:", firstName);
-        console.log("Password:", password);
-        window.Location("./login");
-    };
+
+        const resp = await fetch('http://localhost:1337/api/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                first_name: firstName,
+                email: email,
+                password: password,
+                password_confirmation: confirmPassword
+            })
+        });
+
+        if (!resp.ok) {
+            console.error("Login failed!");
+            return;
+        }
+
+        const data = await resp.json();
+        document.cookie = `authorization=${data.token}`;
+        location.href="/dashboard";
+    }
 
     return (
         <div>

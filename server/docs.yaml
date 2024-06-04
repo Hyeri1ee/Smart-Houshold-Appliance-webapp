@@ -1,0 +1,478 @@
+openapi: 3.0.0
+info:
+  title: 'HBO ICT Project API'
+  contact:
+    email: 560567@student.saxion.nl
+  version: 1.0.0
+servers:
+  - url: 'http://localhost:1337'
+    description: 'Development server'
+paths:
+  /api/register:
+    post:
+      tags:
+        - Auth
+      summary: 'Register into the system'
+      operationId: 47976b44-3df7-4b70-a00e-ef416f2c5e85
+      requestBody:
+        description: 'User registration data'
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - first_name
+                - email
+                - password
+                - password_confirmation
+              properties:
+                first_name:
+                  type: string
+                  maxLength: 20
+                  example: 'John'
+                email:
+                  type: string
+                  format: email
+                  maxLength: 255
+                  example: john.doe@gmail.com
+                password:
+                  type: string
+                  maxLength: 255
+                  minLength: 8
+                  example: password123
+                password_confirmation:
+                  type: string
+                  maxLength: 255
+                  minLength: 8
+                  example: password123
+              type: object
+      responses:
+        '204':
+          description: 'User registered successfully'
+        '422':
+          description: 'Validation error'
+  /api/login:
+    post:
+      tags:
+        - Auth
+      summary: 'Login to the system'
+      operationId: 16bce8a2-9240-48ef-b533-96512d7a0b66
+      requestBody:
+        description: 'User login data'
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  format: email
+                  maxLength: 255
+                  example: john.doe@gmail.com
+                password:
+                  type: string
+                  maxLength: 255
+                  minLength: 8
+                  example: password123
+              type: object
+      responses:
+        '204':
+          description: 'User logged in successfully'
+        '422':
+          description: 'Validation error'
+  /api/logout:
+    post:
+      tags:
+        - Auth
+      summary: 'Logout from the system'
+      operationId: 4b32f07c-e395-496e-9ae8-424ec0a025ca
+      security:
+        - BearerAuth: []
+      responses:
+        '204':
+          description: 'User logged out successfully'
+  /api/user/location:
+    post:
+      tags:
+        - Location
+      summary: "Upload user's location"
+      security:
+        - BearerAuth: []
+      operationId: 7dbc6fbb-e288-49fd-919d-afcdb05a908d
+      requestBody:
+        description: 'Location data'
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - longitude
+                - latitude
+              properties:
+                longitude:
+                  type: number
+                  format: float
+                  example: 19.455982
+                latitude:
+                  type: number
+                  format: float
+                  example: 51.759247
+              type: object
+      responses:
+        '200':
+          description: 'Success response'
+    get:
+      tags:
+        - Location
+      summary: "Get user's location"
+      security:
+        - BearerAuth: []
+      operationId: 10bdae83-4ce7-4b48-a231-405cc7549340
+      responses:
+        '200':
+          description: 'Success response'
+          content:
+            application/json:
+              schema:
+                properties:
+                  data: { $ref: '#/components/schemas/LocationResource' }
+                type: object
+        '404':
+          description: 'Not found'
+  /api/schedule:
+    post:
+      tags:
+        - Schedule
+      summary: 'Upload schedule with times'
+      security:
+        - BearerAuth: []
+      operationId: 6e7b2889-1a5e-4362-bf46-96e290aad399
+      requestBody:
+        description: 'Schedule data'
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - weekday
+                - times
+              properties:
+                weekday:
+                  type: integer
+                  format: int32
+                  example: 2
+                times:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      start_time:
+                        type: integer
+                        format: int64
+                        description: 'Epoch timestamp for the start time'
+                        example: 1622559600
+                      end_time:
+                        type: integer
+                        format: int64
+                        description: 'Epoch timestamp for the end time'
+                        example: 1622584800
+              type: object
+      responses:
+        '200':
+          description: 'Schedule created successfully'
+        '400':
+          description: 'Invalid data'
+    get:
+      tags:
+        - Schedule
+      summary: "Get all user's schedules"
+      security:
+        - BearerAuth: []
+      operationId: 051ca7b6-b055-45da-b354-116c2d4d47fa
+      responses:
+        '200':
+          description: 'Success response'
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ScheduleResource'
+        '404':
+          description: 'Not found'
+  /api/schedule/{schedule_id}:
+    get:
+      tags:
+        - Schedule
+      summary: 'Get specific schedule'
+      security:
+        - BearerAuth: []
+      operationId: 25df81b4-5ae5-4c75-a380-a897b4782a31
+      parameters:
+        - $ref: '#/components/parameters/schedule_id_param'
+      responses:
+        '200':
+          description: 'Success response'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScheduleResource'
+        '404':
+          description: 'Schedule not found'
+    put:
+      tags:
+        - Schedule
+      summary: 'Update a specific schedule with times'
+      security:
+        - BearerAuth: []
+      operationId: 0e1982f4-0e79-4519-8666-f743010c8fce
+      parameters:
+        - $ref: '#/components/parameters/schedule_id_param'
+      requestBody:
+        description: 'Updated schedule data'
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - weekday
+                - times
+              properties:
+                weekday:
+                  type: integer
+                  format: int32
+                  example: 2
+                times:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      start_time:
+                        type: integer
+                        format: int64
+                        description: 'Epoch timestamp for the start time'
+                        example: 1622559600
+                      end_time:
+                        type: integer
+                        format: int64
+                        description: 'Epoch timestamp for the end time'
+                        example: 1622584800
+              type: object
+      responses:
+        '200':
+          description: 'Schedule updated successfully'
+        '404':
+          description: 'Schedule not found'
+        '400':
+          description: 'Invalid data'
+    delete:
+      tags:
+        - Schedule
+      summary: 'Delete a specific schedule'
+      security:
+        - BearerAuth: []
+      operationId: bc931cd0-6ad3-4023-a2b2-0cc61bc0b362
+      parameters:
+        - $ref: '#/components/parameters/schedule_id_param'
+      responses:
+        '200':
+          description: 'Schedule deleted successfully'
+        '404':
+          description: 'Schedule not found'
+  /api/solar:
+    post:
+      tags:
+        - Solar
+      summary: "Upload solar setup for a user"
+      security:
+        - BearerAuth: []
+      operationId: 0e63ebbb-96ef-47e7-9c33-a737167e786f
+      requestBody:
+        description: 'Solar setup data'
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - panel_count
+                - panel_type
+                - panel_area
+                - tilt
+                - azimuth
+                - peak_power
+              properties:
+                panel_count:
+                  type: integer
+                panel_type:
+                  type: integer
+                panel_area:
+                  type: number
+                  format: float
+                tilt:
+                  type: number
+                  format: float
+                azimuth:
+                  type: number
+                  format: float
+                peak_power:
+                  type: number
+                  format: float
+              type: object
+      responses:
+        '200':
+          description: 'Success response'
+    get:
+      tags:
+        - Solar
+      summary: "Get user's solar setup"
+      security:
+        - BearerAuth: []
+      operationId: c7af7655-71cd-450a-95d6-e5c5ac9b2745
+      responses:
+        '200':
+          description: 'Success response'
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    items:
+                      $ref: '#/components/schemas/SolarResource'
+                type: object
+        '404':
+          description: 'Not found'
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    UserResource:
+      title: UserResource
+      properties:
+        user_id:
+          type: integer
+          format: int64
+          example: 1
+        location_id:
+          type: integer
+          format: int64
+        first_name:
+          type: string
+          maxLength: 20
+          example: 'John'
+        email:
+          type: string
+          format: email
+          maxLength: 255
+          example: john.doe@gmail.com
+        password:
+          type: string
+          maxLength: 255
+          example: 'password123'
+      type: object
+    LocationResource:
+      title: LocationResource
+      properties:
+        location_id:
+          type: integer
+          format: int64
+          example: 1
+        longitude:
+          type: number
+          format: float
+          example: 19.455982
+        latitude:
+          type: number
+          format: float
+          example: 51.759247
+      type: object
+    ScheduleResource:
+      title: ScheduleResource
+      properties:
+        schedule_id:
+          type: integer
+          format: int64
+          example: 1
+        user_id:
+          type: integer
+          format: int64
+          example: 1
+        weekday:
+          type: integer
+          format: int32
+          example: 2
+        times:
+          type: array
+          items:
+            $ref: '#/components/schemas/TimeResource'
+      type: object
+    SolarResource:
+      title: SolarResource
+      properties:
+        solar_id:
+          type: integer
+          format: int64
+          example: 1
+        location_id:
+          type: integer
+          format: int64
+        panel_count:
+          type: integer
+          format: int32
+          example: 10
+        panel_type:
+          type: integer
+          format: int32
+          example: 10
+        panel_area:
+          type: number
+          format: float
+          example: 25.5
+        tilt:
+          type: number
+          format: float
+          example: 30.0
+        azimuth:
+          type: number
+          format: float
+          example: 180.0
+        peak_power:
+          type: number
+          format: float
+          example: 10.5
+      type: object
+    TimeResource:
+      title: TimeResource
+      properties:
+        time_id:
+          type: integer
+          format: int32
+          example: 1
+        schedule_id:
+          type: integer
+          format: int32
+        start_time:
+          type: integer
+          format: int64
+          description: 'Epoch timestamp for the start time'
+          example: 1622559600
+        end_time:
+          type: integer
+          format: int64
+          description: 'Epoch timestamp for the end time'
+          example: 1622584800
+      type: object
+  parameters:
+    schedule_id_param:
+      name: schedule_id
+      in: path
+      required: true
+      schema:
+        type: integer
+        format: int64
+        example: 1
