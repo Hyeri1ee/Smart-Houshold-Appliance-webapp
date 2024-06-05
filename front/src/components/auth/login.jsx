@@ -12,6 +12,7 @@ function LoginPage() {
 
     const resp = await fetch('http://localhost:1337/api/login', {
       method: 'POST',
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json'
       },

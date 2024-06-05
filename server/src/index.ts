@@ -3,7 +3,8 @@ import * as dbConnect from './db/db-connect';
 import { solarRoute } from './routers/solar-route';
 import { loginRoute } from './routers/login-route';
 import { registerRoute } from './routers/register-route';
-import { scheduleRoute } from "./routers/schedule-route"
+import { scheduleRoute } from "./routers/schedule-route";
+import { adviceRoute } from "./routers/advice-route";
 
 import cors from 'cors';
 
@@ -26,6 +27,7 @@ app.use('/api/register', registerRoute);
 app.use('/api/login', loginRoute);
 app.use('/api/solar', solarRoute);
 app.use('/api/schedule', scheduleRoute);
+app.use('/api/advice', adviceRoute);
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);

@@ -23,7 +23,7 @@ export class User {
   @Column({ type: 'varchar', length: 60, nullable: false })
   password: string;
 
-  @Column({ type: 'smallint', length: 60, nullable: false })
+  @Column({ type: 'smallint', nullable: false })
   profile_type: number;
 
 
