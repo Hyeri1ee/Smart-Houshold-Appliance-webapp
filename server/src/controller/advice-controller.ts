@@ -1,17 +1,21 @@
-import { Request, Response } from 'express';
-import jwt from 'jsonwebtoken';
-import { User } from '../db/entities/user';
-import { Schedule } from '../db/entities/schedule';
-import { Time } from '../db/entities/time';
-import { getDataSource } from '../db/db-connect';
-import { UserJwtPayload } from './jwt-helper';
-import axios from 'axios';
+import {Request, Response} from 'express';
+import {User} from '../db/entities/user';
+import {Schedule} from '../db/entities/schedule';
+import {Time} from '../db/entities/time';
+import {getDataSource} from '../db/db-connect';
 import 'dotenv/config';
 import { NextFunction } from 'express';
-
+import jwt from 'jsonwebtoken';
+import cookieParser from 'cookie-parser';
+interface DecodedToken {
+    user_id: number;
+    first_name: string;
+    email: string;
+    iat: number;
+  }
 interface WeatherData {
-    dt: number; 
-    energy: number; 
+    dt: number;
+    energy: number;
 }
 interface UserWithSchedule {
     user: User;
@@ -45,6 +49,21 @@ const dummyWeatherData: WeatherData[] = [
 { dt: 20240607210000, energy: 50 }, // 2023-06-07 21:00:00 UTC
 { dt: 20240607220000, energy: 45 }, // 2023-06-07 22:00:00 UTC
 { dt: 20240607230000, energy: 30 }, // 2023-06-07 23:00:00 UTC
+];
+
+const monthNames = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December"
 ];
 
 const findPeakTimes = (weatherData: WeatherData[]): WeatherData[] => {
@@ -132,7 +151,7 @@ const formatTime = (seconds: number): string => {
     return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
 };
 //3. peak times scheduling
-export const assignSchedulesToPeakTimes = (req: Request, res: Response): void => {
+export const assignSchedulesToPeakTimes = (req: Request, res: Response, next:NextFunction): void => {
     const usersWithSchedules: UserWithSchedule[] = res.locals.usersWithSchedules || [];
     const peakTimes = findPeakTimes(dummyWeatherData).sort((a, b) => a.dt - b.dt);
     const ENERGY_USAGE_PER_HOUR = 30;
@@ -218,6 +237,81 @@ export const assignSchedulesToPeakTimes = (req: Request, res: Response): void =>
             }
         }
     }
-
-    res.status(200).json(responseResult);
+    res.locals.responseResult = responseResult;
+    next();
 };
+//4. give information to authosized user
+export const forAuthorizedUserSchedule = (req: Request, res: Response) => {
+    const accessToken = req.cookies.authorization;
+
+    if (!accessToken) {
+        return res.status(401).json({ message: 'Access token is missing' });
+    }
+
+    let decodedToken: DecodedToken;
+    try {
+        decodedToken = jwt.verify(accessToken, process.env.JWT_SECRET || '') as DecodedToken;
+    } catch (err) {
+        return res.status(403).json({ message: 'Invalid access token' });
+    }
+
+    const authorizedUserId = decodedToken.user_id;
+    const responseResult: ResponseFormat[] = res.locals.responseResult || [];
+
+    const authorizedUserSchedule = responseResult.find(
+        (schedule) => schedule.user.user_id === authorizedUserId
+    );
+
+    if (authorizedUserSchedule) {
+        res.status(200).json({
+            start_time: authorizedUserSchedule.adviceTime,
+            date: formatDate(),
+        });
+    } else {
+        res.status(404).json({ message: 'Schedule not found for the authorized user' });
+    }
+};
+
+const findSuffix = (day: number) => {
+  if (day > 3 && day < 21) return 'th';
+  switch (day % 10) {
+    case 1: return "st";
+    case 2: return "nd";
+    case 3: return "rd";
+    default: return "th";
+  }
+}
+
+const formatDate = () => {
+  const date = new Date();
+  const day = date.getDate();
+  const month = monthNames[date.getMonth()];
+
+  const formattedDate = `${day}${findSuffix(day)} ${month}`;
+
+  const targetDate = new Date(date.getFullYear(), 5, 7); // 7th June
+  const timeDiff = targetDate.getTime() - date.getTime();
+  const daysUntilTarget = Math.ceil(timeDiff / (1000 * 3600 * 24));
+
+  let daysUntilText = '';
+  if (daysUntilTarget === 0) {
+      daysUntilText = "today";
+  } else if (daysUntilTarget === 1) {
+      daysUntilText = `in ${daysUntilTarget} day`;
+  } else {
+      daysUntilText = `in ${daysUntilTarget} days`;
+  }
+
+  return `${formattedDate} (${daysUntilText})`;
+}
+
+export const adviceBestTime = (req: Request, res: Response) => {
+    console.log(req.headers);
+    res
+      .status(200)
+      .json({
+          time: "12:30 - 15:00",
+          date: formatDate(),
+      });
+    return;
+}

@@ -19,12 +19,11 @@ class Dropdown extends React.Component {
 
   renderOptions() {
     const { options } = this.props; // Destructure options from props
-    const optionElements = options.map((option) => (
+    return options.map((option) => (
       <option key={option.value} value={option.value}>
         {option.title}
       </option>
     ));
-    return optionElements;
   }
 
   render() {
