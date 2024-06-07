@@ -1,0 +1,552 @@
+{
+  "location_id": "xxxx-xxxx-xxxx-xxxx",
+  "lat": 52.3676,
+  "lon": 4.9041,
+  "date": "2023-06-01",
+  "tz": "-04:00",
+  "sunrise": "2023-06-01T05:41:22-04:00",
+  "sunset": "2023-06-01T19:56:06-04:00",
+  "irradiance": {
+    "daily": [
+      {
+        "clear_sky": {
+          "ghi": 6000,
+          "dni": 8000,
+          "dhi": 1000
+        },
+        "cloudy_sky": {
+          "ghi": 4000,
+          "dni": 6000,
+          "dhi": 800
+        }
+      }
+    ],
+    "hourly": [
+      {
+        "hour": 0,
+        "clear_sky": {
+          "ghi": 0,
+          "dni": 0,
+          "dhi": 0
+        },
+        "cloudy_sky": {
+          "ghi": 0,
+          "dni": 0,
+          "dhi": 0
+        }
+      },
+      {
+        "hour": 1,
+        "clear_sky": {
+          "ghi": 0,
+          "dni": 0,
+          "dhi": 0
+        },
+        "cloudy_sky": {
+          "ghi": 0,
+          "dni": 0,
+          "dhi": 0
+        }
+      },
+      {
+        "hour": 2,
+        "clear_sky": {
+          "ghi": 0,
+          "dni": 0,
+          "dhi": 0
+        },
+        "cloudy_sky": {
+          "ghi": 0,
+          "dni": 0,
+          "dhi": 0
+        }
+      },
+      {
+        "hour": 3,
+        "clear_sky": {
+          "ghi": 0,
+          "dni": 0,
+          "dhi": 0
+        },
+        "cloudy_sky": {
+          "ghi": 0,
+          "dni": 0,
+          "dhi": 0
+        }
+      },
+      {
+        "hour": 4,
+        "clear_sky": {
+          "ghi": 0,
+          "dni": 0,
+          "dhi": 0
+        },
+        "cloudy_sky": {
+          "ghi": 0,
+          "dni": 0,
+          "dhi": 0
+        }
+      },
+      {
+        "hour": 5,
+        "clear_sky": {
+          "ghi": 10,
+          "dni": 20,
+          "dhi": 5
+        },
+        "cloudy_sky": {
+          "ghi": 5,
+          "dni": 10,
+          "dhi": 3
+        }
+      },
+      {
+        "hour": 6,
+        "clear_sky": {
+          "ghi": 50,
+          "dni": 80,
+          "dhi": 20
+        },
+        "cloudy_sky": {
+          "ghi": 30,
+          "dni": 50,
+          "dhi": 15
+        }
+      },
+      {
+        "hour": 7,
+        "clear_sky": {
+          "ghi": 200,
+          "dni": 300,
+          "dhi": 100
+        },
+        "cloudy_sky": {
+          "ghi": 150,
+          "dni": 200,
+          "dhi": 80
+        }
+      },
+      {
+        "hour": 8,
+        "clear_sky": {
+          "ghi": 400,
+          "dni": 500,
+          "dhi": 200
+        },
+        "cloudy_sky": {
+          "ghi": 350,
+          "dni": 400,
+          "dhi": 180
+        }
+      },
+      {
+        "hour": 9,
+        "clear_sky": {
+          "ghi": 600,
+          "dni": 700,
+          "dhi": 300
+        },
+        "cloudy_sky": {
+          "ghi": 500,
+          "dni": 600,
+          "dhi": 250
+        }
+      },
+      {
+        "hour": 10,
+        "clear_sky": {
+          "ghi": 800,
+          "dni": 900,
+          "dhi": 400
+        },
+        "cloudy_sky": {
+          "ghi": 700,
+          "dni": 800,
+          "dhi": 350
+        }
+      },
+      {
+        "hour": 11,
+        "clear_sky": {
+          "ghi": 1000,
+          "dni": 1200,
+          "dhi": 500
+        },
+        "cloudy_sky": {
+          "ghi": 900,
+          "dni": 1000,
+          "dhi": 450
+        }
+      },
+      {
+        "hour": 12,
+        "clear_sky": {
+          "ghi": 1100,
+          "dni": 1300,
+          "dhi": 600
+        },
+        "cloudy_sky": {
+          "ghi": 1000,
+          "dni": 1100,
+          "dhi": 550
+        }
+      },
+      {
+        "hour": 13,
+        "clear_sky": {
+          "ghi": 1000,
+          "dni": 1200,
+          "dhi": 500
+        },
+        "cloudy_sky": {
+          "ghi": 900,
+          "dni": 1000,
+          "dhi": 450
+        }
+      },
+      {
+        "hour": 14,
+        "clear_sky": {
+          "ghi": 900,
+          "dni": 1100,
+          "dhi": 450
+        },
+        "cloudy_sky": {
+          "ghi": 800,
+          "dni": 900,
+          "dhi": 400
+        }
+      },
+      {
+        "hour": 15,
+        "clear_sky": {
+          "ghi": 800,
+          "dni": 1000,
+          "dhi": 400
+        },
+        "cloudy_sky": {
+          "ghi": 700,
+          "dni": 800,
+          "dhi": 350
+        }
+      },
+      {
+        "hour": 16,
+        "clear_sky": {
+          "ghi": 700,
+          "dni": 900,
+          "dhi": 350
+        },
+        "cloudy_sky": {
+          "ghi": 600,
+          "dni": 700,
+          "dhi": 300
+        }
+      },
+      {
+        "hour": 17,
+        "clear_sky": {
+          "ghi": 500,
+          "dni": 700,
+          "dhi": 300
+        },
+        "cloudy_sky": {
+          "ghi": 400,
+          "dni": 600,
+          "dhi": 250
+        }
+      },
+      {
+        "hour": 18,
+        "clear_sky": {
+          "ghi": 300,
+          "dni": 500,
+          "dhi": 200
+        },
+        "cloudy_sky": {
+          "ghi": 200,
+          "dni": 400,
+          "dhi": 150
+        }
+      },
+      {
+        "hour": 19,
+        "clear_sky": {
+          "ghi": 100,
+          "dni": 300,
+          "dhi": 100
+        },
+        "cloudy_sky": {
+          "ghi": 80,
+          "dni": 200,
+          "dhi": 80
+        }
+      },
+      {
+        "hour": 20,
+        "clear_sky": {
+          "ghi": 50,
+          "dni": 100,
+          "dhi": 50
+        },
+        "cloudy_sky": {
+          "ghi": 30,
+          "dni": 80,
+          "dhi": 30
+        }
+      },
+      {
+        "hour": 21,
+        "clear_sky": {
+          "ghi": 20,
+          "dni": 50,
+          "dhi": 20
+        },
+        "cloudy_sky": {
+          "ghi": 10,
+          "dni": 40,
+          "dhi": 10
+        }
+      },
+      {
+        "hour": 22,
+        "clear_sky": {
+          "ghi": 0,
+          "dni": 0,
+          "dhi": 0
+        },
+        "cloudy_sky": {
+          "ghi": 0,
+          "dni": 0,
+          "dhi": 0
+        }
+      },
+      {
+        "hour": 23,
+        "clear_sky": {
+          "ghi": 0,
+          "dni": 0,
+          "dhi": 0
+        },
+        "cloudy_sky": {
+          "ghi": 0,
+          "dni": 0,
+          "dhi": 0
+        }
+      }
+    ]
+  },
+  "panels": [
+    {
+      "panel_id": "zzzz-zzzz-zzzz-zzzz",
+      "output" :
+      { "daily": {
+          "clear_sky": {
+            "power": 12
+          },
+          "cloudy_sky": {
+            "power": 8
+          }
+        },
+        "hourly": {
+          "clear_sky": [
+            {
+              "hour": 0,
+              "power": 0
+            },
+            {
+              "hour": 1,
+              "power": 0
+            },
+            {
+              "hour": 2,
+              "power": 0
+            },
+            {
+              "hour": 3,
+              "power": 0
+            },
+            {
+              "hour": 4,
+              "power": 0
+            },
+            {
+              "hour": 5,
+              "power": 1
+            },
+            {
+              "hour": 6,
+              "power": 6
+            },
+            {
+              "hour": 7,
+              "power": 10
+            },
+            {
+              "hour": 8,
+              "power": 10
+            },
+            {
+              "hour": 9,
+              "power": 9
+            },
+            {
+              "hour": 10,
+              "power": 8
+            },
+            {
+              "hour": 11,
+              "power": 7
+            },
+            {
+              "hour": 12,
+              "power": 12
+            },
+            {
+              "hour": 13,
+              "power": 12
+            },
+            {
+              "hour": 14,
+              "power": 11
+            },
+            {
+              "hour": 15,
+              "power": 10
+            },
+            {
+              "hour": 16,
+              "power": 8
+            },
+            {
+              "hour": 17,
+              "power": 6
+            },
+            {
+              "hour": 18,
+              "power": 3
+            },
+            {
+              "hour": 19,
+              "power": 1
+            },
+            {
+              "hour": 20,
+              "power": 0
+            },
+            {
+              "hour": 21,
+              "power": 0
+            },
+            {
+              "hour": 22,
+              "power": 0
+            },
+            {
+              "hour": 23,
+              "power": 0
+            }
+          ],
+          "cloudy_sky": [
+            {
+              "hour": 0,
+              "power": 0
+            },
+            {
+              "hour": 1,
+              "power": 0
+            },
+            {
+              "hour": 2,
+              "power": 0
+            },
+            {
+              "hour": 3,
+              "power": 0
+            },
+            {
+              "hour": 4,
+              "power": 0
+            },
+            {
+              "hour": 5,
+              "power": 1
+            },
+            {
+              "hour": 6,
+              "power": 4
+            },
+            {
+              "hour": 7,
+              "power": 7
+            },
+            {
+              "hour": 8,
+              "power": 6
+            },
+            {
+              "hour": 9,
+              "power": 5
+            },
+            {
+              "hour": 10,
+              "power": 4
+            },
+            {
+              "hour": 11,
+              "power": 3
+            },
+            {
+              "hour": 12,
+              "power": 5
+            },
+            {
+              "hour": 13,
+              "power": 5
+            },
+            {
+              "hour": 14,
+              "power": 4
+            },
+            {
+              "hour": 15,
+              "power": 4
+            },
+            {
+              "hour": 16,
+              "power": 3
+            },
+            {
+              "hour": 17,
+              "power": 2
+            },
+            {
+              "hour": 18,
+              "power": 1
+            },
+            {
+              "hour": 19,
+              "power": 0
+            },
+            {
+              "hour": 20,
+              "power": 0
+            },
+            {
+              "hour": 21,
+              "power": 0
+            },
+            {
+              "hour": 22,
+              "power": 0
+            },
+            {
+              "hour": 23,
+              "power": 0
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

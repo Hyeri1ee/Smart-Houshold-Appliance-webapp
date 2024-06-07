@@ -1,0 +1,22 @@
+[
+  {
+    "location_id": "xxxx-xxxx-xxxx-xxxx",
+    "type": "point",
+    "coordinates": [
+      {
+        "lat": 52.3676,
+        "lon": 4.9041
+      }
+    ]
+  },
+  {
+    "location_id": "yyyy-yyyy-yyyy-yyyy",
+    "type": "point",
+    "coordinates": [
+      {
+        "lat": 52.3676,
+        "lon": 4.9041
+      }
+    ]
+  }
+]
