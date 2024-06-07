@@ -7,6 +7,7 @@ import { scheduleRoute } from "./routers/schedule-route";
 import { adviceRoute } from "./routers/advice-route";
 
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 
 const app = express();
 const port = 1337;
@@ -22,6 +23,7 @@ app.use(cors({
 
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser())
 
 app.use('/api/register', registerRoute);
 app.use('/api/login', loginRoute);
