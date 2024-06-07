@@ -1,9 +1,9 @@
-import {Route, Navigate, Routes} from 'react-router-dom';
-import Login from './components/auth/login';
-import Register from './components/auth/register';
-import Dashboard from './components/Dashboard';
-import PanelsInfoPage from './PanelsinfoPage';
-import Schedule from "./components/user/schedule";
+import {Navigate, Route, Routes} from 'react-router-dom';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import Dashboard from './pages/Dashboard';
+import PanelsInfoPage from './pages/PanelsinfoPage';
+import Schedule from "./pages/Schedule";
 import axios from 'axios';
 
 axios.defaults.baseURL = 'http://localhost:1337';
@@ -11,7 +11,7 @@ axios.defaults.withCredentials = true;
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", async () => {
-    await navigator.serviceWorker.register("progressive-web-app/sw.js");
+    await navigator.serviceWorker.register("sw/Service-worker.js");
   });
 }
 
