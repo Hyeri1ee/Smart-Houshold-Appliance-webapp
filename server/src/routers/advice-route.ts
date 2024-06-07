@@ -1,6 +1,6 @@
 import express from "express";
-import {adviceBestTime} from "../controller/advice-controller";
+import {getUsersWithSchedules,assignSchedulesToPeakTimes} from "../controller/advice-controller";
 
 export const  adviceRoute = express.Router();
 
-adviceRoute.get("/", adviceBestTime);
+adviceRoute.get("/", getUsersWithSchedules,assignSchedulesToPeakTimes);

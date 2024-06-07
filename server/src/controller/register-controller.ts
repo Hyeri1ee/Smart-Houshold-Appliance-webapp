@@ -57,14 +57,13 @@ export const handleRegister = async (req: Request, res: Response): Promise<void>
       console.error("JWT KEY NOT FOUND, PLEASE RUN MAKE-KEY.SH");
       throw new Error("No JWT key.");
     }
-    const token = jwt.sign(payload, secretKey, { expiresIn: '30m' }); //access token
+    const token = jwt.sign(payload, secretKey, { expiresIn: '5h' }); //access token
 
     res
       .status(200)
       .json({
         message: 'User registered successfully', token
       });
-      res.header("Authorization", `Bearer ${token}`);
   } catch (e: unknown) {
     if (e instanceof Error) {
       console.error(e.message);

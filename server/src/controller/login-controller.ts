@@ -11,7 +11,7 @@ export const checkUserExist = async (req: Request, res: Response): Promise<void>
   let { password } = req.body;
 
   password = password.toString();
-  console.log("email: %s\npw: %s", req.body.email, req.body.password);
+  //console.log("email: %s\npw: %s", req.body.email, req.body.password);
   try {
     // 1. find user by email
     const dataSource = await getDataSource(); // get data source
@@ -48,7 +48,7 @@ export const checkUserExist = async (req: Request, res: Response): Promise<void>
       return;
     }
 
-    const accessToken = jwt.sign(payload, jwtKey, { expiresIn: '30m' }); // Access Token (expire duratioin can be changed)
+    const accessToken = jwt.sign(payload, jwtKey, { expiresIn: '5h' }); // Access Token (expire duratioin can be changed)
     const refreshToken = jwt.sign(payload, jwtKey, { expiresIn: '7d' }); // Refresh Token (expire duratioin can be changed)
 
     // 4. save refresh token to revokedToken table
@@ -56,7 +56,10 @@ export const checkUserExist = async (req: Request, res: Response): Promise<void>
     revokedToken.save({ token: refreshToken });
 
     // 5. success response
+    res.header("Authorization", `Bearer ${accessToken}`);
+    res.header("Refresh-Token", `${refreshToken}`);
     res.status(200).json({ accessToken, refreshToken });
+   
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
