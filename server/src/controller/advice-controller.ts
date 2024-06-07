@@ -26,6 +26,7 @@ interface UserWithSchedule {
 interface ResponseFormat {
     user: User;
     adviceTime: string;
+    adviceEndTime: string;
 }
 interface PeakTime {
     dt: number;  
@@ -156,12 +157,12 @@ export const assignSchedulesToPeakTimes = (req: Request, res: Response, next:Nex
     const peakTimes = findPeakTimes(dummyWeatherData).sort((a, b) => a.dt - b.dt);
     const ENERGY_USAGE_PER_HOUR = 30;
     const responseResult: ResponseFormat[] = [];
-    const assignedUsers: Set<number> = new Set(); // To track users with assigned advice times
+    const assignedUsers: Set<number> = new Set();
 
     const weatherDataCopy: WeatherData[] = dummyWeatherData.map(data => ({ ...data }));
-
+    
     for (const schedule of usersWithSchedules) {
-        if (assignedUsers.has(schedule.user.user_id)) continue; // Skip if user already has an assigned advice time
+        if (assignedUsers.has(schedule.user.user_id)) continue; 
 
         let assigned = false;
 
@@ -195,7 +196,7 @@ export const assignSchedulesToPeakTimes = (req: Request, res: Response, next:Nex
             }
 
             if (canAssign) {
-                responseResult.push({ user: schedule.user, adviceTime: schedule.start_time });
+                responseResult.push({ user: schedule.user, adviceTime: schedule.start_time, adviceEndTime: schedule.end_time });
                 assigned = true;
                 assignedUsers.add(schedule.user.user_id); // Mark user as assigned
                 break;
@@ -230,7 +231,7 @@ export const assignSchedulesToPeakTimes = (req: Request, res: Response, next:Nex
                 }
 
                 if (canAssign) {
-                    responseResult.push({ user: schedule.user, adviceTime: schedule.start_time });
+                    responseResult.push({ user: schedule.user, adviceTime: schedule.start_time, adviceEndTime: schedule.end_time});
                     assignedUsers.add(schedule.user.user_id); // Mark user as assigned
                     break;
                 }
@@ -238,6 +239,7 @@ export const assignSchedulesToPeakTimes = (req: Request, res: Response, next:Nex
         }
     }
     res.locals.responseResult = responseResult;
+    
     next();
 };
 //4. give information to authosized user
@@ -249,8 +251,9 @@ export const forAuthorizedUserSchedule = (req: Request, res: Response) => {
     }
 
     let decodedToken: DecodedToken;
+    const jwtKey: string | undefined = process.env.JWT_KEY;
     try {
-        decodedToken = jwt.verify(accessToken, process.env.JWT_SECRET || '') as DecodedToken;
+        decodedToken = jwt.verify(accessToken,jwtKey || '') as DecodedToken;
     } catch (err) {
         return res.status(403).json({ message: 'Invalid access token' });
     }
@@ -264,7 +267,7 @@ export const forAuthorizedUserSchedule = (req: Request, res: Response) => {
 
     if (authorizedUserSchedule) {
         res.status(200).json({
-            start_time: authorizedUserSchedule.adviceTime,
+            time: `${authorizedUserSchedule.adviceTime} - ${authorizedUserSchedule.adviceEndTime}`,
             date: formatDate(),
         });
     } else {
@@ -273,7 +276,7 @@ export const forAuthorizedUserSchedule = (req: Request, res: Response) => {
 };
 
 const findSuffix = (day: number) => {
-  if (day > 3 && day < 21) return 'th';
+  if (day > 11 && day < 13) return 'th';
   switch (day % 10) {
     case 1: return "st";
     case 2: return "nd";
@@ -289,17 +292,20 @@ const formatDate = () => {
 
   const formattedDate = `${day}${findSuffix(day)} ${month}`;
 
+  const currentDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
   const targetDate = new Date(date.getFullYear(), 5, 7); // 7th June
-  const timeDiff = targetDate.getTime() - date.getTime();
+  const timeDiff = targetDate.getTime() - currentDate.getTime();
   const daysUntilTarget = Math.ceil(timeDiff / (1000 * 3600 * 24));
 
   let daysUntilText = '';
-  if (daysUntilTarget === 0) {
+  if (daysUntilTarget === -1) {
       daysUntilText = "today";
-  } else if (daysUntilTarget === 1) {
+  } else if (daysUntilTarget === 0) {
       daysUntilText = `in ${daysUntilTarget} day`;
+  } else if (daysUntilTarget > 0) {
+    daysUntilText = `in ${daysUntilTarget} days`;
   } else {
-      daysUntilText = `in ${daysUntilTarget} days`;
+    daysUntilText = `${Math.abs(daysUntilTarget)} day(s) ago`;
   }
 
   return `${formattedDate} (${daysUntilText})`;
