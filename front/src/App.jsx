@@ -4,6 +4,8 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import PanelsInfoPage from './pages/PanelsinfoPage';
 import Schedule from "./pages/Schedule";
+import "./styles/reset.css"
+import "./styles/global.css"
 import axios from 'axios';
 
 axios.defaults.baseURL = 'http://localhost:1337';
