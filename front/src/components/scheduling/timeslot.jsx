@@ -1,19 +1,18 @@
-import React, { useState } from 'react';
-//import '../styles/global.css';
-import '../styles/userinfo/timeslot.css';
-import CAL from '../images/cal.png';
-import CLK from '../images/clk.png';
+import React, {useState} from 'react';
+
+import '../../styles/userinfo/timeslot.css';
+import CAL from '../../assets/cal.png';
+import CLK from '../../assets/clk.png';
 
 function Timeslot() {
     const numberTimeslot = useState('');
     const dayOftheWeek = useState('');
-    const time = useState('');
     return (
-      <div class="timeslot">
-        <div class="title">
+      <div className="timeslot">
+        <div className="title">
           <p>Timeslot 1{numberTimeslot}</p>
         </div>
-        <div class="content">
+        <div className="content">
           <img id="calendarImg" src={CAL} alt="calendar" />
   
           <span id="day">Monday {dayOftheWeek}</span>

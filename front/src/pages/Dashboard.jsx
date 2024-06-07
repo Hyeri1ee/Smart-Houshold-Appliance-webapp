@@ -1,5 +1,5 @@
-import "./styles/global.css";
-import "./styles/dashboard/dashboard.css"
+import "../styles/global.css";
+import "../styles/dashboard/dashboard.css"
 
 // https://www.w3schools.com/js/js_cookies.asp
 const getCookie = (cookie, cookieName) => {
