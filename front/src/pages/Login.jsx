@@ -1,4 +1,5 @@
-import {useState} from "react";
+import { useState } from "react";
+import Button from "../components/generic/Button"
 
 import "../styles/global.css";
 import "../styles/auth/auth-page-style.css";
@@ -33,27 +34,28 @@ function LoginPage() {
   }
 
   return (
-    <div>
+    <div id="login-page-container">
+      <h1>Welcome!</h1>
       <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Email:</label>
+      <form id="login-form" onSubmit={handleSubmit}>
+        <div id="login-inputFieldsContainer">
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            placeholder="Email"
+            className="login-input"
           />
-        </div>
-        <div>
-          <label>Password:</label>
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            placeholder="Password"
+            className="login-input"
           />
         </div>
-        <div className="auth-options">
-          <button type="submit">Login</button>
+        <div id="login-authOptions">
+          <Button type="submit">Login</Button>
           <p>Not a user? <a href="/register">Register</a></p>
         </div>
       </form>
