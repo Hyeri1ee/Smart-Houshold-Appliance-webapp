@@ -41,94 +41,47 @@ function RegisterPage() {
     }
 
     return (
-        <div style={styles.container} >
+        <div id="register-page-container">
             <h1>Welcome!</h1>
             <h2>Register</h2>
-            <form onSubmit={handleSubmit} style={styles.form}>
-                <div style={styles.inputFieldsContainer}>
+            <form onSubmit={handleSubmit} id="register-form">
+                <div id="register-inputFieldsContainer">
                     <input
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="Email"
-                        style={styles.input}
+                        className="register-input"
                     />
                     <input
                         type="text"
                         value={firstName}
                         onChange={(e) => setFirstName(e.target.value)}
                         placeholder="First Name"
-                        style={styles.input}
+                        className="register-input"
                     />
                     <input
                         type="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="Password"
-                        style={styles.input}
+                        className="register-input"
                     />
                     <input
                         type="password"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         placeholder="Confirm Password"
-                        style={styles.input}
+                        className="register-input"
                     />
                 </div>
-                <div className="auth-options" style={styles.authOptions}>
+                <div id="register-auth-options">
                     <Button type="submit">Register</Button>
                     <p>Already a user? <a href="/login">Log in</a></p>
                 </div>
             </form>
         </div>
     );
-}
-
-const styles = {
-    container: {
-        paddingTop: "20px",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        maxWidth: "500px",
-        fontFamily: "Arial, sans-serif",
-        height: "100vh",
-        width: "100vw",
-        boxSizing: "border-box",
-    },
-    form: {
-        borderRadius: "4px",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-evenly",
-        height: "100%",
-        width: "90%"
-    },
-    inputFieldsContainer: {
-        borderRadius: "4px",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        height: "60%",
-    },
-    input: {
-        width: "100%",
-        height: "20%",
-        padding: "5px",
-        margin: "8px auto",
-        backgroundColor: "white",
-        border: "2px solid var(--primary-color)",
-        borderRadius: "4px",
-        color: "black"
-    },
-    authOptions: {
-        borderRadius: "4px",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "space-evenly",
-        height: "30%",
-        textAlign: "center"
-    }
 }
 
 export default RegisterPage;
