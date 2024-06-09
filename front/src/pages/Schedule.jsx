@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import {useNavigate} from "react-router-dom";
 import "../styles/global.css";
 import "../styles/schedule/schedule-page-style.css";
+import {checkUserInfo} from "../helpers/CheckUserInfo";
 
 // All Day mark has a bug sometimes needs further investigation
 
@@ -14,6 +15,8 @@ const daysOfWeek = [
     { short: "Sa", full: "Saturday" },
     { short: "Su", full: "Sunday" }
 ];
+
+checkUserInfo();
 
 function SchedulePage() {
     const [showDaysModal, setShowDaysModal] = useState(false);

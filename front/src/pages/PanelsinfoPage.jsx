@@ -1,5 +1,6 @@
 import Dropdown from "../components/generic/Dropdown";
 import LargeButton from "../components/generic/LargeButton";
+import {checkUserInfo} from "../helpers/CheckUserInfo";
 
 const options = [
   { value: "mono-si", title: "mono-si" },
@@ -10,9 +11,10 @@ const options = [
 ];
 
 const redirect = () => {
-  console.log("cum");
   window.location.href = "/";
 }
+
+checkUserInfo();
 
 const PanelsInfoPage = () => {
   return (

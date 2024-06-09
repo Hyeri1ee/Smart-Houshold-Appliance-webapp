@@ -1,14 +1,11 @@
 import "../styles/global.css";
 import "../styles/dashboard/dashboard.css"
 import RecommendedTimeslot from "../components/dashboard/RecommendTimeslot";
-import {getDecodedJwt} from "../helpers/jwt/DecodeJwt";
 import Header from "../components/generic/Header";
+import {checkUserInfo} from "../helpers/CheckUserInfo";
 
 const Dashboard = () => {
-  const decoded = getDecodedJwt();
-  if (!decoded) {
-    window.location.href = "/login";
-  }
+  checkUserInfo();
 
   return (
     <div id="dashboard-wrapper">
