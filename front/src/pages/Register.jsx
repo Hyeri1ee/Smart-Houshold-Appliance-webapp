@@ -41,7 +41,8 @@ function RegisterPage() {
     }
 
     return (
-        <div style = {styles.container} >
+        <div style={styles.container} >
+            <h1>Welcome!</h1>
             <h2>Register</h2>
             <form onSubmit={handleSubmit} style={styles.form}>
                 <div style={styles.inputFieldsContainer}>
@@ -85,7 +86,7 @@ function RegisterPage() {
 
 const styles = {
     container: {
-        paddingTop: "90px",
+        paddingTop: "20px",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -100,7 +101,7 @@ const styles = {
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-evenly",
-        height: "90%",
+        height: "100%",
         width: "90%"
     },
     inputFieldsContainer: {
@@ -108,7 +109,7 @@ const styles = {
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
-        height: "50%",
+        height: "60%",
     },
     input: {
         width: "100%",
@@ -124,8 +125,8 @@ const styles = {
         borderRadius: "4px",
         display: "flex",
         flexDirection: "column",
-        justifyContent: "space-between",
-        height: "23%",
+        justifyContent: "space-evenly",
+        height: "30%",
         textAlign: "center"
     }
 }

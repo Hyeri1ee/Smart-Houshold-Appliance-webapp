@@ -64,7 +64,7 @@ function LoginPage() {
 
 const styles = {
   container: {
-    paddingTop: "90px",
+    paddingTop: "70px",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
@@ -79,7 +79,7 @@ const styles = {
     display: "flex",
     flexDirection: "column",
     justifyContent: "flex-start",
-    height: "80%",
+    height: "90%",
     width: "90%"
   },
   inputFieldsContainer: {
@@ -87,11 +87,11 @@ const styles = {
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
-    height: "40%",
+    height: "50%",
   },
   input: {
     width: "100%",
-    height: "20%",
+    height: "24%",
     padding: "5px",
     margin: "8px auto",
     backgroundColor: "white",
@@ -104,7 +104,7 @@ const styles = {
     display: "flex",
     flexDirection: "column",
     justifyContent: "space-between",
-    height: "18%",
+    height: "22%",
     textAlign: "center"
   }
 }
