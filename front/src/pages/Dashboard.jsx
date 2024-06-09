@@ -4,7 +4,7 @@ import "../styles/dashboard/dashboard.css";
 import Carousel from "../components/generic/Carousel";
 
 const items = [
-  { text: "Washing machine", imageUrl: "https://media.croma.com/image/upload/v1655370905/Croma%20Assets/Large%20Appliances/Washers%20and%20Dryers/Images/253429_jx9ma4.png" },
+  { text: "Washing machine",isRunning:true,  imageUrl: "https://media.croma.com/image/upload/v1655370905/Croma%20Assets/Large%20Appliances/Washers%20and%20Dryers/Images/253429_jx9ma4.png" },
   { text: "Dryer", imageUrl: "https://www.electrolux.com.ph/globalassets/appliances/dryers/edv854j3wb/edv854j3wb-fr-cl-1500x1500.1.png" },
   { text: "Oven", imageUrl: "https://sg.bertazzoni.com/media/immagini/15638_z_F6011PRO-TX.jpg" },
   { text: "Alarm", imageUrl: "https://instantalarm.com/wp-content/uploads/2017/01/6164CAN2-e1504284606174.png" }

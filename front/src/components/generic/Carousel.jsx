@@ -31,7 +31,7 @@ const Carousel = ({ items }) => {
         <div style={styles.carouselContainer}>
             <div style={styles.carousel}>
                 {items.map((item, index) => (
-                    <CarouselItem key={index} text={item.text} imageUrl={item.imageUrl} />
+                    <CarouselItem key={index} text={item.text} imageUrl={item.imageUrl} isRunning={item.isRunning} />
                 ))}
             </div>
         </div>
@@ -42,7 +42,8 @@ Carousel.propTypes = {
     items: PropTypes.arrayOf(
         PropTypes.shape({
             text: PropTypes.string.isRequired,
-            imageUrl: PropTypes.string.isRequired
+            imageUrl: PropTypes.string.isRequired,
+            isRunning: PropTypes.bool.isRequired,
         })
     ).isRequired
 };

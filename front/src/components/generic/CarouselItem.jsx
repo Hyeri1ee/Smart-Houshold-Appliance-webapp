@@ -1,8 +1,10 @@
 import PropTypes from 'prop-types';
 
-const CarouselItem = ({ text, imageUrl }) => {
+const CarouselItem = ({ text, imageUrl, isRunning }) => {
+    const backgroundStyle = isRunning ? { backgroundColor: 'var(--primary)' } : { backgroundColor: 'white' };
+
     return (
-        <div style={styles.carouselItem}>
+        <div style={{ ...styles.carouselItem, ...backgroundStyle }}>
             <p style={styles.carouselText}>{text}</p>
             <img src={imageUrl} alt="carousel item" style={styles.carouselImage} />
         </div>
@@ -12,6 +14,7 @@ const CarouselItem = ({ text, imageUrl }) => {
 CarouselItem.propTypes = {
     text: PropTypes.string.isRequired,
     imageUrl: PropTypes.string.isRequired,
+    isRunning: PropTypes.bool.isRequired,
 };
 
 const styles = {
@@ -19,7 +22,6 @@ const styles = {
         width: '130px',
         height: '130px',
         margin: '0 auto',
-        backgroundColor: 'white',
         borderRadius: '10px',
         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
         padding: '5px',
