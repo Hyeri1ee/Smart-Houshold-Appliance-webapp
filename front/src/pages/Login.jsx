@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import {useState} from "react";
 
 import "../styles/global.css";
 import "../styles/auth/auth-page-style.css";
