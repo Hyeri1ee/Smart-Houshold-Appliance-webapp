@@ -1,4 +1,5 @@
-import React, {useState} from "react";
+import { useState } from "react";
+import Button from "../components/generic/Button";
 
 import "../styles/global.css";
 import "../styles/auth/auth-page-style.css";
@@ -40,48 +41,93 @@ function RegisterPage() {
     }
 
     return (
-        <div>
+        <div style = {styles.container} >
             <h2>Register</h2>
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label>Email:</label>
+            <form onSubmit={handleSubmit} style={styles.form}>
+                <div style={styles.inputFieldsContainer}>
                     <input
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
+                        placeholder="Email"
+                        style={styles.input}
                     />
-                </div>
-                <div>
-                    <label>First Name:</label>
                     <input
                         type="text"
                         value={firstName}
                         onChange={(e) => setFirstName(e.target.value)}
+                        placeholder="First Name"
+                        style={styles.input}
                     />
-                </div>
-                <div>
-                    <label>Password:</label>
                     <input
                         type="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
+                        placeholder="Password"
+                        style={styles.input}
                     />
-                </div>
-                <div>
-                    <label>Confirm Password:</label>
                     <input
                         type="password"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
+                        placeholder="Confirm Password"
+                        style={styles.input}
                     />
                 </div>
-                <div className="auth-options">
-                    <button type="submit">Register</button>
+                <div className="auth-options" style={styles.authOptions}>
+                    <Button type="submit">Register</Button>
                     <p>Already a user? <a href="/login">Log in</a></p>
                 </div>
             </form>
         </div>
     );
+}
+
+const styles = {
+    container: {
+        paddingTop: "90px",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        maxWidth: "500px",
+        fontFamily: "Arial, sans-serif",
+        height: "100vh",
+        width: "100vw",
+        boxSizing: "border-box",
+    },
+    form: {
+        borderRadius: "4px",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-evenly",
+        height: "90%",
+        width: "90%"
+    },
+    inputFieldsContainer: {
+        borderRadius: "4px",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        height: "50%",
+    },
+    input: {
+        width: "100%",
+        height: "20%",
+        padding: "5px",
+        margin: "8px auto",
+        backgroundColor: "white",
+        border: "2px solid var(--primary-color)",
+        borderRadius: "4px",
+        color: "black"
+    },
+    authOptions: {
+        borderRadius: "4px",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        height: "23%",
+        textAlign: "center"
+    }
 }
 
 export default RegisterPage;

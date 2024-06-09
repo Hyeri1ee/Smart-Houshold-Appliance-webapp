@@ -1,4 +1,5 @@
-import React, {useState} from "react";
+import { useState } from "react";
+import Button from "../components/generic/Button"
 
 import "../styles/global.css";
 import "../styles/auth/auth-page-style.css";
@@ -32,32 +33,80 @@ function LoginPage() {
   }
 
   return (
-    <div>
+    <div style={styles.container}>
+      <h1>Welcome!</h1>
       <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Email:</label>
+      <form onSubmit={handleSubmit} style={styles.form}>
+        <div style={styles.inputFieldsContainer}>
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            placeholder="Email"
+            style={styles.input}
           />
-        </div>
-        <div>
-          <label>Password:</label>
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            placeholder="Password"
+            style={styles.input}
           />
         </div>
-        <div className="auth-options">
-          <button type="submit">Login</button>
+        <div className="auth-options" style={styles.authOptions}>
+          <Button type="submit">Login</Button>
           <p>Not a user? <a href="/register">Register</a></p>
         </div>
       </form>
     </div>
   );
+}
+
+const styles = {
+  container: {
+    paddingTop: "90px",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    maxWidth: "500px",
+    fontFamily: "Arial, sans-serif",
+    height: "100vh",
+    width: "100vw",
+    boxSizing: "border-box",
+  },
+  form: {
+    borderRadius: "4px",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "flex-start",
+    height: "80%",
+    width: "90%"
+  },
+  inputFieldsContainer: {
+    borderRadius: "4px",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    height: "40%",
+  },
+  input: {
+    width: "100%",
+    height: "20%",
+    padding: "5px",
+    margin: "8px auto",
+    backgroundColor: "white",
+    border: "2px solid var(--primary-color)",
+    borderRadius: "4px",
+    color: "black"
+  },
+  authOptions: {
+    borderRadius: "4px",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-between",
+    height: "18%",
+    textAlign: "center"
+  }
 }
 
 export default LoginPage;
