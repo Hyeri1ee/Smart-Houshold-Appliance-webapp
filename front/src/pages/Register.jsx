@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import {useState} from "react";
 
 import "../styles/global.css";
 import "../styles/auth/auth-page-style.css";
@@ -18,6 +18,7 @@ function RegisterPage() {
 
         const resp = await fetch('http://localhost:1337/api/register', {
             method: 'POST',
+            credentials: 'include',
             headers: {
                 'Content-Type': 'application/json'
             },

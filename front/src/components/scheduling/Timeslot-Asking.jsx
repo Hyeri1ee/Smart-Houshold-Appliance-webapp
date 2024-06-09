@@ -1,6 +1,6 @@
 import React from "react";
 import {useNavigate} from "react-router-dom";
-import Timeslot from "./timeslot";
+import Timeslot from "./Timeslot";
 
 import "../../styles/userinfo/timeslotAsking-page-style.css";
 

@@ -19,6 +19,7 @@ export class User {
   @Column({ type: 'smallint', nullable: true })
   profile_type: number;
 
+
   @OneToOne(() => Location)
   @JoinColumn()
   location: Location;

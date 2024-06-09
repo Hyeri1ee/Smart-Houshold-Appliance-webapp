@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import {useState} from "react";
 import {useNavigate} from "react-router-dom";
 import "../styles/global.css";
 import "../styles/schedule/schedule-page-style.css";
