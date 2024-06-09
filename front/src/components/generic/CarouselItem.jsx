@@ -2,11 +2,14 @@ import PropTypes from 'prop-types';
 
 const CarouselItem = ({ text, imageUrl, isRunning }) => {
     const backgroundStyle = isRunning ? { backgroundColor: 'var(--primary)' } : { backgroundColor: 'white' };
+    const textStyle = isRunning ? { color: 'white' } : { color: '#333' };
+    const imageWidth = isRunning ? '68%' : '88%';
 
     return (
         <div style={{ ...styles.carouselItem, ...backgroundStyle }}>
-            <p style={styles.carouselText}>{text}</p>
-            <img src={imageUrl} alt="carousel item" style={styles.carouselImage} />
+            <p style={{ ...styles.carouselText, ...textStyle }}>{text}</p>
+            <img src={imageUrl} alt="carousel item" style={{ ...styles.carouselImage, width: imageWidth }} />
+            {isRunning && <p style={styles.p}>ON</p>}
         </div>
     );
 };
@@ -19,8 +22,8 @@ CarouselItem.propTypes = {
 
 const styles = {
     carouselItem: {
-        width: '130px',
-        height: '130px',
+        width: '140px',
+        height: '140px',
         margin: '0 auto',
         borderRadius: '10px',
         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
@@ -30,17 +33,22 @@ const styles = {
         alignItems: 'center',
     },
     carouselImage: {
-        width: '86%',
         height: 'auto',
         borderRadius: '10px',
-        marginBottom: '10px',
+        marginBottom: '4px',
     },
     carouselText: {
         fontSize: '14px',
         textAlign: 'center',
-        color: '#333',
-        margin: 0
+        margin: 0,
     },
+    p: {
+        color: 'var(--primary)',
+        margin: 0,
+        backgroundColor: 'white',
+        borderRadius: '5px',
+        padding: '3px',
+    }
 };
 
 export default CarouselItem;

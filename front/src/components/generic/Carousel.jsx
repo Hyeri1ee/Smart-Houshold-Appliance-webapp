@@ -9,7 +9,7 @@ const styles = {
         alignItems: 'start',
         margin: '0',
         padding: '0px',
-        height: '18vh',
+        height: '20vh',
         width: '200wv',
         // border: '2px solid pink',
         overflowX: 'scroll',
