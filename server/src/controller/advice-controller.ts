@@ -34,22 +34,22 @@ interface PeakTime {
   }
 
 const dummyWeatherData: WeatherData[] = [
-{ dt: 20240610080000, energy: 5 }, // 2023-06-07 08:00:00 UTC
-{ dt: 20240610090000, energy: 10 }, // 2023-06-07 09:00:00 UTC
-{ dt: 20240610100000, energy: 20 }, // 2023-06-07 10:00:00 UTC
-{ dt: 20240610110000, energy: 40 }, // 2023-06-07 11:00:00 UTC
-{ dt: 20240610120000, energy: 80 }, // 2023-06-07 12:00:00 UTC
-{ dt: 20240610130000, energy: 90 }, // 2023-06-07 13:00:00 UTC
-{ dt: 20240610140000, energy: 95 }, // 2023-06-07 14:00:00 UTC
-{ dt: 20240610150000, energy: 85 }, // 2023-06-07 15:00:00 UTC
-{ dt: 20240610160000, energy: 75 }, // 2023-06-07 16:00:00 UTC
-{ dt: 20240610170000, energy: 70 }, // 2023-06-07 17:00:00 UTC
-{ dt: 20240610180000, energy: 65 }, // 2023-06-07 18:00:00 UTC
-{ dt: 20240610190000, energy: 60 }, // 2023-06-07 19:00:00 UTC
-{ dt: 20240610200000, energy: 55 }, // 2023-06-07 20:00:00 UTC
-{ dt: 20240610210000, energy: 50 }, // 2023-06-07 21:00:00 UTC
-{ dt: 20240610220000, energy: 45 }, // 2023-06-07 22:00:00 UTC
-{ dt: 20240610230000, energy: 30 }, // 2023-06-07 23:00:00 UTC
+{ dt: 20240610080000, energy: 5 }, 
+{ dt: 20240610090000, energy: 10 }, 
+{ dt: 20240610100000, energy: 20 }, // 2024-06-10 10:00:00 UTC
+{ dt: 20240610110000, energy: 40 }, 
+{ dt: 20240610120000, energy: 80 }, 
+{ dt: 20240610130000, energy: 90 }, 
+{ dt: 20240610140000, energy: 95 }, 
+{ dt: 20240610150000, energy: 85 }, 
+{ dt: 20240610160000, energy: 75 }, 
+{ dt: 20240610170000, energy: 70 }, 
+{ dt: 20240610180000, energy: 65 }, 
+{ dt: 20240610190000, energy: 60 }, 
+{ dt: 20240610200000, energy: 55 }, 
+{ dt: 20240610210000, energy: 50 }, 
+{ dt: 20240610220000, energy: 45 }, 
+{ dt: 20240610230000, energy: 30 }, 
 ];
 
 const monthNames = [
@@ -128,7 +128,7 @@ export const calculateEnergyUsage = (startTime: string, endTime: string, energyP
     const startDate = new Date(0, 0, 0, startHour, startMinute, startSecond);
     const endDate = new Date(0, 0, 0, endHour, endMinute, endSecond);
 
-    const timeDiff = (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60); // 시간 차이 계산 (시간 단위)
+    const timeDiff = (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60); 
     return timeDiff * energyPerHour;
 };
 const getTimeIndex = (weatherData: WeatherData[], dt: number): number => {
@@ -136,7 +136,7 @@ const getTimeIndex = (weatherData: WeatherData[], dt: number): number => {
 };
 const isWithinPeakTime = (scheduleStartTime: number, scheduleEndTime: number, peakTime: WeatherData): boolean => {
     const peakStartTime = peakTime.dt;
-    const peakEndTime = peakTime.dt + 10000; // 1시간 후
+    const peakEndTime = peakTime.dt + 10000;
 
     return (scheduleStartTime < peakEndTime && scheduleEndTime > peakStartTime);
 };
@@ -292,9 +292,9 @@ const formatDate = () => {
   
     const formattedDate = `${day}${findSuffix(day)} ${month}`;
   
-    // UTC 자정으로 설정
+    
     const currentDate = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
-    const targetDate = currentDate; // 현재 날짜로 설정
+    const targetDate = currentDate;
   
     const timeDiff = targetDate.getTime() - currentDate.getTime();
     const daysUntilTarget = Math.ceil(timeDiff / (1000 * 3600 * 24));
