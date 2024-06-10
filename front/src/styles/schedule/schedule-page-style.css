@@ -1,7 +1,7 @@
 body {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   height: 100vh;
   padding: 2%;
@@ -15,13 +15,8 @@ body {
   height: 100%;
 }
 
-.fixed-header {
-  position: fixed;
-  top: 2vh;
-  left: 50%;
-  transform: translateX(-50%);
-  margin: 0;
-  z-index: 1;
+h2 {
+  text-align: center;
 }
 
 .selected-days-container {
@@ -37,12 +32,13 @@ body {
 }
 
 .day-box {
-  background-color: var(--secondary);
+  background-color: var(--whitesmoke);
   color: var(--text);
   padding: 10px;
   border-radius: 5px;
-  width: 150px;
+  width: 200px;
   text-align: center;
+  color: var(--background);
 }
 
 .schedule-container {
@@ -55,6 +51,19 @@ body {
   height: 100%;
   transition: filter 0.3s ease;
   z-index: 1;
+}
+
+#add-btn {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  white-space: nowrap;
+}
+
+#checkbox-box {
+  display: flex;
+  white-space: nowrap;
 }
 
 .blurred {
@@ -121,13 +130,20 @@ button:hover {
   margin-bottom: 15px;
 }
 
-.modal-timeslot-management{
+.time-slot {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
 }
+
 .modal-submit-buttons {
   display: flex;
   justify-content: space-between;
+  margin: 10px auto;
+}
+
+.input-group {
+  display: flex;
+  justify-content: space-around;
 }
 
 .modal-submit-buttons button {
@@ -145,8 +161,8 @@ button:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   background-color: var(--secondary);
   color: var(--text);

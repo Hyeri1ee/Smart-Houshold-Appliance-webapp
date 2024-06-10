@@ -1,21 +1,22 @@
 import PropTypes from "prop-types";
 
-const LargeButton = ({ onClick, children }) => {
-  const handleClick = (e) => {
-    e.preventDefault();
-    onClick();
-  };
-
+const Button = ({ type, onClick, children }) => {
   return (
-    <button style={styles.button} onClick={handleClick}>
+    <button style={styles.button} type={type} onClick={onClick} className="custom-button">
       {children}
     </button>
   );
 };
 
-LargeButton.propTypes = {
-  onClick: PropTypes.func.isRequired,
+Button.propTypes = {
+  type: PropTypes.oneOf(["button", "submit", "reset"]),
+  onClick: PropTypes.func,
   children: PropTypes.node.isRequired,
+};
+
+Button.defaultProps = {
+  type: "button",
+  onClick: () => { },
 };
 
 const styles = {
@@ -33,4 +34,4 @@ const styles = {
   },
 };
 
-export default LargeButton;
+export default Button;

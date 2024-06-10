@@ -8,6 +8,7 @@ import {adviceRoute} from "./routers/advice-route";
 import {userRoute} from "./routers/user-route";
 
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 
 const app = express();
 const port = 1337;
@@ -17,12 +18,11 @@ dbConnect.handleConnection();
 app.use(cors({
   origin: 'http://localhost:5173',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept'],
+  allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'authorization'],
   credentials: true
 }));
-
-app.use(cors());
 app.use(express.json());
+app.use(cookieParser())
 
 app.use('/api/register', registerRoute);
 app.use('/api/login', loginRoute);

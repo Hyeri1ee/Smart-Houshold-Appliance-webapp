@@ -2,10 +2,12 @@ import "../styles/global.css";
 import "../styles/dashboard/dashboard.css"
 import RecommendedTimeslot from "../components/dashboard/RecommendTimeslot";
 import Header from "../components/generic/Header";
+import {getDecodedJwt} from "../helpers/DecodeJwt";
 import {checkUserInfo} from "../helpers/CheckUserInfo";
 
 const Dashboard = () => {
   checkUserInfo();
+  const decoded = getDecodedJwt();
 
   return (
     <div id="dashboard-wrapper">
