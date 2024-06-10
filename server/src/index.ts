@@ -20,8 +20,6 @@ app.use(cors({
   allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept'],
   credentials: true
 }));
-
-app.use(cors());
 app.use(express.json());
 app.use(cookieParser())
 

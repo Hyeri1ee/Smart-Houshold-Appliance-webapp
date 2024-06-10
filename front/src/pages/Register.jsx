@@ -18,7 +18,6 @@ function RegisterPage() {
 
         const resp = await fetch('http://localhost:1337/api/register', {
             method: 'POST',
-            credentials: 'include',
             headers: {
                 'Content-Type': 'application/json'
             },

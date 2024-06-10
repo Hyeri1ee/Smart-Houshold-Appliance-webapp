@@ -11,7 +11,7 @@ export const handleRegister = async (req: Request, res: Response): Promise<void>
 
   const user = req.body;
 
-  const { first_name, email, password, password_confirmation,profile_type } = user;
+  const { first_name, email, password, password_confirmation } = user;
 
   const dataSource = await getDataSource();
   const userRepository = dataSource.getRepository(User);
@@ -42,7 +42,6 @@ export const handleRegister = async (req: Request, res: Response): Promise<void>
       first_name,
       email,
       password: hashedPassword,
-      profile_type
     });
 
     await userRepository.save(newUser);
@@ -57,7 +56,7 @@ export const handleRegister = async (req: Request, res: Response): Promise<void>
       console.error("JWT KEY NOT FOUND, PLEASE RUN MAKE-KEY.SH");
       throw new Error("No JWT key.");
     }
-    const token = jwt.sign(payload, secretKey, { expiresIn: '5h' }); //access token
+    const token = jwt.sign(payload, secretKey, { expiresIn: '1h' });
 
     res
       .status(200)

@@ -2,9 +2,6 @@ import "../../styles/components/generic/header.css"
 import {getDecodedJwt} from "../../helpers/jwt/DecodeJwt";
 
 const decoded = getDecodedJwt();
-if (!decoded) {
-  window.location.href = "/login";
-}
 
 function Header() {
   return (

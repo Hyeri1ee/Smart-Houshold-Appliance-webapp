@@ -13,7 +13,7 @@ axios.defaults.withCredentials = true;
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", async () => {
-    await navigator.serviceWorker.register("sw/Service-worker.js");
+    await navigator.serviceWorker.register("/Service-worker.js");
   });
 }
 
