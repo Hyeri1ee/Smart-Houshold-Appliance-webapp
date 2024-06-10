@@ -8,7 +8,7 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 
-app.use('/', locationRoutes);
+app.use('/energy/1.0/locations', locationRoutes);
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
