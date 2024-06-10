@@ -9,13 +9,13 @@ const styles = {
         alignItems: 'start',
         margin: '0',
         padding: '0px',
-        height: '20vh',
+        height: '21vh',
         width: '200wv',
         // border: '2px solid pink',
         overflowX: 'scroll',
         WebkitOverflowScrolling: 'touch',
         scrollbarWidth: 'none', // firefox
-        '&::-webkit-scrollbar': {
+        '&::WebkitScrollbar': {
             display: 'none' //hide scrollbar for webKit browsers
         }
     },
@@ -43,9 +43,9 @@ Carousel.propTypes = {
         PropTypes.shape({
             text: PropTypes.string.isRequired,
             imageUrl: PropTypes.string.isRequired,
-            isRunning: PropTypes.bool.isRequired,
+            isRunning: PropTypes.bool,
         })
-    ).isRequired
+    )
 };
 
 export default Carousel;

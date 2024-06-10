@@ -17,7 +17,7 @@ const CarouselItem = ({ text, imageUrl, isRunning }) => {
 CarouselItem.propTypes = {
     text: PropTypes.string.isRequired,
     imageUrl: PropTypes.string.isRequired,
-    isRunning: PropTypes.bool.isRequired,
+    isRunning: PropTypes.bool,
 };
 
 const styles = {
