@@ -1,4 +1,4 @@
-import Dropdown from "../components/Dropdown";
+import Dropdown from "../components/generic/Dropdown";
 import LargeButton from "../components/generic/Button";
 
 const options = [
