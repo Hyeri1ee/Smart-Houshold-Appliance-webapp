@@ -1,0 +1,14 @@
+#page-header {
+  background-color: var(--primary);
+  height: 4vh;
+  width: 100vw;
+  display: flex;
+}
+
+#page-header p {
+  font-weight: bold;
+  font-size: 1.7em;
+  text-align: left;
+  margin: auto 0 auto .5em;
+  color: var(--background);
+}
