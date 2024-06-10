@@ -1,15 +1,14 @@
-// app.js
-
 import express from 'express';
-import locationRoutes from '../openWeatherSim/router/router.js';
+import {locationRoutes, locationsRoutes} from "./router/LocationRoute.js";
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const port = 6969;
 
 app.use(express.json());
 
-app.use('/energy/1.0/locations', locationRoutes);
+app.use('/energy/1.0/locations', locationsRoutes);
+app.use('/energy/1.0/location', locationRoutes);
 
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
 });

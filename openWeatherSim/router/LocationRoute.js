@@ -1,6 +1,9 @@
 import express from 'express';
-import {handleCreateLocation} from "../controller/LocationController.js";
+import {getOutputPrediction, handleCreateLocation, handleSolarPanelCreation} from "../controller/LocationController.js";
 
+export const locationsRoutes = express.Router();
 export const locationRoutes = express.Router();
 
-locationRoutes.post('/', handleCreateLocation);
+locationsRoutes.post('/', handleCreateLocation);
+locationRoutes.post(`/:location_id/panels`, handleSolarPanelCreation);
+locationRoutes.post(`/:location_id/data`, getOutputPrediction);
