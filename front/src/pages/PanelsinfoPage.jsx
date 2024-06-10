@@ -1,5 +1,5 @@
-import Dropdown from "../components/generic/Dropdown";
-import LargeButton from "../components/generic/LargeButton";
+import Dropdown from "../components/Dropdown";
+import LargeButton from "../components/generic/Button";
 
 const options = [
   { value: "mono-si", title: "mono-si" },

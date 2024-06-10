@@ -1,5 +1,7 @@
 import {useState} from "react";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import AddButton from "../components/generic/AddButton";
+import Checkbox from "../components/generic/Checkbox";
 import "../styles/global.css";
 import "../styles/schedule/schedule-page-style.css";
 
@@ -126,6 +128,7 @@ function SchedulePage() {
                 {/* Content that can be blurred */}
             </div>
             <div className="button-container">
+                {/* TODO: it should be "add timeslot for [selected day]" */}
                 <button type="button" onClick={handleAddTimeslot}>Add Timeslot</button>
                 <button type="button" onClick={handleConfirm}>Confirm</button>
             </div>
@@ -161,28 +164,32 @@ function SchedulePage() {
                             <div className="time-slots">
                                 {!allDay && timeSlots.map((slot, index) => (
                                     <div key={index} className="time-slot">
-                                        <label>Start Time:</label>
-                                        <input
-                                            type="time"
-                                            value={slot.startTime}
-                                            onChange={(e) => handleTimeChange(index, "startTime", e.target.value)}
-                                        />
+                                        <div className="input-group">
+                                            <label>Start Time:</label>
+                                            <input
+                                                type="time"
+                                                value={slot.startTime}
+                                                onChange={(e) => handleTimeChange(index, "startTime", e.target.value)}
+                                            />
+                                        </div>
+                                        <div className="input-group">
                                         <label>End Time:</label>
                                         <input
                                             type="time"
                                             value={slot.endTime}
                                             onChange={(e) => handleTimeChange(index, "endTime", e.target.value)}
                                         />
+                                        </div>
                                     </div>
                                 ))}
                             </div>
 
-                            <div className="modal-timeslot-management">
-                                <button type="button" onClick={handleAddTimeSlot}>+</button>
-                                <button type="button" onClick={handleAllDay}>{allDay ? "Unmark All Day" : "Mark All Day"}</button>
+                            <div id="add-btn">
+                                <AddButton onClick={handleAddTimeSlot}></AddButton>
                             </div>
-
-
+                            <div id="checkbox-box">
+                                <Checkbox onClick={handleAllDay}>Mark all day</Checkbox>
+                            </div>
                             <div className="modal-submit-buttons">
                                 <button type="button" onClick={handleSaveTimeslot}>Save</button>
                                 <button type="button" onClick={handleCloseTimeModal}>Cancel</button>

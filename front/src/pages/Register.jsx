@@ -1,4 +1,5 @@
-import {useState} from "react";
+import { useState } from "react";
+import Button from "../components/generic/Button";
 
 import "../styles/global.css";
 import "../styles/auth/auth-page-style.css";
@@ -40,43 +41,42 @@ function RegisterPage() {
     }
 
     return (
-        <div>
+        <div id="register-page-container">
+            <h1>Welcome!</h1>
             <h2>Register</h2>
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label>Email:</label>
+            <form onSubmit={handleSubmit} id="register-form">
+                <div id="register-inputFieldsContainer">
                     <input
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
+                        placeholder="Email"
+                        className="register-input"
                     />
-                </div>
-                <div>
-                    <label>First Name:</label>
                     <input
                         type="text"
                         value={firstName}
                         onChange={(e) => setFirstName(e.target.value)}
+                        placeholder="First Name"
+                        className="register-input"
                     />
-                </div>
-                <div>
-                    <label>Password:</label>
                     <input
                         type="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
+                        placeholder="Password"
+                        className="register-input"
                     />
-                </div>
-                <div>
-                    <label>Confirm Password:</label>
                     <input
                         type="password"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
+                        placeholder="Confirm Password"
+                        className="register-input"
                     />
                 </div>
-                <div className="auth-options">
-                    <button type="submit">Register</button>
+                <div id="register-auth-options">
+                    <Button type="submit">Register</Button>
                     <p>Already a user? <a href="/login">Log in</a></p>
                 </div>
             </form>
