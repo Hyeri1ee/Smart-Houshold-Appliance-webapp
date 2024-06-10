@@ -11,3 +11,23 @@ body {
   width: 100vw;
   height: 100vh;
 }
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+.page-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100vw;
+  margin: 0;
+  padding: 0 0 0 10px;
+  height: 100vh;
+  overflow-x: hidden;
+}
+
+#h2 {
+    text-align: left;
+    margin-bottom: 4px;
+}
