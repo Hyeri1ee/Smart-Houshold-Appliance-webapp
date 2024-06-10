@@ -1,7 +1,7 @@
 import "../styles/global.css";
 import "../styles/dashboard/dashboard.css"
 import RecommendedTimeslot from "../components/dashboard/RecommendTimeslot";
-import {getDecodedJwt} from "../helpers/jwt/DecodeJwt";
+import {getDecodedJwt} from "../helpers/DecodeJwt";
 import Header from "../components/generic/Header";
 
 const Dashboard = () => {

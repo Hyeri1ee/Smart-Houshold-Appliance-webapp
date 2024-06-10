@@ -69,7 +69,7 @@ function HomeConnectLogin() {
     // In a try block in case some info is missing. If any is, then the catch block is used.
     try {
       console.log("tokenRequestResponse: " + tokenRequestResponse);
-      window.sessionStorage.token = tokenRequestResponse.access_token;
+      window.sessionStorage.homeconnect_auth_token = tokenRequestResponse.access_token;
       window.localStorage.refresh_token = tokenRequestResponse.refresh_token;
       window.location.href="/dashboard"; // Sign in successful.
     } catch (e) {
