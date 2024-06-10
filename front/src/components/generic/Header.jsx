@@ -1,5 +1,5 @@
 import "../../styles/components/generic/header.css"
-import {getDecodedJwt} from "../../helpers/jwt/DecodeJwt";
+import {getDecodedJwt} from "../../helpers/DecodeJwt";
 
 const decoded = getDecodedJwt();
 

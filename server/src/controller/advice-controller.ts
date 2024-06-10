@@ -6,7 +6,7 @@ import {getDataSource} from '../db/db-connect';
 import 'dotenv/config';
 import { NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import cookieParser from 'cookie-parser';
+
 interface DecodedToken {
     user_id: number;
     first_name: string;
