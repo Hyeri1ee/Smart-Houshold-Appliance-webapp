@@ -1,5 +1,5 @@
 import "../../styles/components/dashboard/timeslot-recommendation.css"
-import {getCookie} from "../../helpers/GetCookie";
+import {getCookie} from "../../helpers/CookieHelper";
 
 const resp = await fetch('http://localhost:1337/api/advice', {
   method: 'GET',
