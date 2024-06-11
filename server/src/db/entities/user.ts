@@ -1,13 +1,6 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  JoinColumn,
-  OneToMany,
-  OneToOne,
-} from "typeorm";
-import { Schedule } from "./schedule";
-import { Location } from "./location";
+import {Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn,} from "typeorm";
+import {Schedule} from "./schedule";
+import {Location} from "./location";
 
 @Entity()
 export class User {
@@ -23,7 +16,7 @@ export class User {
   @Column({ type: 'varchar', length: 60, nullable: false })
   password: string;
 
-  @Column({ type: 'smallint', length: 60, nullable: false })
+  @Column({ type: 'smallint', nullable: true })
   profile_type: number;
 
 

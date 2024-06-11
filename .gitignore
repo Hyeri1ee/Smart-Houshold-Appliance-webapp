@@ -1,6 +1,10 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
 # dependencies
 front/node_modules
 server/node_modules
+openWeatherSim/node_modules
+server/config.json
 
 */.pnp
 .pnp.js
