@@ -1,0 +1,50 @@
+.time-picker-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: var(--background);
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.time-picker-container h3 {
+  margin-bottom: 10px;
+}
+
+.time-picker-container div {
+  margin-bottom: 15px;
+}
+
+.time-picker-container label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.time-picker-container input[type="date"],
+.time-picker-container input[type="time"] {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.time-picker-container button {
+  padding: 8px 16px;
+  margin-right: 10px;
+  border: none;
+  border-radius: 4px;
+  background-color: var(--primary);
+  color: white;
+  cursor: pointer;
+}
+
+.time-picker-container button:hover {
+  background-color: var(--secondary);
+}
+
+.time-picker-container button:last-child {
+  margin-right: 0;
+}
