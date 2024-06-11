@@ -2,6 +2,7 @@ import {useState} from "react";
 import { useNavigate } from "react-router-dom";
 import AddButton from "../components/generic/AddButton";
 import Checkbox from "../components/generic/Checkbox";
+import { checkUserInfo } from "../helpers/CheckUserInfo";
 import "../styles/global.css";
 import "../styles/schedule/schedule-page-style.css";
 
@@ -18,6 +19,7 @@ const daysOfWeek = [
 ];
 
 function SchedulePage() {
+    checkUserInfo();
     const [showDaysModal, setShowDaysModal] = useState(false);
     const [showTimeModal, setShowTimeModal] = useState(false);
     const [selectedDays, setSelectedDays] = useState([]);

@@ -2,7 +2,6 @@ import {Navigate, Route, Routes} from 'react-router-dom';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
-import PanelsInfoPage from './pages/PanelsinfoPage';
 import Schedule from "./pages/Schedule";
 import HomeConnectLogin from "./pages/HomeConnectLogin";
 import LoginFailed from "./pages/LoginFailed";
@@ -32,7 +31,6 @@ function App() {
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="user/schedule" element={<Schedule />} />
         <Route path="user/profile/type" element={<UserProfilePage />} />
-        <Route path="panels/info" element={<PanelsInfoPage />} />
       </Routes>
     </>
   );
