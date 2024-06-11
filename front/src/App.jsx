@@ -4,11 +4,12 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import PanelsInfoPage from './pages/PanelsinfoPage';
 import Schedule from "./pages/Schedule";
+import HomeConnectLogin from "./pages/HomeConnectLogin";
+import LoginFailed from "./pages/LoginFailed";
 import "./styles/reset.css"
 import "./styles/global.css"
 import axios from 'axios';
 import UserProfilePage from "./pages/UserProfilePage";
-import {checkUserInfo} from "./helpers/CheckUserInfo";
 
 axios.defaults.baseURL = 'http://localhost:1337';
 axios.defaults.withCredentials = true;
@@ -23,8 +24,10 @@ function App() {
   return (
     <>
       <Routes>
-        <Route index element={ <Navigate to="/dashboard" />} />
-        <Route path="login" element={ <Login />} />
+        <Route index element={<Navigate to="/dashboard"/>} />
+        <Route path="login" element={<Login />} />
+        <Route path="login/homeconnect" element={<HomeConnectLogin/>}> </Route>
+        <Route path="login/failed" element={<LoginFailed/>}> </Route>
         <Route path="register" element={<Register />} />
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="user/schedule" element={<Schedule />} />
