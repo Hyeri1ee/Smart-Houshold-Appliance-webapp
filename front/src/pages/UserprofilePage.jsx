@@ -22,29 +22,30 @@ function UserprofilePage() {
       </div>
 
       <div className="checkbox-container" style={styles.checkboxContainer}>
-      <label style={styles.checkboxLabel}>
-        <input type="checkbox" id="single" style={styles.checkboxInput} />
-        <span style={{ ...styles.checkboxCustom, top: "50px", display: "flex", alignItems: "center" }}>
-            I live by myself
-            <img src={singleIcon} alt="single" style={{ width: "40px", height: "40px", marginLeft: "10px" }} />
-        </span>
-     </label>
+  <label style={styles.checkboxLabel}>
+    <input type="checkbox" id="single" style={styles.checkboxInput} />
+    <div style={styles.checkboxCustomWrapper}>
+      <span style={styles.checkboxText}>I live by myself</span>
+      <img src={singleIcon} alt="single" style={styles.checkboxImage} />
+    </div>
+  </label>
 
-        <label style={styles.checkboxLabel}>
-          <input type="checkbox" id="couple" style={styles.checkboxInput} />
-          <span style={{ ...styles.checkboxCustom, top: "150px" }}>I live with my partner or a housemate
-          <img src={coupleIcon} alt="couple" style={{ width: "40px", height: "40px", marginLeft: "10px" }} />
-          </span>
-        </label>
+  <label style={styles.checkboxLabel}>
+    <input type="checkbox" id="couple" style={styles.checkboxInput} />
+    <div style={styles.checkboxCustomWrapper}>
+      <span style={styles.checkboxText}>I live with my partner or a housemate</span>
+      <img src={coupleIcon} alt="couple" style={styles.checkboxImage} />
+    </div>
+  </label>
 
-        <label style={styles.checkboxLabel}>
-          <input type="checkbox" id="family" style={styles.checkboxInput} />
-          <span style={{ ...styles.checkboxCustom, top: "250px" }}>I live with my family
-          <img src={family} alt="family" style={{ width: "40px", height: "40px", marginLeft: "10px" }} />
-
-          </span>
-        </label>
-      </div>
+  <label style={styles.checkboxLabel}>
+    <input type="checkbox" id="family" style={styles.checkboxInput} />
+    <div style={styles.checkboxCustomWrapper}>
+      <span style={styles.checkboxText}>I live with my family</span>
+      <img src={family} alt="family" style={styles.checkboxImage} />
+    </div>
+  </label>
+</div>
 
       <div className="button-container">
         <Button className="back-button"> Back </Button>
@@ -104,6 +105,31 @@ const styles = {
     borderRadius: "4px",
     paddingLeft: "20px",
     color: "#000000",
+  },
+  checkboxCustomWrapper: {
+    top : "10px",
+    height: "90px",
+    width: "250px",
+    backgroundColor: "#FFFFFF",
+    border: "1px solid #ddd",
+    borderRadius: "4px",
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    paddingLeft: "20px",
+    paddingRight: "20px",
+    color: "#000000",
+    marginBottom: "20px", 
+  },
+  checkboxText: {
+    flex: "2 1", 
+    fontSize: "22px",
+  },
+  checkboxImage: {
+    flex: "1 1",
+    width: "40px",
+    height: "40px",
+    marginLeft: "auto",
   },
   backButton: {
     backgroundColor: "#FFF9C4", 
