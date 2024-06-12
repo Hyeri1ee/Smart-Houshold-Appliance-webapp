@@ -1,8 +1,8 @@
-import express from "express";
+// import express from "express";
 
-import { handleGet, handlePost } from "../controller/solar-controller";
+// import { handleGet, handlePost } from "../controller/solar-controller";
 
-export const solarRoute = express.Router();
+// export const solarRoute = express.Router();
 
-solarRoute.get("/", handleGet);
-solarRoute.post("/", handlePost);
+// solarRoute.get("/", handleGet);
+// solarRoute.post("/", handlePost);
