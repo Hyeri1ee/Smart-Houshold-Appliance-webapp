@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
@@ -23,6 +23,11 @@ if ("serviceWorker" in navigator) {
 }
 
 function App() {
+    const location = useLocation();
+
+    // exclude navbar from login and register
+    const shouldRenderNavBar = !["/login", "/register"].includes(location.pathname);
+
     return (
         <div className="app-container">
             <Routes>
@@ -36,7 +41,7 @@ function App() {
                 <Route path="panels/info" element={<PanelsInfoPage />} />
                 <Route path="device/details" element={<DeviceDetails />} />
             </Routes>
-            <BottomNavBar />
+            {shouldRenderNavBar && <BottomNavBar />}
         </div>
     );
 }

@@ -3,7 +3,7 @@
   height: 100vh;
   margin: 0;
   padding: 9vh;
-  text-align: left; /* Align left */
+  text-align: left;
   background-color: var(--background);
   color: var(--text);
   box-sizing: border-box;
@@ -18,12 +18,10 @@ h1 {
   text-transform: uppercase;
   font-weight: bold;
   line-height: 1;
-  text-align: left; /* Align left */
-
 }
 
 h2 {
-  text-align: left; /* Align left */
+  text-align: left;
   font-size: 3vh !important;
   color: var(--text);
   margin-bottom: 5vh;
@@ -119,7 +117,7 @@ h2 {
   font-weight: bold;
   width: 100%;
   max-width: 250px;
-  text-align: left; /* Align left */
+  text-align: left;
 }
 
 
