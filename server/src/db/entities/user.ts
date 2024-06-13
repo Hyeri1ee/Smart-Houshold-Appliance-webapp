@@ -25,5 +25,5 @@ export class User {
   location: Location;
 
   @OneToMany(() => Schedule, (schedule) => schedule.user)
-  schedules: Schedule[];
+  schedule: Schedule[];
 }

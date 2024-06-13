@@ -9,8 +9,6 @@ import 'dotenv/config'
 export const checkUserExist = async (req: Request, res: Response): Promise<void> => {
   let { password } = req.body;
 
-  password = password.toString();
-  console.log("email: %s\npw: %s", req.body.email, req.body.password);
   try {
     // 1. find user by email
     const dataSource = await getDataSource(); // get data source

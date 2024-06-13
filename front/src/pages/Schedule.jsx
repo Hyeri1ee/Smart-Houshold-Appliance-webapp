@@ -8,13 +8,13 @@ import "../styles/schedule/schedule-page-style.css";
 // All Day mark has a bug sometimes needs further investigation
 
 const daysOfWeek = [
-    { short: "Mo", full: "Monday" },
-    { short: "Tu", full: "Tuesday" },
-    { short: "We", full: "Wednesday" },
-    { short: "Th", full: "Thursday" },
-    { short: "Fr", full: "Friday" },
-    { short: "Sa", full: "Saturday" },
-    { short: "Su", full: "Sunday" }
+    { short: "Mo", full: "Monday", id: 0 },
+    { short: "Tu", full: "Tuesday", id: 1 },
+    { short: "We", full: "Wednesday", id: 2 },
+    { short: "Th", full: "Thursday", id: 3 },
+    { short: "Fr", full: "Friday", id: 4 },
+    { short: "Sa", full: "Saturday", id: 5 },
+    { short: "Su", full: "Sunday", id: 6 }
 ];
 
 function SchedulePage() {
