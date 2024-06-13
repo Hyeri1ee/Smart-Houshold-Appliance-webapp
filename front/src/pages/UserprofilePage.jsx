@@ -75,14 +75,14 @@ const styles = {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    marginTop: "50px",
+    marginTop: "80px",
     height: "450px",
     width: "380px",
   },
   checkboxLabel: {
     display: "block",
     position: "relative",
-    paddingLeft: "35px",
+    paddingLeft: "10px",
     marginBottom: "12px",
     cursor: "pointer",
     fontSize: "22px",
@@ -128,7 +128,7 @@ const styles = {
   checkboxImage: {
     flex: "1 1",
     width: "40px",
-    height: "40px",
+    height:"auto",
     marginLeft: "auto",
   },
   backButton: {
