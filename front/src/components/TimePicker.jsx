@@ -1,16 +1,24 @@
 import React, { useState } from 'react';
-import "../styles/components/timePicker.css"
+import { DayPicker } from 'react-day-picker';
+import 'react-day-picker/dist/style.css';
+import '../styles/components/timePicker.css';
+import { format, isToday, addMinutes } from 'date-fns';
 
 const TimePicker = ({ onClose, onConfirm }) => {
     const [selectedDate, setSelectedDate] = useState(new Date());
-    const [selectedTime, setSelectedTime] = useState(new Date());
+    const [selectedTime, setSelectedTime] = useState(addMinutes(new Date(), 1)); // Default to 1 minute ahead of now
 
-    const handleDateChange = (e) => {
-        setSelectedDate(new Date(e.target.value));
+    const handleDateChange = (date) => {
+        if (date) {
+            setSelectedDate(date);
+        }
     };
 
     const handleTimeChange = (e) => {
-        setSelectedTime(new Date(e.target.value));
+        const [hours, minutes] = e.target.value.split(':');
+        const newTime = new Date(selectedTime);
+        newTime.setHours(hours, minutes);
+        setSelectedTime(newTime);
     };
 
     const handleConfirm = () => {
@@ -26,18 +34,32 @@ const TimePicker = ({ onClose, onConfirm }) => {
 
     return (
         <div className="time-picker-container">
-            <h3>Select Date and Time</h3>
-            <div>
-                <label>Date:</label>
-                <input type="date" value={selectedDate.toISOString().split('T')[0]} onChange={handleDateChange} />
+            <h3 className="time-picker-heading">Select Date and Time</h3>
+            <div className="date-picker-container">
+                <label className="date-label">Date:</label>
+                <DayPicker
+                    mode="single"
+                    selected={selectedDate}
+                    onSelect={handleDateChange}
+                    modifiers={{
+                        selected: selectedDate
+                    }}
+                    disabled={{ before: new Date().setHours(0, 0, 0, 0) }} // Disable all past dates
+                />
             </div>
-            <div>
-                <label>Time:</label>
-                <input type="time" value={selectedTime.toTimeString().split(' ')[0]} onChange={handleTimeChange} />
+            <div className="time-input-container">
+                <label className="time-label">Time:</label>
+                <input
+                    className="time-input"
+                    type="time"
+                    value={format(selectedTime, 'HH:mm')}
+                    onChange={handleTimeChange}
+                    min={isToday(selectedDate) ? format(new Date(), 'HH:mm') : '00:00'} // Disable past times if today is selected
+                />
             </div>
-            <div>
-                <button onClick={handleConfirm}>Confirm</button>
-                <button onClick={onClose}>Cancel</button>
+            <div className="button-container">
+                <button className="confirm-button" onClick={handleConfirm}>Confirm</button>
+                <button className="cancel-button" onClick={onClose}>Cancel</button>
             </div>
         </div>
     );

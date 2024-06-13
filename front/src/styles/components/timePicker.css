@@ -10,28 +10,34 @@
   z-index: 1000;
 }
 
-.time-picker-container h3 {
+.time-picker-heading {
   margin-bottom: 10px;
 }
 
-.time-picker-container div {
+.date-picker-container,
+.time-input-container,
+.button-container {
   margin-bottom: 15px;
 }
 
-.time-picker-container label {
+.date-label,
+.time-label {
+
   display: block;
   margin-bottom: 5px;
+
 }
 
-.time-picker-container input[type="date"],
-.time-picker-container input[type="time"] {
+.time-input {
+
   width: 100%;
   padding: 8px;
   border: 1px solid #ccc;
   border-radius: 4px;
 }
 
-.time-picker-container button {
+.confirm-button,
+.cancel-button {
   padding: 8px 16px;
   margin-right: 10px;
   border: none;
@@ -41,10 +47,12 @@
   cursor: pointer;
 }
 
-.time-picker-container button:hover {
+.confirm-button:hover,
+.cancel-button:hover {
   background-color: var(--secondary);
 }
 
-.time-picker-container button:last-child {
+.cancel-button:last-child {
   margin-right: 0;
 }
+
