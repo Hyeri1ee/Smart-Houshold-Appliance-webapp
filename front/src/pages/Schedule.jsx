@@ -5,8 +5,6 @@ import Checkbox from "../components/generic/Checkbox";
 import "../styles/global.css";
 import "../styles/schedule/schedule-page-style.css";
 
-// All Day mark has a bug sometimes needs further investigation
-
 const daysOfWeek = [
     { short: "Mo", full: "Monday" },
     { short: "Tu", full: "Tuesday" },
