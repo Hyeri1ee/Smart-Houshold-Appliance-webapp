@@ -10,6 +10,61 @@ import coupleIcon from "../assets/userprofile/couple.png";
 import family from "../assets/userprofile/family.png";
 
 function UserprofilePage() {
+    const [selectedOption, setSelectedOption] = useState(null);
+    const navigate = useNavigate();
+  
+    useEffect(() => {
+      const token = getCookie("token");
+      if (token) {
+        saveUserProfileType(selectedOption, token);
+      }
+    }, [selectedOption]);
+  
+    const handleOptionChange = (event) => {
+      const selectedValue = event.currentTarget.htmlFor;
+      let profileType;
+  
+      switch (selectedValue) {
+        case "single":
+          profileType = 1;
+          break;
+        case "couple":
+          profileType = 2;
+          break;
+        case "family":
+            profileType = 3;
+            break;
+          default:
+            profileType = null;
+        }
+    
+        setSelectedOption(profileType);
+      };
+    
+      const handleNextClick = () => {
+        navigate("/dashboard");
+      };
+
+      const saveUserProfileType = async (profileType, token) => {
+        try {
+          const response = await fetch("http://localhost:1337/user/profile", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ profile_type: profileType }),
+          });
+          const data = await response.json();
+          document.cookie = `authorization=${data.token}`;
+          if (response.ok) {
+            console.log("User profile type saved successfully");
+          } else {
+            console.error("Failed to save user profile type");
+          }
+        } catch (error) {
+          console.error("Error saving user profile type:", error);
+        }
+      };
   return (
     <div className="app-container">
       <div className="fixed-header" style={styles.fixedHeader}>
@@ -23,7 +78,7 @@ function UserprofilePage() {
 
       <div className="checkbox-container" style={styles.checkboxContainer}>
   <label style={styles.checkboxLabel}>
-    <input type="checkbox" id="single" style={styles.checkboxInput} />
+    <input type="checkbox" id="single" style={styles.checkboxInput} onchange={handleOptionChange} />
     <div style={styles.checkboxCustomWrapper}>
       <span style={styles.checkboxText}>I live by myself</span>
       <img src={singleIcon} alt="single" style={styles.checkboxImage} />
@@ -31,7 +86,7 @@ function UserprofilePage() {
   </label>
 
   <label style={styles.checkboxLabel}>
-    <input type="checkbox" id="couple" style={styles.checkboxInput} />
+    <input type="checkbox" id="couple" style={styles.checkboxInput} onchange={handleOptionChange}/>
     <div style={styles.checkboxCustomWrapper}>
       <span style={styles.checkboxText}>I live with my partner or a housemate</span>
       <img src={coupleIcon} alt="couple" style={styles.checkboxImage} />
@@ -39,7 +94,7 @@ function UserprofilePage() {
   </label>
 
   <label style={styles.checkboxLabel}>
-    <input type="checkbox" id="family" style={styles.checkboxInput} />
+    <input type="checkbox" id="family" style={styles.checkboxInput} onchange={handleOptionChange} />
     <div style={styles.checkboxCustomWrapper}>
       <span style={styles.checkboxText}>I live with my family</span>
       <img src={family} alt="family" style={styles.checkboxImage} />
@@ -49,7 +104,7 @@ function UserprofilePage() {
 
       <div className="button-container">
         <Button className="back-button"> Back </Button>
-        <Button > Next </Button>
+        <Button onClick={handleNextClick}> Next </Button>
       </div>
     </div>
   );
