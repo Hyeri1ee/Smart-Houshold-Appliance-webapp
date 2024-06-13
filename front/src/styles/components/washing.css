@@ -3,7 +3,6 @@
   height: 100vh;
   margin: 0;
   padding: 9vh;
-  text-align: left; /* Align left */
   background-color: var(--background);
   color: var(--text);
   box-sizing: border-box;
@@ -12,14 +11,13 @@
 }
 
 h1 {
-  font-size: 4vh !important;
+  font-size: 2em !important;
+  width: 80vw;
+  margin: auto 0 5vh auto;
   color: var(--text);
-  margin-bottom: 5vh;
-  text-transform: uppercase;
   font-weight: bold;
   line-height: 1;
-  text-align: left; /* Align left */
-
+  /*text-align: center;*/
 }
 
 h2 {
