@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import AddButton from "../components/generic/AddButton";
 import Checkbox from "../components/generic/Checkbox";
@@ -8,13 +8,19 @@ import Button from "../components/generic/Button";
 import singleIcon from "../assets/userprofile/single.png";
 import coupleIcon from "../assets/userprofile/couple.png";
 import family from "../assets/userprofile/family.png";
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+  }
 
 function UserprofilePage() {
     const [selectedOption, setSelectedOption] = useState(null);
     const navigate = useNavigate();
   
     useEffect(() => {
-      const token = getCookie("token");
+      const token = getCookie("authorization");
+      console.log(token);
       if (token) {
         saveUserProfileType(selectedOption, token);
       }
@@ -32,17 +38,19 @@ function UserprofilePage() {
           profileType = 2;
           break;
         case "family":
-            profileType = 3;
-            break;
-          default:
-            profileType = null;
+          profileType = 3;
+          break;
+        default:
+          profileType = null;
         }
-    
+        console.log("aa");
+        console.log(profileType);
         setSelectedOption(profileType);
       };
     
-      const handleNextClick = () => {
+      const handleNextClick = async () => {
         navigate("/dashboard");
+       
       };
 
       const saveUserProfileType = async (profileType, token) => {
@@ -78,7 +86,7 @@ function UserprofilePage() {
 
       <div className="checkbox-container" style={styles.checkboxContainer}>
   <label style={styles.checkboxLabel}>
-    <input type="checkbox" id="single" style={styles.checkboxInput} onchange={handleOptionChange} />
+    <input type="checkbox" id="single" style={styles.checkboxInput} onClick={handleOptionChange} />
     <div style={styles.checkboxCustomWrapper}>
       <span style={styles.checkboxText}>I live by myself</span>
       <img src={singleIcon} alt="single" style={styles.checkboxImage} />
@@ -86,7 +94,7 @@ function UserprofilePage() {
   </label>
 
   <label style={styles.checkboxLabel}>
-    <input type="checkbox" id="couple" style={styles.checkboxInput} onchange={handleOptionChange}/>
+    <input type="checkbox" id="couple" style={styles.checkboxInput} onClick={handleOptionChange}/>
     <div style={styles.checkboxCustomWrapper}>
       <span style={styles.checkboxText}>I live with my partner or a housemate</span>
       <img src={coupleIcon} alt="couple" style={styles.checkboxImage} />
@@ -94,7 +102,7 @@ function UserprofilePage() {
   </label>
 
   <label style={styles.checkboxLabel}>
-    <input type="checkbox" id="family" style={styles.checkboxInput} onchange={handleOptionChange} />
+    <input type="checkbox" id="family" style={styles.checkboxInput} onClick={handleOptionChange} />
     <div style={styles.checkboxCustomWrapper}>
       <span style={styles.checkboxText}>I live with my family</span>
       <img src={family} alt="family" style={styles.checkboxImage} />
