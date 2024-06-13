@@ -85,29 +85,29 @@ function UserprofilePage() {
       </div>
 
       <div className="checkbox-container" style={styles.checkboxContainer}>
-  <label style={styles.checkboxLabel}>
-    <input type="checkbox" id="single" style={styles.checkboxInput} onClick={handleOptionChange} />
-    <div style={styles.checkboxCustomWrapper}>
-      <span style={styles.checkboxText}>I live by myself</span>
-      <img src={singleIcon} alt="single" style={styles.checkboxImage} />
-    </div>
-  </label>
+      <label htmlFor="single" style={styles.checkboxLabel}>
+  <input type="checkbox" id="single" style={styles.checkboxInput} onClick={handleOptionChange} />
+  <div style={styles.checkboxCustomWrapper}>
+    <span style={styles.checkboxText}>I live by myself</span>
+    <img src={singleIcon} alt="single" style={styles.checkboxImage} />
+  </div>
+</label>
 
-  <label style={styles.checkboxLabel}>
-    <input type="checkbox" id="couple" style={styles.checkboxInput} onClick={handleOptionChange}/>
-    <div style={styles.checkboxCustomWrapper}>
-      <span style={styles.checkboxText}>I live with my partner or a housemate</span>
-      <img src={coupleIcon} alt="couple" style={styles.checkboxImage} />
-    </div>
-  </label>
+<label htmlFor="couple" style={styles.checkboxLabel}>
+  <input type="checkbox" id="couple" style={styles.checkboxInput} onClick={handleOptionChange} />
+  <div style={styles.checkboxCustomWrapper}>
+    <span style={styles.checkboxText}>I live with my partner or a housemate</span>
+    <img src={coupleIcon} alt="couple" style={styles.checkboxImage} />
+  </div>
+</label>
 
-  <label style={styles.checkboxLabel}>
-    <input type="checkbox" id="family" style={styles.checkboxInput} onClick={handleOptionChange} />
-    <div style={styles.checkboxCustomWrapper}>
-      <span style={styles.checkboxText}>I live with my family</span>
-      <img src={family} alt="family" style={styles.checkboxImage} />
-    </div>
-  </label>
+<label htmlFor="family" style={styles.checkboxLabel}>
+  <input type="checkbox" id="family" style={styles.checkboxInput} onClick={handleOptionChange} />
+  <div style={styles.checkboxCustomWrapper}>
+    <span style={styles.checkboxText}>I live with my family</span>
+    <img src={family} alt="family" style={styles.checkboxImage} />
+  </div>
+</label>
 </div>
 
       <div className="button-container">
