@@ -2,7 +2,7 @@
   width: 100vw;
   height: 100vh;
   margin: 0;
-  padding: 3vh;
+  padding: 9vh;
   text-align: left;
   background-color: var(--background);
   color: var(--text);
@@ -14,11 +14,10 @@
 h1 {
   font-size: 4vh !important;
   color: var(--text);
-  margin-bottom: 3vh;
+  margin-bottom: 5vh;
   text-transform: uppercase;
   font-weight: bold;
   line-height: 1;
-  text-align: left;
 }
 
 h2 {
@@ -32,6 +31,7 @@ h2 {
 }
 
 .image-section {
+
   margin-top: 3vh;
   background-color: var(--primary);
   height: 20vh;
@@ -92,10 +92,9 @@ h2 {
 
 .controls-section,
 .start-time-section {
-  display: flex;
+
   flex-direction: column;
-  align-items: flex-start;
-  width: 100%;
+  align-items: center;
   margin-bottom: 5vh;
   transition: filter 0.2s;
 }
@@ -104,6 +103,7 @@ h2 {
 .start-time-section.blur {
   filter: blur(4px);
   pointer-events: none;
+
 }
 
 .control-button {
@@ -116,10 +116,10 @@ h2 {
   color: var(--text);
   font-weight: bold;
   width: 100%;
-  max-width: none;
+  max-width: 250px;
   text-align: left;
-  padding-left: 20px;
 }
+
 
 .control-button:hover {
   background-color: var(--secondary);
@@ -132,7 +132,6 @@ h2 {
   margin: 5px 0;
   color: var(--text);
   cursor: pointer;
-  text-align: left;
 }
 
 input[type="radio"] {
@@ -146,6 +145,7 @@ input[type="radio"] {
 }
 
 .bottom-button {
+
   margin: 0 10px;
   padding: 10px 20px;
   background-color: var(--primary);
