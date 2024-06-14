@@ -8,71 +8,59 @@ import Button from "../components/generic/Button";
 import singleIcon from "../assets/userprofile/single.png";
 import coupleIcon from "../assets/userprofile/couple.png";
 import family from "../assets/userprofile/family.png";
-function getCookie(name) {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(';').shift();
-  }
+import { getCookie } from "../helpers/cookies/GetCookie";
 
 function UserprofilePage() {
-    const [selectedOption, setSelectedOption] = useState(null);
+    const [selectedLabel, setSelectedLabel] = useState(null);
+    const [profileType, setProfileType] = useState(null);
     const navigate = useNavigate();
-  
-    useEffect(() => {
-      const token = getCookie("authorization");
-      console.log(token);
-      if (token) {
-        saveUserProfileType(selectedOption, token);
-      }
-    }, [selectedOption]);
-  
-    const handleOptionChange = (event) => {
-      const selectedValue = event.currentTarget.htmlFor;
-      let profileType;
-  
-      switch (selectedValue) {
-        case "single":
-          profileType = 1;
-          break;
-        case "couple":
-          profileType = 2;
-          break;
-        case "family":
-          profileType = 3;
-          break;
-        default:
-          profileType = null;
-        }
-        console.log("aa");
-        console.log(profileType);
-        setSelectedOption(profileType);
-      };
-    
-      const handleNextClick = async () => {
-        navigate("/dashboard");
-       
-      };
 
-      const saveUserProfileType = async (profileType, token) => {
-        try {
-          const response = await fetch("http://localhost:1337/user/profile", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ profile_type: profileType }),
-          });
-          const data = await response.json();
-          document.cookie = `authorization=${data.token}`;
-          if (response.ok) {
-            console.log("User profile type saved successfully");
-          } else {
-            console.error("Failed to save user profile type");
-          }
-        } catch (error) {
-          console.error("Error saving user profile type:", error);
+    const handleLabelClick = (labelId) => {
+        setSelectedLabel(labelId);
+        setProfileType(labelIdToProfileType(labelId));
+    };
+    const labelIdToProfileType = (labelId) => {
+        switch (labelId) {
+          case 'single':
+            return 1;
+          case 'couple':
+            return 2;
+          case 'family':
+            return 3;
+          default:
+            return null;
         }
-      };
+    };
+
+    const handleNextButtonClick = async () => {
+    if (profileType) {
+        try {
+        const accessToken = getCookie('authorization');
+        console.log(accessToken);
+        const response = await fetch('http://localhost:1337/api/user/profile', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
+            },
+            body: JSON.stringify({ profile_type : profileType }),
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            document.cookie = `authorization=${data.accessToken}`;
+            navigate('/dashboard');
+        } else {
+            console.error('Failed to update profile type');
+            }
+        } catch (error) {
+            console.error('Error updating profile type:', error);
+        }
+        } else {
+        alert('Please select a household type.');
+        }
+    };
+
   return (
     <div className="app-container">
       <div className="fixed-header" style={styles.fixedHeader}>
@@ -85,24 +73,51 @@ function UserprofilePage() {
       </div>
 
       <div className="checkbox-container" style={styles.checkboxContainer}>
-      <label htmlFor="single" style={styles.checkboxLabel}>
-  <input type="checkbox" id="single" style={styles.checkboxInput} onClick={handleOptionChange} />
+      <label
+  htmlFor="single"
+  style={{
+    ...styles.checkboxLabel,
+    backgroundColor: selectedLabel === 'single' ? '#e0e0e0' : '#ffffff',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  }}
+  onClick={() => handleLabelClick('single')}
+>
   <div style={styles.checkboxCustomWrapper}>
     <span style={styles.checkboxText}>I live by myself</span>
     <img src={singleIcon} alt="single" style={styles.checkboxImage} />
   </div>
 </label>
 
-<label htmlFor="couple" style={styles.checkboxLabel}>
-  <input type="checkbox" id="couple" style={styles.checkboxInput} onClick={handleOptionChange} />
+<label
+  htmlFor="couple"
+  style={{
+    ...styles.checkboxLabel,
+    backgroundColor: selectedLabel === 'couple' ? '#e0e0e0' : '#ffffff',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  }}
+  onClick={() => handleLabelClick('couple')}
+>
   <div style={styles.checkboxCustomWrapper}>
     <span style={styles.checkboxText}>I live with my partner or a housemate</span>
     <img src={coupleIcon} alt="couple" style={styles.checkboxImage} />
   </div>
 </label>
 
-<label htmlFor="family" style={styles.checkboxLabel}>
-  <input type="checkbox" id="family" style={styles.checkboxInput} onClick={handleOptionChange} />
+<label
+  htmlFor="family"
+  style={{
+    ...styles.checkboxLabel,
+    backgroundColor: selectedLabel === 'family' ? '#e0e0e0' : '#ffffff',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  }}
+  onClick={() => handleLabelClick('family')}
+>
   <div style={styles.checkboxCustomWrapper}>
     <span style={styles.checkboxText}>I live with my family</span>
     <img src={family} alt="family" style={styles.checkboxImage} />
@@ -112,7 +127,7 @@ function UserprofilePage() {
 
       <div className="button-container">
         <Button className="back-button"> Back </Button>
-        <Button onClick={handleNextClick}> Next </Button>
+        <Button onClick={handleNextButtonClick}> Next </Button>
       </div>
     </div>
   );
