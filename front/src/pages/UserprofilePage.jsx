@@ -41,13 +41,12 @@ function UserprofilePage() {
             method: 'POST',
             headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
             },
             body: JSON.stringify({ profile_type : profileType }),
         });
 
         if (response.ok) {
-            const data = await response.json();
-            document.cookie = `authorization=${data.accessToken}`;
             navigate('/dashboard');
         } else {
             console.error('Failed to update profile type');
