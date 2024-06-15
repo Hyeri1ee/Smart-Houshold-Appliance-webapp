@@ -43,6 +43,7 @@ function UserprofilePage() {
             'Authorization': `Bearer ${accessToken}`,
           },
           body: JSON.stringify({ profile_type: profileType }),
+          credentials: "include",
         });
 
         if (response.ok) {
