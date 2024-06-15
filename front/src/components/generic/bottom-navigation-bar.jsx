@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/navBar/navBar.css';
 
@@ -10,14 +9,14 @@ import settingsIcon from "/settings.png";
 function BottomNavBar() {
     return (
         <div className="bottom-nav-bar">
-            <Link to="/home">
-                <img src={homeIcon} alt="Home" />
+            <Link to="/dashboard">
+                <img src={homeIcon} alt="Dashboard" />
             </Link>
             <Link to="/devices">
                 <img src={devicesIcon} alt="Devices" />
             </Link>
-            <Link to="/dashboard">
-                <img src={scheduleIcon} alt="Dashboard" />
+            <Link to="user/schedule">
+                <img src={scheduleIcon} alt="Schedule" />
             </Link>
             <Link to="/user/settings">
                 <img src={settingsIcon} alt="Settings" />

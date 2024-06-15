@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 
 const CarouselItem = ({ text, imageUrl, isRunning }) => {
-    const backgroundStyle = isRunning ? { backgroundColor: 'var(--primary)' } : { backgroundColor: 'white' };
+    const backgroundStyle = isRunning ? { backgroundColor: 'var(--primary)' } : { backgroundColor: 'whitesmoke' };
     const textStyle = isRunning ? { color: 'white' } : { color: '#333' };
     const imageWidth = isRunning ? '68%' : '88%';
 
