@@ -1,63 +1,62 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
-import AddButton from "../components/generic/AddButton";
-import Checkbox from "../components/generic/Checkbox";
 import "../styles/global.css";
 import "../styles/schedule/schedule-page-style.css";
 import Button from "../components/generic/Button";
 import singleIcon from "../assets/userprofile/single.png";
 import coupleIcon from "../assets/userprofile/couple.png";
-import family from "../assets/userprofile/family.png";
+import familyIcon from "../assets/userprofile/family.png";
 import { getCookie } from "../helpers/cookies/GetCookie";
 
 function UserprofilePage() {
-    const [selectedLabel, setSelectedLabel] = useState(null);
-    const [profileType, setProfileType] = useState(null);
-    const navigate = useNavigate();
+  const [selectedLabel, setSelectedLabel] = useState(null);
+  const [profileType, setProfileType] = useState(null);
+  const navigate = useNavigate();
 
-    const handleLabelClick = (labelId) => {
-        setSelectedLabel(labelId);
-        setProfileType(labelIdToProfileType(labelId));
-    };
-    const labelIdToProfileType = (labelId) => {
-        switch (labelId) {
-          case 'single':
-            return 1;
-          case 'couple':
-            return 2;
-          case 'family':
-            return 3;
-          default:
-            return null;
-        }
-    };
+  const handleLabelClick = (labelId) => {
+    setSelectedLabel(labelId);
+    setProfileType(labelIdToProfileType(labelId));
+  };
 
-    const handleNextButtonClick = async () => {
+  const labelIdToProfileType = (labelId) => {
+    switch (labelId) {
+      case 'single':
+        return 1;
+      case 'couple':
+        return 2;
+      case 'family':
+        return 3;
+      default:
+        return null;
+    }
+  };
+
+  const handleNextButtonClick = async () => {
     if (profileType) {
-        try {
+      try {
         const accessToken = getCookie('authorization');
         console.log(accessToken);
         const response = await fetch('http://localhost:1337/api/user/profile', {
-            method: 'POST',
-            headers: {
+          method: 'POST',
+          headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${accessToken}`,
-            },
-            body: JSON.stringify({ profile_type : profileType }),
+          },
+          body: JSON.stringify({ profile_type: profileType }),
         });
 
         if (response.ok) {
-            navigate('/dashboard');
+          navigate('/dashboard');
         } else {
-            console.error('Failed to update profile type');
-            }
-        } catch (error) {
-            console.error('Error updating profile type:', error);
+          console.error('Failed to update profile type');
         }
-        } else {
-        alert('Please select a household type.');
-        }
-    };
+      } catch (error) {
+        console.error('Error updating profile type:', error);
+      }
+    } else {
+      alert('Please select a household type.');
+    }
+  };
 
   return (
     <div className="app-container">
@@ -71,60 +70,42 @@ function UserprofilePage() {
       </div>
 
       <div className="checkbox-container" style={styles.checkboxContainer}>
-      <label
-  htmlFor="single"
-  style={{
-    ...styles.checkboxLabel,
-    backgroundColor: selectedLabel === 'single' ? '#e0e0e0' : '#ffffff',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-  }}
-  onClick={() => handleLabelClick('single')}
->
-  <div style={styles.checkboxCustomWrapper}>
-    <span style={styles.checkboxText}>I live by myself</span>
-    <img src={singleIcon} alt="single" style={styles.checkboxImage} />
-  </div>
-</label>
+        <div
+          style={{
+            ...styles.checkboxDiv,
+            backgroundColor: selectedLabel === 'single' ? '#e0e0e0' : '#ffffff',
+          }}
+          onClick={() => handleLabelClick('single')}
+        >
+          <p style={styles.checkboxText}>I live by myself</p>
+          <img src={singleIcon} alt="single" style={styles.checkboxImage} />
+        </div>
 
-<label
-  htmlFor="couple"
-  style={{
-    ...styles.checkboxLabel,
-    backgroundColor: selectedLabel === 'couple' ? '#e0e0e0' : '#ffffff',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-  }}
-  onClick={() => handleLabelClick('couple')}
->
-  <div style={styles.checkboxCustomWrapper}>
-    <span style={styles.checkboxText}>I live with my partner or a housemate</span>
-    <img src={coupleIcon} alt="couple" style={styles.checkboxImage} />
-  </div>
-</label>
+        <div
+          style={{
+            ...styles.checkboxDiv,
+            backgroundColor: selectedLabel === 'couple' ? '#e0e0e0' : '#ffffff',
+          }}
+          onClick={() => handleLabelClick('couple')}
+        >
+          <p style={styles.checkboxText}>I live with my partner or a housemate</p>
+          <img src={coupleIcon} alt="couple" style={{ ...styles.checkboxImage, paddingRight: selectedLabel === 'couple' ? '10px' : '0px' }} />
+        </div>
 
-<label
-  htmlFor="family"
-  style={{
-    ...styles.checkboxLabel,
-    backgroundColor: selectedLabel === 'family' ? '#e0e0e0' : '#ffffff',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-  }}
-  onClick={() => handleLabelClick('family')}
->
-  <div style={styles.checkboxCustomWrapper}>
-    <span style={styles.checkboxText}>I live with my family</span>
-    <img src={family} alt="family" style={styles.checkboxImage} />
-  </div>
-</label>
-</div>
+        <div
+          style={{
+            ...styles.checkboxDiv,
+            backgroundColor: selectedLabel === 'family' ? '#e0e0e0' : '#ffffff',
+          }}
+          onClick={() => handleLabelClick('family')}
+        >
+          <p style={styles.checkboxText}>I live with my family</p>
+          <img src={familyIcon} alt="family" style={{ ...styles.checkboxImage, paddingRight: selectedLabel === 'family' ? '15px' : '0px' }} />
+        </div>
+      </div>
 
       <div className="button-container">
-        <Button className="back-button"> Back </Button>
+        <Button className="back-button" style={styles.backButton}> Back </Button>
         <Button onClick={handleNextButtonClick}> Next </Button>
       </div>
     </div>
@@ -154,62 +135,36 @@ const styles = {
     marginTop: "80px",
     height: "450px",
     width: "380px",
+    color: '#404040'
   },
-  checkboxLabel: {
-    display: "block",
-    position: "relative",
-    paddingLeft: "10px",
-    marginBottom: "12px",
-    cursor: "pointer",
-    fontSize: "22px",
-    userSelect: "none",
-  },
-  checkboxInput: {
-    position: "absolute",
-    opacity: 0,
-    cursor: "pointer",
-    height: 0,
-    width: 0,
-  },
-  checkboxCustom: {
-    position: "absolute",
-    left: "-110px",
-    height: "90px",
-    width: "250px",
-    backgroundColor: "#FFFFFF",
-    border: "1px solid #ddd",
-    borderRadius: "4px",
-    paddingLeft: "20px",
-    color: "#000000",
-  },
-  checkboxCustomWrapper: {
-    top : "10px",
-    height: "90px",
-    width: "250px",
-    backgroundColor: "#FFFFFF",
-    border: "1px solid #ddd",
-    borderRadius: "4px",
+  checkboxDiv: {
+    height: '90px',
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
-    paddingLeft: "20px",
-    paddingRight: "20px",
-    color: "#000000",
-    marginBottom: "20px", 
+    justifyContent: "center",
+    padding: "0px",
+    marginBottom: "20px",
+    cursor: "pointer",
+    border: "1px solid #ddd",
+    borderRadius: "4px",
+    width: "260px",
+    backgroundColor: "#ffffff",
   },
   checkboxText: {
-    flex: "2 1", 
+    flex: 2,
     fontSize: "22px",
+    margin: 0,
   },
   checkboxImage: {
-    flex: "1 1",
+    flex: 1,
     width: "40px",
-    height:"auto",
+    height: "auto",
     marginLeft: "auto",
   },
   backButton: {
-    backgroundColor: "#FFF9C4", 
-    border: "1px solid #ddd", 
+    backgroundColor: "#FFF9C4",
+    border: "1px solid #ddd",
   },
 };
 
