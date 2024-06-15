@@ -4,11 +4,11 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import PanelsInfoPage from './pages/PanelsinfoPage';
 import Schedule from "./pages/Schedule";
+import UserprofilePage from "./pages/UserprofilePage";
 import HomeConnectLogin from "./pages/HomeConnectLogin";
 import LoginFailed from "./pages/LoginFailed";
 import DeviceDetails from "./pages/DeviceDetails";
 import BottomNavBar from "./components/generic/bottom-navigation-bar";
-
 import "./styles/reset.css";
 import "./styles/global.css";
 import axios from 'axios';
@@ -40,6 +40,7 @@ function App() {
                 <Route path="user/schedule" element={<Schedule />} />
                 <Route path="panels/info" element={<PanelsInfoPage />} />
                 <Route path="device/details" element={<DeviceDetails />} />
+                <Route path="user/profile" element={<UserprofilePage />} />
             </Routes>
             {shouldRenderNavBar && <BottomNavBar />}
         </div>
