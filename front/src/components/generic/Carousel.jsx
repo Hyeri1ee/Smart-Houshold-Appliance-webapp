@@ -9,9 +9,8 @@ const styles = {
         alignItems: 'start',
         margin: '0',
         padding: '0px',
-        height: '21vh',
+        height: '25vh',
         width: '200wv',
-        // border: '2px solid pink',
         overflowX: 'scroll',
         WebkitOverflowScrolling: 'touch',
         scrollbarWidth: 'none', // firefox

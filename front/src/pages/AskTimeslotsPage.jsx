@@ -5,8 +5,6 @@ import Checkbox from "../components/generic/Checkbox";
 import "../styles/global.css";
 import "../styles/schedule/schedule-page-style.css";
 
-// All Day mark has a bug sometimes needs further investigation
-
 const daysOfWeek = [
     { short: "Mo", full: "Monday", id: 0 },
     { short: "Tu", full: "Tuesday", id: 1 },
@@ -17,7 +15,7 @@ const daysOfWeek = [
     { short: "Su", full: "Sunday", id: 6 }
 ];
 
-function SchedulePage() {
+function AskTimeslotsPage() {
     const [showDaysModal, setShowDaysModal] = useState(false);
     const [showTimeModal, setShowTimeModal] = useState(false);
     const [selectedDays, setSelectedDays] = useState([]);
@@ -202,4 +200,4 @@ function SchedulePage() {
     );
 }
 
-export default SchedulePage;
+export default AskTimeslotsPage;
