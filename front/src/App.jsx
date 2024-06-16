@@ -3,7 +3,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import PanelsInfoPage from './pages/PanelsinfoPage';
-import Schedule from "./pages/Schedule";
+import Schedule from "./pages/AskTimeslotsPage";
 import UserprofilePage from "./pages/UserprofilePage";
 import HomeConnectLogin from "./pages/HomeConnectLogin";
 import LoginFailed from "./pages/LoginFailed";

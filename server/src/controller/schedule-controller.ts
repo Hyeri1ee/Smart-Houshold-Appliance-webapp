@@ -2,7 +2,6 @@ import {Request, Response} from 'express';
 import {Repository} from 'typeorm'
 import {Schedule} from '../db/entities/schedule';
 import {getDataSource} from '../db/db-connect';
-import {Brackets} from 'typeorm';
 import {User} from "../db/entities/user";
 import {Time} from "../db/entities/time";
 import {handleJwt} from "./jwt-helper";
@@ -26,8 +25,6 @@ export const checkSchedule = async (req: Request, res: Response): Promise<void> 
       });
     return;
   }
-
-  const userId = decoded.user_id;
 
   try {
     const dataSource = await getDataSource();
@@ -83,95 +80,92 @@ export const putSchedule = async (req: Request, res: Response) => {
       });
   }
 
-  if (req.body.weekday === undefined || req.body.weekday === null) {
+  if (!Array.isArray(req.body)) {
     return res
       .status(400)
       .json({
-        error: "weekday missing from request body"
+        error: "req body is not an array!"
       });
   }
 
-  if (!req.body.times) {
-    return res
-      .status(400)
-      .json({
-        error: "times are missing from request body"
-      });
-  }
-
-  const weekday = parseInt(req.body.weekday);
-
-  if (isNaN(weekday) || !isFinite(Number(weekday)) || weekday < 0 || weekday > 6) {
-    return res
-      .status(400)
-      .json({
-        error: "weekday is not a whole number, or not between 0 and 6."
-      });
-  }
-
-  if (!Array.isArray(req.body.times)) {
-    return res
-      .status(400)
-      .json({
-        error: "times is not an array!"
-      });
-  }
-
-  try {
-    req.body.times.forEach((t: timeRange) => {
-      if (!t.start_time.match(timeRegex) || !t.end_time.match(timeRegex)) {
-        throw new Error();
-      }
-    })
-  } catch (e) {
-    return res
-      .status(400)
-      .json({
-        error: "Time is in wrong format. Make sure it's a string of HH:MM:SS"
-      })
-  }
-
-  const dateSource = await getDataSource();
-  const userRepository = dateSource.getRepository(User);
-  const scheduleRepository = dateSource.getRepository(Schedule);
-  const timesRepository = dateSource.getRepository(Time);
-
-  const user: User | null = await userRepository.findOne({where: {user_id: decoded.user_id}});
-
-  if (!user) {
-    return res
-      .status(400)
-      .json({
-        error: "user_id does not match any existing user."
-      })
-  }
-
-  const existingScheduleForWeekday: Schedule | null = await scheduleRepository.findOne({
-    where: {
-      user_id: decoded.user_id,
-      weekday: weekday
+  for (let i = 0; i < req.body.length; i++) {
+    if (!req.body[i].weekday) {
+      return res
+        .status(400)
+        .json({
+          error: "weekday missing from request body"
+        });
     }
-  });
 
-  if (existingScheduleForWeekday === null) {
-    const newTimes = req.body.times;
-    const newSchedule: Schedule = new Schedule();
-    newSchedule.user_id = user.user_id;
-    newSchedule.weekday = weekday;
+    if (!req.body[i].times || !Array.isArray(req.body[i].times)) {
+      return res
+        .status(400)
+        .json({
+          error: "times are missing from request body, or not an array."
+        });
+    }
 
-    const times = await handleTimes(newTimes, timesRepository, newSchedule);
+    const weekday = parseInt(req.body[i].weekday);
+    const times = req.body[i].times;
 
-    console.log(times);
+    if (isNaN(weekday) || !isFinite(Number(weekday)) || weekday < 0 || weekday > 6) {
+      return res
+        .status(400)
+        .json({
+          error: "weekday is not a whole number, or not between 0 and 6."
+        });
+    }
 
-    newSchedule.times = times;
-    newSchedule.user = user;
+    try {
+      times.forEach((t: timeRange) => {
+        if (!t.start_time.match(timeRegex) || !t.end_time.match(timeRegex)) {
+          throw new Error();
+        }
+      })
+    } catch (e) {
+      return res
+        .status(400)
+        .json({
+          error: "Time is in wrong format. Make sure it's a string of HH:MM:SS"
+        })
+    }
 
-    await scheduleRepository.save(newSchedule);
-    return res.sendStatus(201);
-  } else {
-    const times = await handleTimes(req.body.times, timesRepository, existingScheduleForWeekday);
-    existingScheduleForWeekday.times = times;
-    return res.sendStatus(200);
+    const dateSource = await getDataSource();
+    const userRepository = dateSource.getRepository(User);
+    const scheduleRepository = dateSource.getRepository(Schedule);
+    const timesRepository = dateSource.getRepository(Time);
+
+    const user: User | null = await userRepository.findOne({where: {user_id: decoded.user_id}});
+
+    if (!user) {
+      return res
+        .status(400)
+        .json({
+          error: "user_id does not match any existing user."
+        })
+    }
+
+    const existingScheduleForWeekday: Schedule | null = await scheduleRepository.findOne({
+      where: {
+        user_id: decoded.user_id,
+        weekday: weekday
+      }
+    });
+
+    if (existingScheduleForWeekday === null) {
+      const newTimes = times;
+      const newSchedule: Schedule = new Schedule();
+      newSchedule.user_id = user.user_id;
+      newSchedule.weekday = weekday;
+
+      newSchedule.times = await handleTimes(newTimes, timesRepository, newSchedule);
+      newSchedule.user = user;
+
+      await scheduleRepository.save(newSchedule);
+    } else {
+      existingScheduleForWeekday.times = await handleTimes(times, timesRepository, existingScheduleForWeekday);
+      await scheduleRepository.save(existingScheduleForWeekday);
+    }
   }
-
+  return res.sendStatus(200);
 }

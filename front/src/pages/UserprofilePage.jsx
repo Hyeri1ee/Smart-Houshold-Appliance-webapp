@@ -6,7 +6,7 @@ import Button from "../components/generic/Button";
 import singleIcon from "../assets/userprofile/single.png";
 import coupleIcon from "../assets/userprofile/couple.png";
 import familyIcon from "../assets/userprofile/family.png";
-import { getCookie } from "../helpers/cookies/GetCookie";
+import { getCookie } from "../helpers/GetCookie";
 
 function UserprofilePage() {
   const [selectedLabel, setSelectedLabel] = useState(null);
