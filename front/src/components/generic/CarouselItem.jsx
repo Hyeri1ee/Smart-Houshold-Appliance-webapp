@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 
 const CarouselItem = ({ text, imageUrl, isRunning }) => {
-    const backgroundStyle = isRunning ? { backgroundColor: 'var(--primary)' } : { backgroundColor: 'whitesmoke' };
-    const textStyle = isRunning ? { color: 'white' } : { color: '#333' };
+    const backgroundStyle = isRunning ? { backgroundColor: 'var(--primary)' } : { backgroundColor: 'var(--whitesmoke)' };
+    const textStyle = isRunning ? { color: 'var(--whitesmoke)' } : { color: 'var(--gray)' };
     const imageWidth = isRunning ? '68%' : '88%';
 
     return (
@@ -45,7 +45,7 @@ const styles = {
     p: {
         color: 'var(--primary)',
         margin: 0,
-        backgroundColor: 'white',
+        backgroundColor: 'var(--whitesmoke)',
         borderRadius: '5px',
         padding: '3px',
     }

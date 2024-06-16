@@ -2,10 +2,10 @@ import PropTypes from 'prop-types';
 import { format } from 'date-fns';
 
 const ScheduleDayBox = ({ day, startTime, endTime, appliance, program, isAdvice }) => {
-    const backgroundColor = isAdvice ? { backgroundColor: 'var(--primary)' } : { backgroundColor: 'whitesmoke' };
-    const dayTextColor = isAdvice ? { color: 'white' } : { color: 'var(--primary)' };
-    const whiteText = isAdvice ? { color: 'white' } : { color: '#404040' };
-    const dirtyWhiteText = isAdvice ? { color: '#D2D2D2' } : { color: 'gray' };
+    const backgroundColor = isAdvice ? { backgroundColor: 'var(--primary)' } : { backgroundColor: 'var(--whitesmoke)' };
+    const dayTextColor = isAdvice ? { color: 'var(--whitesmoke)' } : { color: 'var(--primary)' };
+    const whiteText = isAdvice ? { color: 'var(--whitesmoke)' } : { color: 'var(--gray)' };
+    const dirtyWhiteText = isAdvice ? { color: 'var(--whitesmoke)' } : { color: 'var(--gray)' };
 
     return (
         <div style={{ ...styles.box, ...backgroundColor }}>
@@ -42,22 +42,21 @@ const styles = {
         margin: '6px',
         borderRadius: '10px',
         boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-        // padding: '0px 0px',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
         textAlign: 'center',
         position: 'relative',
-        backgroundColor: 'whitesmoke',
-        color: '#404040',
+        backgroundColor: 'var(--whitesmoke)',
+        color: 'var(--gray)',
     },
     ribbonRed: {
         position: 'absolute',
         top: '10px',
         right: '-10px',
         width: '60px',
-        backgroundColor: 'red',
+        backgroundColor: 'var(--red)',
         color: 'white',
         textAlign: 'center',
         transform: 'rotate(45deg)',
@@ -115,4 +114,3 @@ const styles = {
 };
 
 export default ScheduleDayBox;
-

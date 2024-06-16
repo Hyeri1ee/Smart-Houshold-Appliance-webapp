@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/dist/style.css';
 import '../styles/timePicker.css';
 import { format, isToday, addMinutes } from 'date-fns';
+import PropTypes from 'prop-types';
 
 const TimePicker = ({ onClose, onConfirm }) => {
     const [selectedDate, setSelectedDate] = useState(new Date());
@@ -60,6 +61,11 @@ const TimePicker = ({ onClose, onConfirm }) => {
             </div>
         </div>
     );
+};
+
+TimePicker.propTypes = {
+    onClose: PropTypes.func.isRequired,
+    onConfirm: PropTypes.func.isRequired,
 };
 
 export default TimePicker;

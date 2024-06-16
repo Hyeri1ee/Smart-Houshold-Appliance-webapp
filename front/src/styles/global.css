@@ -5,6 +5,8 @@
     --secondary: #095179;
     --accent: #097931;
     --whitesmoke: #F5F5F5;
+    --red: #cc0000;
+    --gray: #333;
 
   font-family: Inter, sans-serif;
   color: var(--text);
