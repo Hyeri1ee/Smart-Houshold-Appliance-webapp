@@ -15,7 +15,7 @@ const daysOfWeek = [
     { short: "Su", full: "Sunday" }
 ];
 
-function SchedulePage() {
+function AskTimeslotsPage() {
     const [showDaysModal, setShowDaysModal] = useState(false);
     const [showTimeModal, setShowTimeModal] = useState(false);
     const [selectedDays, setSelectedDays] = useState([]);
@@ -200,4 +200,4 @@ function SchedulePage() {
     );
 }
 
-export default SchedulePage;
+export default AskTimeslotsPage;
