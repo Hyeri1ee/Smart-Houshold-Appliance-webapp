@@ -1,6 +1,6 @@
 import express from "express";
-import {getUsersWithSchedules,assignSchedulesToPeakTimes,forAuthorizedUserSchedule} from "../controllers/AdviceController";
+import { assignSchedulesToPeakTimes } from "../controllers/AdviceController";
 
 export const  adviceRoute = express.Router();
 
-adviceRoute.get("/", getUsersWithSchedules,assignSchedulesToPeakTimes,forAuthorizedUserSchedule);
+adviceRoute.get("/", assignSchedulesToPeakTimes);
