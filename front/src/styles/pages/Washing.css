@@ -108,7 +108,6 @@ h2 {
 
 .control-button {
   margin: 5px 0;
-  padding: 10px 20px;
   background-color: var(--primary);
   border: none;
   border-radius: 5px;
@@ -118,7 +117,7 @@ h2 {
   width: 100%;
   max-width: none;
   text-align: left;
-  padding-left: 20px;
+  padding: 10px 20px;
 }
 
 .control-button:hover {

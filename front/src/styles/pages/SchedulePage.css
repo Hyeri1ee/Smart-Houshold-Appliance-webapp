@@ -33,12 +33,11 @@ h2 {
 
 .day-box {
   background-color: var(--whitesmoke);
-  color: var(--text);
+  color: var(--background);
   padding: 10px;
   border-radius: 5px;
   width: 200px;
   text-align: center;
-  color: var(--background);
 }
 
 .schedule-container {
