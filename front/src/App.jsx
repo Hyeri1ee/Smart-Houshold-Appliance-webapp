@@ -3,14 +3,12 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import PanelsInfoPage from './pages/PanelsinfoPage';
-import Schedule from "./pages/SchedulePage";
+import Schedule from "./pages/AskTimeslotsPage";
 import UserprofilePage from "./pages/UserprofilePage";
 import HomeConnectLogin from "./pages/HomeConnectLogin";
 import LoginFailed from "./pages/LoginFailed";
 import DeviceDetails from "./pages/DeviceDetails";
 import BottomNavBar from "./components/generic/bottom-navigation-bar";
-import HomeConnectSimulator from './pages/HomeConnectSimulatorPage';
-import HomeAppliancesSimulator from './pages/HomeAppliancesSimulator';
 import "./styles/reset.css";
 import "./styles/global.css";
 import axios from 'axios';
@@ -36,7 +34,6 @@ function App() {
                 <Route index element={<Navigate to="/dashboard" />} />
                 <Route path="login" element={<Login />} />
                 <Route path="login/homeconnect" element={<HomeConnectLogin />} />
-                <Route path="login/homeconnect/simulator" element={<HomeConnectSimulator />} />
                 <Route path="login/failed" element={<LoginFailed />} />
                 <Route path="register" element={<Register />} />
                 <Route path="dashboard" element={<Dashboard />} />
@@ -44,7 +41,6 @@ function App() {
                 <Route path="panels/info" element={<PanelsInfoPage />} />
                 <Route path="device/details" element={<DeviceDetails />} />
                 <Route path="user/profile" element={<UserprofilePage />} />
-                <Route path="homeapp/simulator" element={<HomeAppliancesSimulator />} />
             </Routes>
             {shouldRenderNavBar && <BottomNavBar />}
         </div>
