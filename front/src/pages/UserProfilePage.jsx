@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import "../styles/global.css";
-import "../styles/pages/SchedulePage.css";
+// import "../styles/pages/SchedulePage.css";
 import Button from "../components/generic/Button";
 import singleIcon from "../assets/user/profile/single.png";
 import coupleIcon from "../assets/user/profile/couple.png";

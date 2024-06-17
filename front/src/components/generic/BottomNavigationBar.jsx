@@ -1,10 +1,10 @@
 import { Link } from 'react-router-dom';
 import '../styles/navBar/Navbar.css';
 
-import homeIcon from "/home.png";
-import devicesIcon from "/devices.png";
-import scheduleIcon from "/schedule.png";
-import settingsIcon from "/settings.png";
+import homeIcon from "../../assets/navbar/home.png";
+import devicesIcon from "../../assets/navbar/devices.png";
+import scheduleIcon from "../../assets/navbar/schedule.png";
+import settingsIcon from "../../assets/navbar/settings.png";
 
 function BottomNavBar() {
     return (
