@@ -1,13 +1,17 @@
 .bottom-nav-bar {
   position: fixed;       /* Changed to fixed to always stick to the bottom */
   bottom: 0;             /* Position the nav bar at the bottom of the viewport */
+  left: 0;               /* Align to the left to cover full width */
   width: 100%;           /* Full width of the viewport */
   height: 8vh;           /* Increased height of the navbar */
   display: flex;         /* Flexbox for layout */
   justify-content: space-around; /* Space around the items */
+  align-items: center;   /* Center items vertically */
   background-color: var(--primary); /* Background color */
   color: var(--text);    /* Text color */
   z-index: 999;          /* Ensure it stays on top of other elements */
+  padding: 0;            /* Ensure no extra padding */
+  margin: 0;             /* Ensure no extra margin */
 }
 
 .bottom-nav-bar a {

@@ -27,7 +27,7 @@ const styles = {
 };
 
 const Carousel = () => {
-  const [appliances, setAppliances] = useState([]);
+  const [items, setItems] = useState([]);
   const [message, setMessage] = useState(null);
 
   useEffect(() => {
@@ -58,7 +58,7 @@ const Carousel = () => {
           imageUrl: getApplianceImage(appliance.type)
         }));
 
-        setAppliances(appliancesData);
+        setItems(appliancesData);
       } catch (error) {
         console.log(error);
         setMessage('Sign in to Home Connect in order to see your appliances');
@@ -92,7 +92,7 @@ const Carousel = () => {
   return (
     <div style={styles.carouselContainer}>
       <div style={styles.carousel}>
-        {appliances.map((item, index) => (
+        {items.map((item, index) => (
           <CarouselItem key={index} text={item.text} imageUrl={item.imageUrl} isRunning={item.isRunning} />
         ))}
       </div>

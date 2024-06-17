@@ -22,7 +22,7 @@ const Dashboard = () => {
       <a href="panels/info">Go to panel input!</a> <br/>
       <a href="user/schedule">Go to schedule!</a> <br/>
       <h2 id='h2'>Devices</h2>
-        <Carousel items={items} />
+        <Carousel/>
     </div>
     </div>
   )
