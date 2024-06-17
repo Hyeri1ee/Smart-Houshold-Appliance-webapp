@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import '../styles/components/washing.css';
+import '../styles/pages/Washing.css';
 import washingMachineImage from "/machine.png";
 import TimePicker from '../components/generic/TimePicker';
 

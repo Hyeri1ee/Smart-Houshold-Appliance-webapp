@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import "../styles/global.css";
-import "../styles/schedule/schedule-page-style.css";
+import "../styles/pages/SchedulePage.css";
 import Button from "../components/generic/Button";
-import singleIcon from "../assets/userprofile/single.png";
-import coupleIcon from "../assets/userprofile/couple.png";
-import familyIcon from "../assets/userprofile/family.png";
-import { getCookie } from "../helpers/GetCookie";
+import singleIcon from "../assets/user/profile/single.png";
+import coupleIcon from "../assets/user/profile/couple.png";
+import familyIcon from "../assets/user/profile/family.png";
+import { getCookie } from "../helpers/CookieHelper";
 
 function UserprofilePage() {
   const [selectedLabel, setSelectedLabel] = useState(null);

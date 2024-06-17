@@ -1,15 +1,15 @@
 import express from 'express';
-import * as dbConnect from './db/db-connect';
-import {solarRoute} from './routers/solar-route';
-import {loginRoute} from './routers/login-route';
-import {registerRoute} from './routers/register-route';
-import {scheduleRoute} from "./routers/schedule-route";
-import {adviceRoute} from "./routers/advice-route";
-import {userRoute} from "./routers/user-route";
+import * as dbConnect from './db/DatabaseConnect';
+import {loginRoute} from './routers/LoginRoute';
+import {registerRoute} from './routers/RegisterRoute';
+import {scheduleRoute} from "./routers/ScheduleRoute";
+import {adviceRoute} from "./routers/AdviceRoute";
+import {userRoute} from "./routers/UserRoute";
 
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import { userProfileRoute } from './routers/userprofile-route';
+import {userProfileRoute} from './routers/UserProfileRoute';
+import {solarRoute} from "./routers/SolarRoute";
 
 const app = express();
 const port = 1337;
