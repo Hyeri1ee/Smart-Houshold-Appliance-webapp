@@ -16,23 +16,58 @@ const WashingMachine = () => {
 
   useEffect(() => {
     let interval = null;
-    if (isRunning) {
-      interval = setInterval(() => {
-        setProgress(prev => {
-          if (prev < 100) {
-            return prev + 1;
-          } else {
-            clearInterval(interval);
-            setIsRunning(false);
-            return 0;
-          }
+    const fetchActiveProgram = async () => {
+      try {
+        const accessToken = window.sessionStorage.getItem('homeconnect_simulator_auth_token');
+        const response = await fetch(`https://simulator.home-connect.com/api/homeappliances/${washingMachineId}/programs/active`, {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Accept': 'application/vnd.bsh.sdk.v1+json',
+          },
         });
-      }, 100); // Increment progress every 100ms
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log('API Response:', data.data.options);
+
+          const durationOption = data.data.options.find(option => option.key === 'BSH.Common.Option.Duration');
+          const programDuration = durationOption ? durationOption.value : null;
+
+          console.log('Program Duration (seconds):', programDuration);
+
+          if (isRunning && programDuration) {
+            const intervalDuration = programDuration * 1000 / 100;
+
+            interval = setInterval(() => {
+              setProgress(prev => {
+                if (prev < 100) {
+                  return prev + 1;
+                } else {
+                  clearInterval(interval);
+                  setIsRunning(false);
+                  return 0;
+                }
+              });
+
+            }, intervalDuration);
+          }
+        } else {
+          console.error('Error fetching active program:', response.status);
+        }
+      } catch (error) {
+        console.error('Error fetching active program:', error);
+      }
+    };
+
+    if (isRunning) {
+      fetchActiveProgram();
     } else {
       clearInterval(interval);
     }
+
     return () => clearInterval(interval);
-  }, [isRunning]);
+  }, [isRunning, washingMachineId]);
+
 
   const handleStartStop = () => {
     if (isRunning) {

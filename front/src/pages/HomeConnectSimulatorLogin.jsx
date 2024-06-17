@@ -66,7 +66,7 @@ function HomeConnectSimulatorLogin() {
       console.log('tokenRequestResponse:', tokenRequestResponse);
       window.sessionStorage.setItem('homeconnect_simulator_auth_token', tokenRequestResponse.access_token);
       window.localStorage.setItem('refresh_simulator_token', tokenRequestResponse.refresh_token);
-      window.location.href = '/pages';
+      window.location.href = '/dashboard';
     } catch (e) {
       console.error('' +
         'Some information was missing from home-connect\'s API response. This is most likely not our fault.' +
