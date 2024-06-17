@@ -9,6 +9,7 @@ import {userRoute} from "./routers/user-route";
 
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import { userProfileRoute } from './routers/userprofile-route';
 
 const app = express();
 const port = 1337;
@@ -18,7 +19,7 @@ dbConnect.handleConnection();
 app.use(cors({
   origin: 'http://localhost:5173',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'authorization'],
+  allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization'],
   credentials: true
 }));
 app.use(express.json());
@@ -30,6 +31,7 @@ app.use('/api/solar', solarRoute);
 app.use('/api/schedule', scheduleRoute);
 app.use('/api/advice', adviceRoute);
 app.use('/api/user', userRoute);
+app.use('/api/user/profile', userProfileRoute);
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);

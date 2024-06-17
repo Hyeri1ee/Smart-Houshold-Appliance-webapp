@@ -1,11 +1,11 @@
-import { DataSource } from 'typeorm';
+import {DataSource} from 'typeorm';
 import fs from 'fs/promises';
-import { User } from "./entities/user";
-import { Revoked_token } from "./entities/revoked_token";
-import { Solar_setup } from "./entities/solar_setup";
-import { Schedule } from "./entities/schedule";
-import { Time } from "./entities/time";
-import { Location } from "./entities/location";
+import {User} from "./entities/user";
+import {Revoked_token} from "./entities/revoked_token";
+import {Solar_setup} from "./entities/solar_setup";
+import {Schedule} from "./entities/schedule";
+import {Time} from "./entities/time";
+import {Location} from "./entities/location";
 
 interface Settings {
   host: string;
