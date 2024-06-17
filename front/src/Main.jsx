@@ -7,7 +7,14 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <BrowserRouter>
-      <App />
+      <App/>
     </BrowserRouter>
   </React.StrictMode>
 );
+
+//"FrogDarkest": "132a13",
+//  "FrogDark": "31572c",
+//  "Frog": "4f772d",
+//  "FrogLighter": "90a955",
+//  "FrogLightest": "ecf39e",
+//  "TestColor": "fa11f2",
