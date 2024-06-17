@@ -3,7 +3,7 @@ import {useNavigate} from "react-router-dom";
 import AddButton from "../components/generic/AddButton";
 import Checkbox from "../components/generic/Checkbox";
 import "../styles/global.css";
-import "../styles/schedule/schedule-page-style.css";
+import "../styles/pages/SchedulePage.css";
 
 const daysOfWeek = [
   {short: "Mo", full: "Monday", id: 0},
@@ -89,7 +89,7 @@ function AskTimeslotsPage() {
     //
     // const data = await resp.json();
     // document.cookie = `authorization=${data.token}`;
-    // location.href = "/dashboard";
+    // location.href = "/pages";
   };
 
   const toggleDay = (day) => {

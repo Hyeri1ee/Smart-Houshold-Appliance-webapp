@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import PropTypes from 'prop-types';
 import CarouselItem from './CarouselItem';
-import "../../styles/dashboard/dashboard.css";
+import "../../styles/pages/Dashboard.css";
 
 const styles = {
   carouselContainer: {
@@ -93,7 +93,7 @@ const Carousel = () => {
     <div style={styles.carouselContainer}>
       <div style={styles.carousel}>
         {items.map((item, index) => (
-          <CarouselItem key={index} text={item.text} imageUrl={item.imageUrl} isRunning={item.isRunning} />
+          <CarouselItem key={index} text={item.text} imageUrl={item.imageUrl} isRunning={item.isRunning}/>
         ))}
       </div>
     </div>

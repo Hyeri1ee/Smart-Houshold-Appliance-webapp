@@ -11,10 +11,3 @@ root.render(
     </BrowserRouter>
   </React.StrictMode>
 );
-
-//"FrogDarkest": "132a13",
-//  "FrogDark": "31572c",
-//  "Frog": "4f772d",
-//  "FrogLighter": "90a955",
-//  "FrogLightest": "ecf39e",
-//  "TestColor": "fa11f2",

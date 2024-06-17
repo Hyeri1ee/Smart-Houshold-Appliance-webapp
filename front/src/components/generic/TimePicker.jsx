@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/dist/style.css';
-import '../styles/timePicker.css';
+import '../styles/TimePicker.css';
 import { format, isToday, addMinutes } from 'date-fns';
 import PropTypes from 'prop-types';
 

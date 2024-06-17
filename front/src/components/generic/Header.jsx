@@ -1,4 +1,4 @@
-import "../../styles/components/generic/header.css"
+import "../../styles/components/Header.css"
 import {getDecodedJwt} from "../../helpers/DecodeJwt";
 
 let decoded = getDecodedJwt();
