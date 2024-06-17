@@ -17,11 +17,24 @@ body {
 
 h2 {
   text-align: center;
+  margin-top: 10vh;
+  padding: 20px;
+  text-transform: none;
+  font-weight: bold;
+  font-size: 3em;
+  line-height: 1.4;
+}
+
+h3 {
+  margin-bottom: 10px;
+  font-weight: 600;
 }
 
 .selected-days-container {
   position: fixed;
-  top: calc(50% + 2vh); /* Adjusting the position to be below the fixed header */
+  top: calc(
+    50% + 2vh
+  ); /* Adjusting the position to be below the fixed header */
   left: 50%;
   transform: translate(-50%, -50%);
   display: flex;
@@ -32,8 +45,8 @@ h2 {
 }
 
 .day-box {
-  background-color: var(--whitesmoke);
-  color: var(--background);
+  background-color: var(--secondary);
+  color: var(--whitesmoke);
   padding: 10px;
   border-radius: 5px;
   width: 200px;
@@ -125,13 +138,14 @@ button:hover {
   margin-top: 0;
 }
 
-.modal form div {
-  margin-bottom: 15px;
-}
-
 .time-slot {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  /* border: 1px solid var(--whitesmoke); */
+  border-radius: 8px;
+  margin: 10px 0;
 }
 
 .modal-submit-buttons {
@@ -140,9 +154,38 @@ button:hover {
   margin: 10px auto;
 }
 
+.time-slot {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 0 5px 0;
+  /* border: 2px solid red; */
+}
+
+.inputs {
+  /* border: 2px solid green; */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 80%; 
+}
+
 .input-group {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-evenly;
+  items-align: center;
+  /* border: 1px solid pink; */
+  padding: 5px 0;
+  width: 100%;
+}
+
+input {
+  border: none;
+  background-color: var(--whitesmoke);
+  color: var(--gray);
+  width: 48%;
+  margin: 0;
 }
 
 .modal-submit-buttons button {

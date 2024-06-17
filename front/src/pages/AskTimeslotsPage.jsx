@@ -1,19 +1,20 @@
-import {useState} from "react";
-import {useNavigate} from "react-router-dom";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import AddButton from "../components/generic/AddButton";
+import RemoveButton from "../components/generic/RemoveButton";
 import Checkbox from "../components/generic/Checkbox";
 import {getCookie} from "../helpers/CookieHelper";
 import "../styles/global.css";
-import "../styles/pages/SchedulePage.css";
+import "../styles/pages/AskTimeslotsPage.css";
 
 const daysOfWeek = [
-  {short: "Mo", full: "Monday", id: 0},
-  {short: "Tu", full: "Tuesday", id: 1},
-  {short: "We", full: "Wednesday", id: 2},
-  {short: "Th", full: "Thursday", id: 3},
-  {short: "Fr", full: "Friday", id: 4},
-  {short: "Sa", full: "Saturday", id: 5},
-  {short: "Su", full: "Sunday", id: 6}
+  { short: "Mo", full: "Monday", id: 0 },
+  { short: "Tu", full: "Tuesday", id: 1 },
+  { short: "We", full: "Wednesday", id: 2 },
+  { short: "Th", full: "Thursday", id: 3 },
+  { short: "Fr", full: "Friday", id: 4 },
+  { short: "Sa", full: "Saturday", id: 5 },
+  { short: "Su", full: "Sunday", id: 6 }
 ];
 
 function AskTimeslotsPage() {
@@ -114,12 +115,18 @@ function AskTimeslotsPage() {
   };
 
   const handleAddTimeSlot = () => {
-    setTimeSlots([...timeSlots, {startTime: "", endTime: ""}]);
+    setTimeSlots([...timeSlots, { startTime: "", endTime: "" }]);
+  };
+
+  const handleRemoveTimeSlot = (index) => {
+    const newTimeSlots = [...timeSlots];
+    newTimeSlots.splice(index, 1); // Remove the element at the given index
+    setTimeSlots(newTimeSlots);
   };
 
   const handleDayModal = (day) => {
     setCurrentDay(day);
-    setTimeSlots(dayTimeSlots[day] || [{startTime: "", endTime: ""}]);
+    setTimeSlots(dayTimeSlots[day] || [{ startTime: "", endTime: "" }]);
     setShowTimeModal(true);
   };
 
@@ -158,7 +165,6 @@ function AskTimeslotsPage() {
         {/* Content that can be blurred */}
       </div>
       <div className="button-container">
-        {/* TODO: it should be "add timeslot for [selected day]" */}
         <button type="button" onClick={handleAddTimeslot}>Add Timeslot</button>
         <button type="button" onClick={handleConfirm}>Confirm</button>
       </div>
@@ -189,27 +195,31 @@ function AskTimeslotsPage() {
       {showTimeModal && (
         <div className="modal-overlay">
           <div className="modal">
+            {/* TODO: it should be "add timeslot for [selected day]" */}
             <h3>Add Timeslot</h3>
             <form>
               <div className="time-slots">
                 {!allDay && timeSlots.map((slot, index) => (
                   <div key={index} className="time-slot">
-                    <div className="input-group">
-                      <label>Start Time:</label>
-                      <input
-                        type="time"
-                        value={slot.startTime}
-                        onChange={(e) => handleTimeChange(index, "startTime", e.target.value)}
-                      />
+                    <div className="inputs">
+                      <div className="input-group">
+                        <label>Start Time:</label>
+                        <input
+                          type="time"
+                          value={slot.startTime}
+                          onChange={(e) => handleTimeChange(index, "startTime", e.target.value)}
+                        />
+                      </div>
+                      <div className="input-group">
+                        <label>End Time:</label>
+                        <input
+                          type="time"
+                          value={slot.endTime}
+                          onChange={(e) => handleTimeChange(index, "endTime", e.target.value)}
+                        />
+                      </div>
                     </div>
-                    <div className="input-group">
-                      <label>End Time:</label>
-                      <input
-                        type="time"
-                        value={slot.endTime}
-                        onChange={(e) => handleTimeChange(index, "endTime", e.target.value)}
-                      />
-                    </div>
+                    <RemoveButton onRemove={handleRemoveTimeSlot} index={index} />
                   </div>
                 ))}
               </div>

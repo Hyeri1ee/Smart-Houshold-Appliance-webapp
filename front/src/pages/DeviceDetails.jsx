@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import '../styles/pages/Washing.css';
 import washingMachineImage from "../assets/device/machine.png";
 import TimePicker from '../components/generic/TimePicker';

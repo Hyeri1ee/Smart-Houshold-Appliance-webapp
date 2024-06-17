@@ -32,8 +32,8 @@ AddButton.propTypes = {
 
 const styles = {
     button: {
-        width: "60px",
-        height: "60px",
+        width: "50px",
+        height: "50px",
         borderRadius: "50%",
         backgroundColor: "#097969",
         color: "white",
@@ -42,7 +42,8 @@ const styles = {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        padding: "0",
+        margin: "6px 0",
+        padding: '0'
     },
 }
 
