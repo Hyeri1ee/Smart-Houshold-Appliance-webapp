@@ -153,15 +153,26 @@ export const putSchedule = async (req: Request, res: Response) => {
     });
 
     if (existingScheduleForWeekday === null) {
-      const newTimes = times;
-      const newSchedule: Schedule = new Schedule();
-      newSchedule.user_id = user.user_id;
-      newSchedule.weekday = weekday;
+      const newSchedule = scheduleRepository.create({
+        user_id: user.user_id,
+        weekday: weekday,
+        times: times,
+        user: user
+      })
 
-      newSchedule.times = await handleTimes(newTimes, timesRepository, newSchedule);
-      newSchedule.user = user;
+      scheduleRepository.save(newSchedule);
+      
+      // const newSchedule: Schedule = new Schedule();
+      // newSchedule.user_id = user.user_id;
+      // newSchedule.weekday = weekday;
 
-      await scheduleRepository.save(newSchedule);
+      // newSchedule.times = await handleTimes(newTimes, timesRepository, newSchedule);
+      // newSchedule.user = user;
+
+      // await scheduleRepository.save(newSchedule);
+      
+      // console.log('schedule id: %d', newSchedule.schedule_id);
+      console.log(await scheduleRepository.findOne({where: {user: user}}));
     } else {
       existingScheduleForWeekday.times = await handleTimes(times, timesRepository, existingScheduleForWeekday);
       await scheduleRepository.save(existingScheduleForWeekday);

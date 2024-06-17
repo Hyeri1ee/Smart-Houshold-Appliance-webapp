@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/pages/Washing.css';
-import washingMachineImage from "/machine.png";
+import washingMachineImage from "../assets/device/machine.png";
 import TimePicker from '../components/generic/TimePicker';
 
 const WashingMachine = () => {
