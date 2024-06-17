@@ -2,7 +2,7 @@ import { useState } from "react";
 import Button from "../components/generic/Button";
 
 import "../styles/global.css";
-import "../styles/auth/auth-page-style.css";
+import "../styles/pages/AuthPage.css";
 
 function RegisterPage() {
     const [email, setEmail] = useState("");
@@ -37,7 +37,7 @@ function RegisterPage() {
 
         const data = await resp.json();
         document.cookie = `authorization=${data.token}`;
-        location.href="/dashboard";
+        location.href="/pages";
     }
 
     return (

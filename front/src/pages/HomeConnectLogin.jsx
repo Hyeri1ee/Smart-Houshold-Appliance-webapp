@@ -71,7 +71,7 @@ function HomeConnectLogin() {
       console.log("tokenRequestResponse: " + tokenRequestResponse);
       window.sessionStorage.homeconnect_auth_token = tokenRequestResponse.access_token;
       window.localStorage.refresh_token = tokenRequestResponse.refresh_token;
-      window.location.href="/dashboard"; // Sign in successful.
+      window.location.href="/pages"; // Sign in successful.
     } catch (e) {
       console.error('' +
         'Some information was missing from home-connect\'s API response. This is most likely not our fault.' +

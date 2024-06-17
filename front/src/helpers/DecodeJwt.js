@@ -1,4 +1,4 @@
-import {getCookie} from "./GetCookie";
+import {getCookie} from "./CookieHelper";
 
 const parseJwt = (token) => {
   if (!token) {
