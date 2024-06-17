@@ -6,7 +6,7 @@ import {User} from "../db/entities/User";
 import {Time} from "../db/entities/Time";
 import {handleJwt} from "./JWTHelper";
 
-const timeRegex = /^(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d$/;
+const timeRegex = /^(?:[01]\d|2[0-3]):[0-5]\d$/;
 
 interface timeRange {
   start_time: string;
@@ -126,7 +126,7 @@ export const putSchedule = async (req: Request, res: Response) => {
       return res
         .status(400)
         .json({
-          error: "Time is in wrong format. Make sure it's a string of HH:MM:SS"
+          error: "Time is in wrong format. Make sure it's a string of HH:MM"
         })
     }
 
