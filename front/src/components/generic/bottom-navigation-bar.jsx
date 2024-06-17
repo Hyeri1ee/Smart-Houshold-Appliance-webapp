@@ -12,7 +12,7 @@ function BottomNavBar() {
             <Link to="/dashboard">
                 <img src={homeIcon} alt="Dashboard" />
             </Link>
-            <Link to="/devices">
+            <Link to="/device/details">
                 <img src={devicesIcon} alt="Devices" />
             </Link>
             <Link to="user/schedule">
