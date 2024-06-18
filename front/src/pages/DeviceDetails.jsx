@@ -112,6 +112,7 @@ const WashingMachine = () => {
         '1600': 'LaundryCare.Washer.EnumType.SpinSpeed.RPM1600'
       }[currentSpin];
 
+
       const response = await fetch(`https://simulator.home-connect.com/api/homeappliances/${washingMachineId}/programs/active`, {
         method: 'PUT',
         headers: {
