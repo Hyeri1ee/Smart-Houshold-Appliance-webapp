@@ -3,8 +3,6 @@ import '../styles/pages/Washing.css';
 import washingMachineImage from "../assets/device/machine.png";
 import TimePicker from '../components/generic/TimePicker';
 
-const accessToken = window.sessionStorage.getItem('homeconnect_simulator_auth_token');
-
 const WashingMachine = () => {
   const [startOption, setStartOption] = useState('now');
   const [isRunning, setIsRunning] = useState(false);
@@ -14,10 +12,14 @@ const WashingMachine = () => {
   const [currentSpin, setCurrentSpin] = useState('1000');
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [scheduledTime, setScheduledTime] = useState(null);
+  const [countdown, setCountdown] = useState(null);
+  const [fetchTimerActive, setFetchTimerActive] = useState(false);
+
   const washingMachineId = 'SIEMENS-HCS03WCH1-7BC6383CF794';
 
   useEffect(() => {
     let interval = null;
+
     const fetchActiveProgram = async () => {
       try {
         const accessToken = window.sessionStorage.getItem('homeconnect_simulator_auth_token');
@@ -30,12 +32,8 @@ const WashingMachine = () => {
 
         if (response.ok) {
           const data = await response.json();
-          console.log('API Response:', data.data.options);
-
           const durationOption = data.data.options.find(option => option.key === 'BSH.Common.Option.Duration');
           const programDuration = durationOption ? durationOption.value : null;
-
-          console.log('Program Duration (seconds):', programDuration);
 
           if (isRunning && programDuration) {
             const intervalDuration = programDuration * 1000 / 100;
@@ -50,7 +48,6 @@ const WashingMachine = () => {
                   return 0;
                 }
               });
-
             }, intervalDuration);
           }
         } else {
@@ -61,61 +58,31 @@ const WashingMachine = () => {
       }
     };
 
-    if (isRunning) {
+    if (fetchTimerActive) {
       fetchActiveProgram();
-    } else {
-      clearInterval(interval);
+      setFetchTimerActive(false);
     }
 
     return () => clearInterval(interval);
-  }, [isRunning, washingMachineId]);
-
+  }, [fetchTimerActive, isRunning, washingMachineId]);
 
   const handleStartStop = () => {
     if (isRunning) {
       setIsRunning(false);
-    } else {
+    } else if (startOption === 'now') {
       startWashingMachine();
+    } else if (startOption === 'schedule' && scheduledTime) {
+      const currentTime = Date.now();
+      const countdownDuration = scheduledTime.getTime() - currentTime;
+      setCountdown(countdownDuration);
+      window.localStorage.setItem('scheduledTime', scheduledTime.toISOString());
+      window.localStorage.setItem('countdown', countdownDuration);
     }
   };
 
-
-  const retrieveWashSettings = async () => {
-    
-    try {
-      const response = await fetch(`https://simulator.home-connect.com/api/homeappliances`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${accessToken}`,
-          'Content-Type': 'application/json',
-          'Accept': 'application/vnd.bsh.sdk.v1+json',
-        }
-      });
-
-     
-      if (response.status === 200) {
-        const data = await response.json();
-        const washer = data.homeappliances.find(appliance => appliance.name === "Washer Simulator");
-
-        if (washer) {
-          const washerHaId = washer.haId;
-          console.log("Washer Simulator haId:", washerHaId);
-        } else {
-          console.error("Washer Simulator not found");
-        }
-      }
-     
-
-    } catch (error) {
-      console.error();
-    }
-  }
-
-  retrieveWashSettings();
-
   const startWashingMachine = async () => {
-
     try {
+      const accessToken = window.sessionStorage.getItem('homeconnect_simulator_auth_token');
       const programKey = {
         'Cotton': 'LaundryCare.Washer.Program.Cotton',
         'EasyCare': 'LaundryCare.Washer.Program.EasyCare',
@@ -153,17 +120,17 @@ const WashingMachine = () => {
           'Accept': 'application/vnd.bsh.sdk.v1+json',
         },
         body: JSON.stringify({
-          "data":{
-            "key":programKey,
-            "options":[
-                {
-                    "key":"LaundryCare.Washer.Option.Temperature",
-                    "value":temperatureKey
-                },
-                {
-                    "key":"LaundryCare.Washer.Option.SpinSpeed",
-                    "value":spinKey
-                }
+          "data": {
+            "key": programKey,
+            "options": [
+              {
+                "key": "LaundryCare.Washer.Option.Temperature",
+                "value": temperatureKey
+              },
+              {
+                "key": "LaundryCare.Washer.Option.SpinSpeed",
+                "value": spinKey
+              }
             ]
           }
         }),
@@ -182,7 +149,7 @@ const WashingMachine = () => {
 
   const handleScheduleStart = () => {
     setStartOption('schedule');
-    setShowTimePicker(true); // Show the time picker component
+    setShowTimePicker(true);
   };
 
   const handleTimePickerClose = () => {
@@ -193,6 +160,47 @@ const WashingMachine = () => {
     setScheduledTime(selectedTime);
     setShowTimePicker(false);
   };
+
+  useEffect(() => {
+    const savedTime = window.localStorage.getItem('scheduledTime');
+    const savedCountdown = window.localStorage.getItem('countdown');
+    if (savedTime && savedCountdown) {
+      const scheduledDate = new Date(savedTime);
+      const currentTime = Date.now();
+      const countdownDuration = scheduledDate.getTime() - currentTime;
+
+      if (scheduledDate > new Date()) {
+        setScheduledTime(scheduledDate);
+        setCountdown(Math.min(countdownDuration, parseInt(savedCountdown, 10)));
+      } else {
+        window.localStorage.removeItem('scheduledTime');
+        window.localStorage.removeItem('countdown');
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    let timer;
+    if (countdown !== null && countdown > 0) {
+      timer = setInterval(() => {
+        setCountdown(prev => {
+          const newCountdown = prev - 1000;
+          window.localStorage.setItem('countdown', newCountdown);
+          if (newCountdown <= 0) {
+            clearInterval(timer);
+            setCountdown(null);
+            window.localStorage.removeItem('scheduledTime');
+            window.localStorage.removeItem('countdown');
+            startWashingMachine();
+            return 0;
+          } else {
+            return newCountdown;
+          }
+        });
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [countdown]);
 
   return (
     <div className="washing-machine-container">
@@ -217,7 +225,7 @@ const WashingMachine = () => {
         </div>
       )}
 
-      <div className={`controls-section ${isRunning ? 'blur' : ''}`}>
+      <div className={`controls-section ${countdown !== null ? 'blur' : ''}`}>
         <h2>Controls</h2>
         <div>
           <label>Mode:</label>
@@ -233,13 +241,13 @@ const WashingMachine = () => {
           <label>Temperature:</label>
           <select value={currentDegree} onChange={(e) => setCurrentDegree(e.target.value)}>
             <option value="20">20°C</option>
-            <option value="30">30°C</option>
-            <option value="40">40°C</option>
-            <option value="50">50°C</option>
-            <option value="60">60°C</option>
-            <option value="70">70°C</option>
-            <option value="80">80°C</option>
-            <option value="90">90°C</option>
+            <option value="30°C">30°C</option>
+            <option value="40°C">40°C</option>
+            <option value="50°C">50°C</option>
+            <option value="60°C">60°C</option>
+            <option value="70°C">70°C</option>
+            <option value="80°C">80°C</option>
+            <option value="90°C">90°C</option>
           </select>
         </div>
         <div>
@@ -256,7 +264,7 @@ const WashingMachine = () => {
         </div>
       </div>
 
-      <div className={`start-time-section ${isRunning ? 'blur' : ''}`}>
+      <div className={`start-time-section ${countdown !== null ? 'blur' : ''}`}>
         <h2>Start Time</h2>
         <label>
           <input
@@ -294,13 +302,19 @@ const WashingMachine = () => {
         </div>
       )}
 
+      {countdown !== null && (
+        <div className="countdown-timer">
+          Time until start: {Math.floor(countdown / 1000)} seconds
+        </div>
+      )}
+
       <div className="bottom-buttons">
         <button className="bottom-button" onClick={() => setIsRunning(false)}>Back</button>
         <button
           className={`bottom-button ${isRunning ? 'stop-button' : ''}`}
           onClick={handleStartStop}
         >
-          {isRunning ? 'Stop' : 'Start'}
+          {isRunning ? 'Stop' : startOption === 'schedule' ? 'Schedule Start' : 'Start'}
         </button>
       </div>
     </div>
