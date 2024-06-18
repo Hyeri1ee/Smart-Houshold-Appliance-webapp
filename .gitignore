@@ -3,7 +3,7 @@
 # dependencies
 front/node_modules
 server/node_modules
-openWeatherSim/node_modules
+openweather/simulation/node_modules
 server/config.json
 
 */.pnp
@@ -38,5 +38,6 @@ yarn-error.log*
 
 .vscode
 */.idea
+.fleet
+/.fleet
 /.idea
-front/cert/

@@ -1,9 +1,11 @@
-import "../../styles/components/dashboard/timeslot-recommendation.css"
-import {getCookie} from "../../helpers/cookies/GetCookie";
+import "../../styles/components/TimeslotRecommendation.css"
+import {getCookie} from "../../helpers/CookieHelper";
 
 const resp = await fetch('http://localhost:1337/api/advice', {
   method: 'GET',
-  authorization: getCookie("authorization")
+  headers: {
+    authorization: getCookie("authorization"),
+  },
 });
 
 const data = await resp.json();

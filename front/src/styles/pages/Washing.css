@@ -1,0 +1,211 @@
+.washing-machine-container {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+  background-color: var(--background);
+  color: var(--text);
+  box-sizing: border-box;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+h1 {
+  font-size: 4vh !important;
+  color: var(--text);
+  margin: 5vh 0 5vh !important;
+  font-weight: bold;
+  line-height: 1;
+  text-align: center;
+}
+
+h2 {
+  text-align: left;
+  font-size: 3vh !important;
+  color: var(--text);
+  margin-bottom: 3vh;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.image-section {
+  background-color: var(--primary);
+  height: 20vh;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 0 auto 3vh auto;
+  position: relative;
+}
+
+.centered-image {
+  max-height: 25vh;
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.running-section {
+  width: 100%;
+  margin: 0 auto;
+  text-align: center;
+  padding: 10px;
+  border-radius: 0;
+}
+
+.progress-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.progress-bar {
+  flex: 1;
+  height: 10px;
+  border-radius: 5px;
+  overflow: hidden;
+  margin: 10px auto;
+  position: relative;
+}
+
+.progress {
+  height: 100%;
+  background-color: var(--primary);
+  transition: width 0.1s;
+}
+
+.progress-percentage {
+  min-width: 50px;
+  text-align: left;
+  color: var(--text);
+  font-weight: bold;
+}
+
+.controls-section,
+.start-time-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 8vh;
+  transition: filter 0.2s;
+}
+
+.adjusted {
+  margin-bottom: 4vh !important;
+}
+
+select {
+  background-color: var(--background);
+  color: var(--text);
+  border-radius: 5px;
+  border: 1px solid var(--text);
+  margin-left: .5em;
+}
+
+.controls-section.blur,
+.start-time-section.blur {
+  filter: blur(4px);
+  pointer-events: none;
+}
+
+.control-button {
+  margin: 5px 0;
+  padding: 10px 20px;
+  background-color: var(--primary);
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  color: var(--text);
+  font-weight: bold;
+  width: 100%;
+  max-width: 250px;
+  text-align: left;
+}
+
+.control-button:hover {
+  background-color: var(--secondary);
+}
+
+.start-time-section label {
+  display: flex;
+  flex-direction: row;
+  white-space: nowrap;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.start-time-section label:first-of-type {
+  margin-bottom: .5em;
+}
+
+.scheduled-time {
+  text-align: center;
+  margin-bottom: 1vh;
+  min-height: 3vh;
+  max-height: 3vh;
+}
+
+input[type="radio"] {
+  margin-right: 10px;
+}
+
+.bottom-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.bottom-button {
+  margin: 0 10px;
+  padding: 10px 20px;
+  background-color: var(--primary);
+  border: none;
+  border-radius: 5px;
+  color: var(--text);
+  cursor: pointer;
+  font-weight: bold;
+  flex: 0 0 auto;
+}
+
+.bottom-button:hover {
+  background-color: var(--secondary);
+}
+
+.stop-button {
+  background-color: red;
+  color: white;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.9);
+  z-index: 10;
+}
+
+.controls-section.blur,
+.start-time-section.blur {
+  filter: blur(5px);
+  transition: filter 0.3s ease;
+}
+
+.countdown-timer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: var(--primary);
+  padding: 10px 20px;
+  border-radius: 8px;
+}
+
+.centered-box {
+  z-index: 2;
+}

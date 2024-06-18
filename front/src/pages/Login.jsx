@@ -2,7 +2,7 @@ import { useState } from "react";
 import Button from "../components/generic/Button"
 
 import "../styles/global.css";
-import "../styles/auth/auth-page-style.css";
+import "../styles/pages/AuthPage.css";
 
 function LoginPage() {
   const [email, setEmail] = useState("");
@@ -17,8 +17,7 @@ function LoginPage() {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        email: email,
-        password: password,
+        email: email, password: password
       })
     });
 
@@ -29,7 +28,9 @@ function LoginPage() {
 
     const data = await resp.json();
     document.cookie = `authorization=${data.token}`;
-    location.href="/dashboard";
+    const isFirstLogin = data.isFirstLogin;
+    window.location.href = '/dashboard';
+
   }
 
   return (

@@ -2,7 +2,7 @@ import { useState } from "react";
 import Button from "../components/generic/Button";
 
 import "../styles/global.css";
-import "../styles/auth/auth-page-style.css";
+import "../styles/pages/AuthPage.css";
 
 function RegisterPage() {
     const [email, setEmail] = useState("");
