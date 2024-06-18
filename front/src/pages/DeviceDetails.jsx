@@ -15,52 +15,25 @@ const WashingMachine = () => {
   const [countdown, setCountdown] = useState(null);
   const [fetchTimerActive, setFetchTimerActive] = useState(false);
 
+  const [decreaseStartTimeHeight, setDecreaseStartTimeHeight] = useState(false);
   const washingMachineId = 'SIEMENS-HCS03WCH1-7BC6383CF794';
 
   useEffect(() => {
     let interval = null;
-
-    const fetchActiveProgram = async () => {
-      try {
-        const accessToken = window.sessionStorage.getItem('homeconnect_simulator_auth_token');
-        const response = await fetch(`https://simulator.home-connect.com/api/homeappliances/${washingMachineId}/programs/active`, {
-          headers: {
-            'Authorization': `Bearer ${accessToken}`,
-            'Accept': 'application/vnd.bsh.sdk.v1+json',
-          },
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          const durationOption = data.data.options.find(option => option.key === 'BSH.Common.Option.Duration');
-          const programDuration = durationOption ? durationOption.value : null;
-
-          if (isRunning && programDuration) {
-            const intervalDuration = programDuration * 1000 / 100;
-
-            interval = setInterval(() => {
-              setProgress(prev => {
-                if (prev < 100) {
-                  return prev + 1;
-                } else {
-                  clearInterval(interval);
-                  setIsRunning(false);
-                  return 0;
-                }
-              });
-            }, intervalDuration);
+    if (isRunning) {
+      interval = setInterval(() => {
+        setProgress(prev => {
+          if (prev < 100) {
+            return prev + 1;
+          } else {
+            clearInterval(interval);
+            setIsRunning(false);
+            return 0;
           }
-        } else {
-          console.error('Error fetching active program:', response.status);
-        }
-      } catch (error) {
-        console.error('Error fetching active program:', error);
-      }
-    };
-
-    if (fetchTimerActive) {
-      fetchActiveProgram();
-      setFetchTimerActive(false);
+        });
+      }, 100); // Increment progress every 100ms
+    } else {
+      clearInterval(interval);
     }
 
     return () => clearInterval(interval);
@@ -79,6 +52,22 @@ const WashingMachine = () => {
       window.localStorage.setItem('countdown', countdownDuration);
     }
   };
+
+  const reduceStartTimeSectionHeight = () => {
+    document.querySelector('.start-time-section').classList.add('adjusted');
+  }
+
+  const increaseStartTimeSectionHeight = () => {
+    document.querySelector('.start-time-section').classList.remove('adjusted');
+  }
+
+  useEffect(() => {
+    if (decreaseStartTimeHeight) {
+      reduceStartTimeSectionHeight();
+    } else {
+      increaseStartTimeSectionHeight();
+    }
+  }, [decreaseStartTimeHeight]);
 
   const startWashingMachine = async () => {
     try {
@@ -159,6 +148,7 @@ const WashingMachine = () => {
 
   const handleTimePickerConfirm = (selectedTime) => {
     setScheduledTime(selectedTime);
+    setDecreaseStartTimeHeight(true);
     setShowTimePicker(false);
   };
 
@@ -290,7 +280,10 @@ const WashingMachine = () => {
             type="radio"
             value="now"
             checked={startOption === 'now'}
-            onChange={() => setStartOption('now')}
+            onChange={() => {
+              setStartOption('now');
+              setDecreaseStartTimeHeight(false);
+            }}
           />
           Start Now
         </label>
@@ -303,6 +296,11 @@ const WashingMachine = () => {
           />
           Schedule Start
         </label>
+        {startOption === 'schedule' && scheduledTime && (
+          <div className="scheduled-time">
+            Scheduled Time: {scheduledTime.toLocaleString()}
+          </div>
+        )}
       </div>
 
       {showTimePicker && (
@@ -315,11 +313,7 @@ const WashingMachine = () => {
         </div>
       )}
 
-      {startOption === 'schedule' && scheduledTime && (
-        <div className="scheduled-time">
-          Scheduled Time: {scheduledTime.toLocaleString()}
-        </div>
-      )}
+
 
       {countdown !== null && (
         <div className={`countdown-timer ${countdown !== null ? 'centered-box' : ''}`}>

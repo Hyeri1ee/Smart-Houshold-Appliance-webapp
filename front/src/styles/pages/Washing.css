@@ -2,7 +2,7 @@
   width: 100vw;
   height: 100vh;
   margin: 0;
-  padding: 3vh;
+  padding: 0;
   text-align: left;
   background-color: var(--background);
   color: var(--text);
@@ -14,25 +14,22 @@
 h1 {
   font-size: 4vh !important;
   color: var(--text);
-  margin-bottom: 3vh;
-  text-transform: uppercase;
+  margin: 5vh 0 5vh !important;
   font-weight: bold;
   line-height: 1;
-  text-align: left;
+  text-align: center;
 }
 
 h2 {
   text-align: left;
   font-size: 3vh !important;
   color: var(--text);
-  margin-bottom: 5vh;
-  text-transform: uppercase;
+  margin-bottom: 3vh;
   font-weight: bold;
   line-height: 1;
 }
 
 .image-section {
-  margin-top: 3vh;
   background-color: var(--primary);
   height: 20vh;
   width: 100vw;
@@ -40,10 +37,8 @@ h2 {
   align-items: center;
   justify-content: center;
   padding: 0;
-  margin-bottom: 5vh;
+  margin: 0 auto 3vh auto;
   position: relative;
-  left: 50%;
-  transform: translateX(-50%);
 }
 
 .centered-image {
@@ -94,10 +89,21 @@ h2 {
 .start-time-section {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  width: 100%;
-  margin-bottom: 5vh;
+  align-items: center;
+  margin-bottom: 8vh;
   transition: filter 0.2s;
+}
+
+.adjusted {
+  margin-bottom: 4vh !important;
+}
+
+select {
+  background-color: var(--background);
+  color: var(--text);
+  border-radius: 5px;
+  border: 1px solid var(--text);
+  margin-left: .5em;
 }
 
 .controls-section.blur,
@@ -108,6 +114,7 @@ h2 {
 
 .control-button {
   margin: 5px 0;
+  padding: 10px 20px;
   background-color: var(--primary);
   border: none;
   border-radius: 5px;
@@ -115,9 +122,8 @@ h2 {
   color: var(--text);
   font-weight: bold;
   width: 100%;
-  max-width: none;
+  max-width: 250px;
   text-align: left;
-  padding: 10px 20px;
 }
 
 .control-button:hover {
@@ -126,12 +132,21 @@ h2 {
 
 .start-time-section label {
   display: flex;
-  align-items: center;
+  flex-direction: row;
   white-space: nowrap;
-  margin: 5px 0;
   color: var(--text);
   cursor: pointer;
-  text-align: left;
+}
+
+.start-time-section label:first-of-type {
+  margin-bottom: .5em;
+}
+
+.scheduled-time {
+  text-align: center;
+  margin-bottom: 1vh;
+  min-height: 3vh;
+  max-height: 3vh;
 }
 
 input[type="radio"] {

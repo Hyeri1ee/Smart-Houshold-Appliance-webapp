@@ -5,11 +5,12 @@ import {registerRoute} from './routers/RegisterRoute';
 import {scheduleRoute} from "./routers/ScheduleRoute";
 import {adviceRoute} from "./routers/AdviceRoute";
 import {userRoute} from "./routers/UserRoute";
+import {userProfileRoute} from './routers/UserProfileRoute';
+import {solarRoute} from "./routers/SolarRoute";
+import {washingScheduleRoute} from "./routers/ScheduledWashingController";
 
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import {userProfileRoute} from './routers/UserProfileRoute';
-import {solarRoute} from "./routers/SolarRoute";
 
 const app = express();
 const port = 1337;
@@ -32,6 +33,7 @@ app.use('/api/schedule', scheduleRoute);
 app.use('/api/advice', adviceRoute);
 app.use('/api/user', userRoute);
 app.use('/api/user/profile', userProfileRoute);
+app.use('/api/schedule/wash', washingScheduleRoute);
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);

@@ -1,7 +1,7 @@
 const captureCode = (searchParams) => {
   if (!searchParams.has('code')) {
     console.error('The authorization code is missing!');
-    window.location.href = '/login/failed';
+    // window.location.href = '/login/failed';
   }
 
   return searchParams.get('code');
@@ -30,7 +30,7 @@ const getToken = async (authorizationCode) => {
 
   if (!resp.ok) {
     console.error('Something went wrong when getting auth and refresh token.');
-    window.location.href = '/login/failed';
+    // window.location.href = '/login/failed';
     return null;
   }
 

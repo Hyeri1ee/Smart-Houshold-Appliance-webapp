@@ -3,7 +3,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Schedule from "./pages/SchedulePage";
-import UserProfilePage from "./pages/UserprofilePage";
+import UserProfilePage from "./pages/UserProfilePage";
 import HomeConnectLogin from "./pages/HomeConnectLogin";
 import LoginFailed from "./pages/LoginFailed";
 import DeviceDetails from "./pages/DeviceDetails";
@@ -27,7 +27,8 @@ function App() {
   const location = useLocation();
 
   // exclude navbar from login and register
-  const shouldRenderNavBar = !["/login", "/register", "/user/timeslots"].includes(location.pathname);
+  const excludedPaths = ["/login", "/register", "/user/timeslots", "/user/profile"];
+  const shouldRenderNavBar = !excludedPaths.includes(location.pathname) && !excludedPaths.includes(location.pathname.replace(/\/$/, ''));
 
   return (<div className="app-container">
     <Routes>
