@@ -1,7 +1,7 @@
 const checkTokenPresent = () => {
   // If the user has already signed in to homeconnect, redirect them to the pages page. They shouldn't be here.
   if (window.localStorage.getItem("refresh_token")) {
-    window.location.href="/pages";
+    window.location.href="/dashboard";
   }
 }
 
