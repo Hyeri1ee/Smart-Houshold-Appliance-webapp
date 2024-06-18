@@ -12,6 +12,7 @@ const WashingMachine = () => {
   const [currentSpin, setCurrentSpin] = useState('1000');
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [scheduledTime, setScheduledTime] = useState(null);
+  const [decreaseStartTimeHeight, setDecreaseStartTimeHeight] = useState(false);
   const washingMachineId = 'SIEMENS-HCS03WCH1-7BC6383CF794';
 
   useEffect(() => {
@@ -41,6 +42,22 @@ const WashingMachine = () => {
       startWashingMachine();
     }
   };
+
+  const reduceStartTimeSectionHeight = () => {
+    document.querySelector('.start-time-section').classList.add('adjusted');
+  }
+
+  const increaseStartTimeSectionHeight = () => {
+    document.querySelector('.start-time-section').classList.remove('adjusted');
+  }
+
+  useEffect(() => {
+    if (decreaseStartTimeHeight) {
+      reduceStartTimeSectionHeight();
+    } else {
+      increaseStartTimeSectionHeight();
+    }
+  }, [decreaseStartTimeHeight]);
 
   const startWashingMachine = async () => {
     const accessToken = window.sessionStorage.getItem('homeconnect_simulator_auth_token');
@@ -121,6 +138,7 @@ const WashingMachine = () => {
 
   const handleTimePickerConfirm = (selectedTime) => {
     setScheduledTime(selectedTime);
+    setDecreaseStartTimeHeight(true);
     setShowTimePicker(false);
   };
 
@@ -193,7 +211,10 @@ const WashingMachine = () => {
             type="radio"
             value="now"
             checked={startOption === 'now'}
-            onChange={() => setStartOption('now')}
+            onChange={() => {
+              setStartOption('now');
+              setDecreaseStartTimeHeight(false);
+            }}
           />
           Start Now
         </label>
@@ -206,6 +227,11 @@ const WashingMachine = () => {
           />
           Schedule Start
         </label>
+        {startOption === 'schedule' && scheduledTime && (
+          <div className="scheduled-time">
+            Scheduled Time: {scheduledTime.toLocaleString()}
+          </div>
+        )}
       </div>
 
       {showTimePicker && (
@@ -215,12 +241,6 @@ const WashingMachine = () => {
             onClose={handleTimePickerClose}
             onConfirm={handleTimePickerConfirm}
           />
-        </div>
-      )}
-
-      {startOption === 'schedule' && scheduledTime && (
-        <div className="scheduled-time">
-          Scheduled Time: {scheduledTime.toLocaleString()}
         </div>
       )}
 

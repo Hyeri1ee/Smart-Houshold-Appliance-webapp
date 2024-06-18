@@ -4,7 +4,6 @@ body {
   justify-content: flex-start;
   align-items: center;
   height: 100vh;
-  padding: 2%;
   margin: 0;
   overflow: hidden;
 }
@@ -17,7 +16,6 @@ body {
 
 h2 {
   text-align: center;
-  margin-top: 10vh;
   padding: 20px;
   text-transform: none;
   font-weight: bold;
@@ -34,7 +32,7 @@ h3 {
   position: fixed;
   top: calc(
     50% + 2vh
-  ); /* Adjusting the position to be below the fixed header */
+  );
   left: 50%;
   transform: translate(-50%, -50%);
   display: flex;
@@ -174,8 +172,6 @@ button:hover {
 .input-group {
   display: flex;
   justify-content: space-evenly;
-  items-align: center;
-  /* border: 1px solid pink; */
   padding: 5px 0;
   width: 100%;
 }
