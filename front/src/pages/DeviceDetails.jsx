@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../styles/pages/Washing.css';
 import washingMachineImage from "../assets/device/machine.png";
 import TimePicker from '../components/generic/TimePicker';
@@ -12,6 +12,9 @@ const WashingMachine = () => {
   const [currentSpin, setCurrentSpin] = useState('1000');
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [scheduledTime, setScheduledTime] = useState(null);
+  const [countdown, setCountdown] = useState(null);
+  const [fetchTimerActive, setFetchTimerActive] = useState(false);
+
   const [decreaseStartTimeHeight, setDecreaseStartTimeHeight] = useState(false);
   const washingMachineId = 'SIEMENS-HCS03WCH1-7BC6383CF794';
 
@@ -32,14 +35,21 @@ const WashingMachine = () => {
     } else {
       clearInterval(interval);
     }
+
     return () => clearInterval(interval);
-  }, [isRunning]);
+  }, [fetchTimerActive, isRunning, washingMachineId]);
 
   const handleStartStop = () => {
     if (isRunning) {
       setIsRunning(false);
-    } else {
+    } else if (startOption === 'now') {
       startWashingMachine();
+    } else if (startOption === 'schedule' && scheduledTime) {
+      const currentTime = Date.now();
+      const countdownDuration = scheduledTime.getTime() - currentTime;
+      setCountdown(countdownDuration);
+      window.localStorage.setItem('scheduledTime', scheduledTime.toISOString());
+      window.localStorage.setItem('countdown', countdownDuration);
     }
   };
 
@@ -60,9 +70,8 @@ const WashingMachine = () => {
   }, [decreaseStartTimeHeight]);
 
   const startWashingMachine = async () => {
-    const accessToken = window.sessionStorage.getItem('homeconnect_simulator_auth_token');
-
     try {
+      const accessToken = window.sessionStorage.getItem('homeconnect_simulator_auth_token');
       const programKey = {
         'Cotton': 'LaundryCare.Washer.Program.Cotton',
         'EasyCare': 'LaundryCare.Washer.Program.EasyCare',
@@ -92,6 +101,7 @@ const WashingMachine = () => {
         '1600': 'LaundryCare.Washer.EnumType.SpinSpeed.RPM1600'
       }[currentSpin];
 
+
       const response = await fetch(`https://simulator.home-connect.com/api/homeappliances/${washingMachineId}/programs/active`, {
         method: 'PUT',
         headers: {
@@ -100,17 +110,17 @@ const WashingMachine = () => {
           'Accept': 'application/vnd.bsh.sdk.v1+json',
         },
         body: JSON.stringify({
-          "data":{
-            "key":programKey,
-            "options":[
-                {
-                    "key":"LaundryCare.Washer.Option.Temperature",
-                    "value":temperatureKey
-                },
-                {
-                    "key":"LaundryCare.Washer.Option.SpinSpeed",
-                    "value":spinKey
-                }
+          "data": {
+            "key": programKey,
+            "options": [
+              {
+                "key": "LaundryCare.Washer.Option.Temperature",
+                "value": temperatureKey
+              },
+              {
+                "key": "LaundryCare.Washer.Option.SpinSpeed",
+                "value": spinKey
+              }
             ]
           }
         }),
@@ -129,7 +139,7 @@ const WashingMachine = () => {
 
   const handleScheduleStart = () => {
     setStartOption('schedule');
-    setShowTimePicker(true); // Show the time picker component
+    setShowTimePicker(true);
   };
 
   const handleTimePickerClose = () => {
@@ -141,6 +151,65 @@ const WashingMachine = () => {
     setDecreaseStartTimeHeight(true);
     setShowTimePicker(false);
   };
+
+  const handleCancelSchedule = () => {
+    setStartOption('now');
+    setScheduledTime(null);
+    setCountdown(null);
+    window.localStorage.removeItem('scheduledTime');
+    window.localStorage.removeItem('countdown');
+  };
+
+  const formatCountdown = (milliseconds) => {
+    const totalSeconds = Math.floor(milliseconds / 1000);
+    const days = Math.floor(totalSeconds / (3600 * 24));
+    const hours = Math.floor((totalSeconds % (3600 * 24)) / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    return `${days}d ${hours}h ${minutes}m ${seconds}s`;
+  };
+
+  useEffect(() => {
+    const savedTime = window.localStorage.getItem('scheduledTime');
+    const savedCountdown = window.localStorage.getItem('countdown');
+    if (savedTime && savedCountdown) {
+      const scheduledDate = new Date(savedTime);
+      const currentTime = Date.now();
+      const countdownDuration = scheduledDate.getTime() - currentTime;
+
+      if (scheduledDate > new Date()) {
+        setScheduledTime(scheduledDate);
+        setCountdown(Math.min(countdownDuration, parseInt(savedCountdown, 10)));
+      } else {
+        window.localStorage.removeItem('scheduledTime');
+        window.localStorage.removeItem('countdown');
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    let timer;
+    if (countdown !== null && countdown > 0) {
+      timer = setInterval(() => {
+        setCountdown(prev => {
+          const newCountdown = prev - 1000;
+          window.localStorage.setItem('countdown', newCountdown);
+          if (newCountdown <= 0) {
+            clearInterval(timer);
+            setCountdown(null);
+            window.localStorage.removeItem('scheduledTime');
+            window.localStorage.removeItem('countdown');
+            startWashingMachine();
+            return 0;
+          } else {
+            return newCountdown;
+          }
+        });
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [countdown]);
 
   return (
     <div className="washing-machine-container">
@@ -165,7 +234,7 @@ const WashingMachine = () => {
         </div>
       )}
 
-      <div className={`controls-section ${isRunning ? 'blur' : ''}`}>
+      <div className={`controls-section ${countdown !== null ? 'blur' : ''}`}>
         <h2>Controls</h2>
         <div>
           <label>Mode:</label>
@@ -204,7 +273,7 @@ const WashingMachine = () => {
         </div>
       </div>
 
-      <div className={`start-time-section ${isRunning ? 'blur' : ''}`}>
+      <div className={`start-time-section ${countdown !== null ? 'blur' : ''}`}>
         <h2>Start Time</h2>
         <label>
           <input
@@ -244,13 +313,23 @@ const WashingMachine = () => {
         </div>
       )}
 
+
+
+      {countdown !== null && (
+        <div className={`countdown-timer ${countdown !== null ? 'centered-box' : ''}`}>
+          <div className="countdown-box">
+            Time until start: {formatCountdown(countdown)}
+          </div>
+        </div>
+      )}
+
       <div className="bottom-buttons">
         <button className="bottom-button" onClick={() => setIsRunning(false)}>Back</button>
         <button
           className={`bottom-button ${isRunning ? 'stop-button' : ''}`}
-          onClick={handleStartStop}
+          onClick={countdown !== null ? handleCancelSchedule : handleStartStop}
         >
-          {isRunning ? 'Stop' : 'Start'}
+          {isRunning ? 'Stop' : countdown !== null ? 'Cancel' : startOption === 'schedule' ? 'Schedule Start' : 'Start'}
         </button>
       </div>
     </div>

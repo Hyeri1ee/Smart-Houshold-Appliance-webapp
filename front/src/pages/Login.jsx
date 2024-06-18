@@ -28,7 +28,9 @@ function LoginPage() {
 
     const data = await resp.json();
     document.cookie = `authorization=${data.token}`;
-    location.href="/pages";
+    const isFirstLogin = data.isFirstLogin;
+    window.location.href = '/dashboard';
+
   }
 
   return (

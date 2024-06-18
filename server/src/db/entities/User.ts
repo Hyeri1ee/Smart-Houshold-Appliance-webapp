@@ -19,6 +19,9 @@ export class User {
   @Column({ type: 'smallint', nullable: true })
   profile_type: number;
 
+  @Column({ type : 'boolean', nullable: false, default: true })
+  ifFirstLogin: boolean;
+
 
   @OneToOne(() => Location)
   @JoinColumn()
