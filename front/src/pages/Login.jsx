@@ -29,11 +29,8 @@ function LoginPage() {
     const data = await resp.json();
     document.cookie = `authorization=${data.token}`;
     const isFirstLogin = data.isFirstLogin;
-    if (isFirstLogin) {
-      window.location.href = '/user/profile';
-    } else {
-      window.location.href = '/dashboard';
-    }
+    window.location.href = '/dashboard';
+
   }
 
   return (
