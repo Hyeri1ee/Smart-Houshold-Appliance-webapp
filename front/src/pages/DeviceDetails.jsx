@@ -169,6 +169,16 @@ const WashingMachine = () => {
     window.localStorage.removeItem('countdown');
   };
 
+  const formatCountdown = (milliseconds) => {
+    const totalSeconds = Math.floor(milliseconds / 1000);
+    const days = Math.floor(totalSeconds / (3600 * 24));
+    const hours = Math.floor((totalSeconds % (3600 * 24)) / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    return `${days}d ${hours}h ${minutes}m ${seconds}s`;
+  };
+
   useEffect(() => {
     const savedTime = window.localStorage.getItem('scheduledTime');
     const savedCountdown = window.localStorage.getItem('countdown');
@@ -311,8 +321,10 @@ const WashingMachine = () => {
       )}
 
       {countdown !== null && (
-        <div className="countdown-timer">
-          Time until start: {Math.floor(countdown / 1000)} seconds
+        <div className={`countdown-timer ${countdown !== null ? 'centered-box' : ''}`}>
+          <div className="countdown-box">
+            Time until start: {formatCountdown(countdown)}
+          </div>
         </div>
       )}
 
