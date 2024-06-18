@@ -2,6 +2,7 @@ import {Request, Response} from 'express';
 import {handleJwt} from "./JWTHelper";
 import {getDataSource} from "../db/DatabaseConnect";
 import {User} from "../db/entities/User";
+import { Schedule } from '../db/entities/Schedule';
 
 export const checkUserInfo = async (req: Request, res: Response) => {
   let decoded
@@ -10,7 +11,7 @@ export const checkUserInfo = async (req: Request, res: Response) => {
   } catch (e) {
     console.log(e);
     return res
-      .status(404)
+      .status(400)
       .json({
         message: 'User not signed in',
         redirect: '/login'
@@ -19,6 +20,7 @@ export const checkUserInfo = async (req: Request, res: Response) => {
 
   const dataSource = await getDataSource(); // get data source
   const userRepository = dataSource.getRepository(User);
+  const scheduleRepository = dataSource.getRepository(Schedule);
   const user = await userRepository.findOne({ where: { user_id: decoded.user_id } });
 
   if (!user) {
@@ -34,7 +36,9 @@ export const checkUserInfo = async (req: Request, res: Response) => {
       });
   }
 
-  if (!user.schedule || user.schedule.length === 0) {
+  const schedule = await scheduleRepository.findOne({where: {user: user}});
+
+  if (!schedule) {
     return res
       .status(206)
       .json({
