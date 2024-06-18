@@ -161,6 +161,14 @@ const WashingMachine = () => {
     setShowTimePicker(false);
   };
 
+  const handleCancelSchedule = () => {
+    setStartOption('now');
+    setScheduledTime(null);
+    setCountdown(null);
+    window.localStorage.removeItem('scheduledTime');
+    window.localStorage.removeItem('countdown');
+  };
+
   useEffect(() => {
     const savedTime = window.localStorage.getItem('scheduledTime');
     const savedCountdown = window.localStorage.getItem('countdown');
@@ -241,13 +249,13 @@ const WashingMachine = () => {
           <label>Temperature:</label>
           <select value={currentDegree} onChange={(e) => setCurrentDegree(e.target.value)}>
             <option value="20">20°C</option>
-            <option value="30°C">30°C</option>
-            <option value="40°C">40°C</option>
-            <option value="50°C">50°C</option>
-            <option value="60°C">60°C</option>
-            <option value="70°C">70°C</option>
-            <option value="80°C">80°C</option>
-            <option value="90°C">90°C</option>
+            <option value="30">30°C</option>
+            <option value="40">40°C</option>
+            <option value="50">50°C</option>
+            <option value="60">60°C</option>
+            <option value="70">70°C</option>
+            <option value="80">80°C</option>
+            <option value="90">90°C</option>
           </select>
         </div>
         <div>
@@ -312,9 +320,9 @@ const WashingMachine = () => {
         <button className="bottom-button" onClick={() => setIsRunning(false)}>Back</button>
         <button
           className={`bottom-button ${isRunning ? 'stop-button' : ''}`}
-          onClick={handleStartStop}
+          onClick={countdown !== null ? handleCancelSchedule : handleStartStop}
         >
-          {isRunning ? 'Stop' : startOption === 'schedule' ? 'Schedule Start' : 'Start'}
+          {isRunning ? 'Stop' : countdown !== null ? 'Cancel' : startOption === 'schedule' ? 'Schedule Start' : 'Start'}
         </button>
       </div>
     </div>
