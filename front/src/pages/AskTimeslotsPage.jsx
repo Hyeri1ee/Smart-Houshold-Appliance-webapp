@@ -2,6 +2,7 @@ import {useState} from "react";
 import {useNavigate} from "react-router-dom";
 import AddButton from "../components/generic/AddButton";
 import Checkbox from "../components/generic/Checkbox";
+import {getCookie} from "../helpers/CookieHelper";
 import "../styles/global.css";
 import "../styles/pages/SchedulePage.css";
 
@@ -68,28 +69,34 @@ function AskTimeslotsPage() {
 
     console.log(timeSlots);
 
-    // const resp = await fetch('http://localhost:1337/api/schedule', {
-    //   method: 'PUT',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //     'authorization': getCookie('authorization'),
-    //   },
-    //   body: JSON.stringify({
-    //     first_name: firstName,
-    //     email: email,
-    //     password: password,
-    //     password_confirmation: confirmPassword
-    //   })
-    // });
-    //
-    // if (!resp.ok) {
-    //   console.error("Login failed!");
-    //   return;
-    // }
-    //
-    // const data = await resp.json();
-    // document.cookie = `authorization=${data.token}`;
-    // location.href = "/pages";
+    const auth = getCookie('authorization');
+
+    const resp = await fetch('http://localhost:1337/api/schedule', {
+      method: 'PUT',
+      headers: {
+        'Authorization': auth,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify([
+          {
+          "weekday": 2,
+          "times": [
+            {
+              "start_time": "12:00:00",
+              "end_time": "18:00:00"
+            }
+          ]
+        }
+      ])
+    });
+    
+    if (!resp.ok) {
+      console.error("Fetch failed!");
+      return;
+    }
+    
+    const data = await resp.json();;
+    location.href = "/dashboard";
   };
 
   const toggleDay = (day) => {

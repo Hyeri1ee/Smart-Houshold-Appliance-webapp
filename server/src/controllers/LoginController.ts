@@ -22,6 +22,7 @@ export const checkUserExist = async (req: Request, res: Response): Promise<void>
       return;
     }
 
+    
     // 2-2. compare with hashed password
     if (!(await bcrypt.compare(password, user.password))) {
       res.status(401).json({ error: 'Invalid email or password' });
@@ -29,6 +30,7 @@ export const checkUserExist = async (req: Request, res: Response): Promise<void>
       return;
     }
 
+    const isFirstLogin = user.ifFirstLogin;
     // 3. JWT token generation
     const payload: UserJwtPayload = {
       user_id: user.user_id,
@@ -48,7 +50,7 @@ export const checkUserExist = async (req: Request, res: Response): Promise<void>
     const token = jwt.sign(payload, jwtKey);
 
     // 5. success response
-    res.status(200).json({ "token": token });
+    res.status(200).json({ "token": token, "isFirstLogin" : isFirstLogin });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });

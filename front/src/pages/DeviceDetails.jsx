@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/pages/Washing.css';
-import washingMachineImage from "/machine.png";
+import washingMachineImage from "../assets/device/machine.png";
 import TimePicker from '../components/generic/TimePicker';
+
+const accessToken = window.sessionStorage.getItem('homeconnect_simulator_auth_token');
 
 const WashingMachine = () => {
   const [startOption, setStartOption] = useState('now');
@@ -77,8 +79,41 @@ const WashingMachine = () => {
     }
   };
 
+
+  const retrieveWashSettings = async () => {
+    
+    try {
+      const response = await fetch(`https://simulator.home-connect.com/api/homeappliances`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+          'Accept': 'application/vnd.bsh.sdk.v1+json',
+        }
+      });
+
+     
+      if (response.status === 200) {
+        const data = await response.json();
+        const washer = data.homeappliances.find(appliance => appliance.name === "Washer Simulator");
+
+        if (washer) {
+          const washerHaId = washer.haId;
+          console.log("Washer Simulator haId:", washerHaId);
+        } else {
+          console.error("Washer Simulator not found");
+        }
+      }
+     
+
+    } catch (error) {
+      console.error();
+    }
+  }
+
+  retrieveWashSettings();
+
   const startWashingMachine = async () => {
-    const accessToken = window.sessionStorage.getItem('homeconnect_simulator_auth_token');
 
     try {
       const programKey = {
