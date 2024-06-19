@@ -42,7 +42,6 @@ const checkValidInfo = async (req: Request, res: Response) => {
     'client_secret': process.env.CLIENT_SECRET,
   }
 
-
   const resp = await fetch(`${
       'https://simulator.home-connect.com' +
       '/security/oauth/token'
@@ -97,27 +96,40 @@ const checkValidInfo = async (req: Request, res: Response) => {
 
   const data = await response.json();
 
-  for (const setting of req.body.settings) {
-    let valid: boolean = false;
+  let valid: boolean = false;
 
-    for (const program of data.data.progams) {
-      if (program.key === setting.key) {
-        const availableResp =
-          await fetch(`https://simulator.home-connect.com/api/homeappliances/${req.body.washerId}/programs/available/${setting.key}`, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${accessToken}`,
-            'Accept': 'application/vnd.bsh.sdk.v1+json',
-          },
-        });
+  for (const program of data.data.progams) {
+    if (program.key === req.body.settings.data.key) {
+      valid = true
+    }
+  }
 
-        const availableSettings = await availableResp.json();
-        for (const option of availableSettings.data.options) {
-          for (const value of option.constraints.allowedvalues) {
-            if (value === setting.value) {
-              valid = true;
-            }
-          }
+  if (!valid) {
+    res
+      .status(400)
+      .json({
+        error: 'Invalid program key',
+      })
+    return false;
+  }
+
+  valid = false;
+
+  const availableOptionsResp =
+    await fetch(`https://simulator.home-connect.com/api/homeappliances/${req.body.washerId}/programs/available/${req.body.settings.data.key}`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${accessToken}`,
+      'Accept': 'application/vnd.bsh.sdk.v1+json',
+    },
+  });
+
+  const availableOptions = await availableOptionsResp.json();
+  for (const optionIn of req.body.settings.data.options) {
+    for (const option of availableOptions.data.options) {
+      for (const value of option.constraints.allowedvalues) {
+        if (value === optionIn.value) {
+          valid = true;
         }
       }
     }
@@ -126,12 +138,10 @@ const checkValidInfo = async (req: Request, res: Response) => {
       res
         .status(400)
         .json({
-          error: 'Invalid program key',
+          error: 'Invalid options',
         })
       return false;
     }
-
-    valid = false;
   }
 
   return true;
@@ -150,7 +160,7 @@ export const addScheduledWash = async (req: Request, res: Response) => {
       });
   }
 
-  if (!req.body || !req.body.homeconnectrefresh || !req.body.date || !req.body.washer_id || !req.body.settings || !Array.isArray(req.body.settings)) {
+  if (!req.body || !req.body.homeconnectrefresh || !req.body.date || !req.body.washer_id || !req.body.settings || !req.body.settings.data) {
     return res
       .status(400)
       .json({
