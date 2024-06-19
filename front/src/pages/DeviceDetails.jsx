@@ -19,8 +19,7 @@ const WashingMachine = () => {
 
   const handleStartStop = () => {
     if (isRunning) {
-      setIsRunning(false);
-      setEndTime(null);
+      stopWashingMachine();
     } else if (startOption === 'now') {
       startWashingMachine();
     } else if (startOption === 'schedule' && scheduledTime) {
@@ -56,6 +55,28 @@ const WashingMachine = () => {
       if (operationState.value !== 'BSH.Common.EnumType.OperationState.Run') {
         setIsRunning(false);
         setEndTime(null);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const stopWashingMachine = async () => {
+    try {
+      const accessToken = window.sessionStorage.getItem('homeconnect_simulator_auth_token');
+      const response = await fetch(`https://simulator.home-connect.com/api/homeappliances/${washingMachineId}/programs/active`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Accept': 'application/vnd.bsh.sdk.v1+json',
+        },
+      });
+
+      if (response.status === 204 || response.status === 200) {
+        setIsRunning(false);
+        setEndTime(null);
+      } else {
+        console.log("Error stopping the washing machine");
       }
     } catch (error) {
       console.log(error);
@@ -259,74 +280,75 @@ const WashingMachine = () => {
         </div>
       )}
 
+      {!isRunning && (
+      <>
       <div className={`controls-section ${countdown !== null ? 'blur' : ''}`}>
         <h2>Controls</h2>
-        <div>
-          <label>Mode:</label>
-          <select value={currentMode} onChange={(e) => setCurrentMode(e.target.value)}>
-            <option value="Cotton">Cotton</option>
-            <option value="EasyCare">Easy Care</option>
-            <option value="Mix">Mix</option>
-            <option value="DelicatesSilk">Silk</option>
-            <option value="Wool">Wool</option>
-          </select>
-        </div>
-        <div>
-          <label>Temperature:</label>
-          <select value={currentDegree} onChange={(e) => setCurrentDegree(e.target.value)}>
-            <option value="20">20°C</option>
-            <option value="30°C">30°C</option>
-            <option value="40">40°C</option>
-            <option value="50">50°C</option>
-            <option value="60">60°C</option>
-            <option value="70">70°C</option>
-            <option value="80">80°C</option>
-            <option value="90">90°C</option>
-          </select>
-        </div>
-        <div>
-          <label>Spin Speed:</label>
-          <select value={currentSpin} onChange={(e) => setCurrentSpin(e.target.value)}>
-            <option value="400">400 RPM</option>
-            <option value="600">600 RPM</option>
-            <option value="800">800 RPM</option>
-            <option value="1000">1000 RPM</option>
-            <option value="1200">1200 RPM</option>
-            <option value="1400">1400 RPM</option>
-            <option value="1600">1600 RPM</option>
-          </select>
-        </div>
-      </div>
-
-      <div className={`start-time-section ${countdown !== null ? 'blur' : ''}`}>
-        <h2>Start Time</h2>
-        <label>
-          <input
-            type="radio"
-            value="now"
-            checked={startOption === 'now'}
-            onChange={() => {
-              setStartOption('now');
-              setDecreaseStartTimeHeight(false);
-            }}
-          />
-          Start Now
-        </label>
-        <label>
-          <input
-            type="radio"
-            value="schedule"
-            checked={startOption === 'schedule'}
-            onChange={handleScheduleStart}
-          />
-          Schedule Start
-        </label>
-        {startOption === 'schedule' && scheduledTime && (
-          <div className="scheduled-time">
-            Scheduled Time: {scheduledTime.toLocaleString()}
+          <div>
+            <label>Mode:</label>
+            <select value={currentMode} onChange={(e) => setCurrentMode(e.target.value)}>
+              <option value="Cotton">Cotton</option>
+              <option value="EasyCare">Easy Care</option>
+              <option value="Mix">Mix</option>
+              <option value="DelicatesSilk">Silk</option>
+              <option value="Wool">Wool</option>
+            </select>
           </div>
-        )}
-      </div>
+          <div>
+            <label>Temperature:</label>
+            <select value={currentDegree} onChange={(e) => setCurrentDegree(e.target.value)}>
+              <option value="20">20°C</option>
+              <option value="30°C">30°C</option>
+              <option value="40">40°C</option>
+              <option value="50">50°C</option>
+              <option value="60">60°C</option>
+              <option value="70">70°C</option>
+              <option value="80">80°C</option>
+              <option value="90">90°C</option>
+            </select>
+          </div>
+          <div>
+            <label>Spin Speed:</label>
+            <select value={currentSpin} onChange={(e) => setCurrentSpin(e.target.value)}>
+              <option value="400">400 RPM</option>
+              <option value="600">600 RPM</option>
+              <option value="800">800 RPM</option>
+              <option value="1000">1000 RPM</option>
+              <option value="1200">1200 RPM</option>
+              <option value="1400">1400 RPM</option>
+              <option value="1600">1600 RPM</option>
+            </select>
+          </div>
+        </div>
+        <div className={`start-time-section ${countdown !== null ? 'blur' : ''}`}>
+            <h2>Start Time</h2>
+            <label>
+              <input
+                type="radio"
+                value="now"
+                checked={startOption === 'now'}
+                onChange={() => {
+                  setStartOption('now');
+                  setDecreaseStartTimeHeight(false);
+                }}
+                />
+              Start Now
+            </label>
+            <label>
+              <input
+                type="radio"
+                value="schedule"
+                checked={startOption === 'schedule'}
+                onChange={handleScheduleStart}                 
+                />
+              Schedule Start
+            </label>
+            {startOption === 'schedule' && scheduledTime && (
+              <div className="scheduled-time">
+                Scheduled Time: {scheduledTime.toLocaleString()}
+              </div>
+            )}
+          </div>
 
       {showTimePicker && (
         <div>
@@ -345,8 +367,10 @@ const WashingMachine = () => {
           </div>
         </div>
       )}
+      </>
+    )}
 
-      <div className="bottom-buttons">
+    <div className="bottom-buttons">
         <button className="bottom-button" onClick={() => setIsRunning(false)}>Back</button>
         <button
           className={`bottom-button ${isRunning ? 'stop-button' : ''}`}
