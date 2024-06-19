@@ -6,6 +6,7 @@ import Checkbox from "../components/generic/Checkbox";
 import {getCookie} from "../helpers/CookieHelper";
 import "../styles/global.css";
 import "../styles/pages/AskTimeslotsPage.css";
+import { set } from "date-fns";
 
 const daysOfWeek = [
   { short: "Mo", full: "Monday", id: 0 },
@@ -27,6 +28,7 @@ function AskTimeslotsPage() {
   const [timeSlots, setTimeSlots] = useState([]);
   const [allDay, setAllDay] = useState(false); //  for tracking "All Day" selection
   const navigate = useNavigate();
+  const [fetchedSchedule, setFetchedSchedule] = useState(null);
 
   const handleAddTimeslot = () => {
     setTempSelectedDays(selectedDays);
@@ -54,6 +56,7 @@ function AskTimeslotsPage() {
   };
 
   const handleSaveTimeslot = async () => {
+
     // If "All Day" is marked, save "All Day" instead of time slots
     if (allDay) {
       setDayTimeSlots((prevDayTimeSlots) => ({
@@ -78,17 +81,6 @@ function AskTimeslotsPage() {
         'Authorization': auth,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify([
-          {
-          "weekday": 2,
-          "times": [
-            {
-              "start_time": "12:00",
-              "end_time": "18:00"
-            }
-          ]
-        }
-      ])
     });
     
     if (!resp.ok) {
@@ -96,7 +88,8 @@ function AskTimeslotsPage() {
       return;
     }
     
-    const data = await resp.json();;
+    const data = await resp.json();
+    console.log(data.schedule);
     location.href = "/dashboard";
   };
 

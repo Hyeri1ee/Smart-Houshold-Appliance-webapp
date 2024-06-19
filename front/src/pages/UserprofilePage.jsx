@@ -113,7 +113,7 @@ function UserProfilePage() {
       </div>
 
       <div className="button-container">
-        <Button className="opt-out" onClick={handleOptionOut} style={styles.backButton}> Don't choose </Button>
+        <Button className="opt-out" onClick={handleOptionOut} style={styles.backButton}> Skip </Button>
         <Button className="back-button" onClick={handleBackButtonClick} style={styles.backButton}> Back </Button>
         <Button onClick={handleNextButtonClick}> Next </Button>
       </div>

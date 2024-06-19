@@ -30,19 +30,99 @@ export const checkSchedule = async (req: Request, res: Response): Promise<void> 
     const dataSource = await getDataSource();
     const scheduleRepository = dataSource.getRepository(Schedule);
     const timeRepository = dataSource.getRepository(Time);
+    const users = dataSource.getRepository(User);
+    const user = await users.findOne({where: {user_id: decoded.user_id}});
+    const profileType = (user?.profile_type);
 
-    const schedule = await scheduleRepository.findOne({where: {user_id: decoded.user_id}});
+    //set default schedule basedon profile type
+    switch (profileType) {
+      case 1:
+        //mon 0 - sun 6 까지 all day 를 schedule에 넣어서 보내줘야함
+        for (let i = 0; i < 7; i++) {
+          const schedule = await scheduleRepository.findOne({where: {user_id: decoded.user_id, weekday: i}});
+          if (!schedule) {
+            //save schedule
+            const newSchedule = new Schedule();
+            newSchedule.user_id = decoded.user_id;
+            newSchedule.weekday = i;
+            await scheduleRepository.save(newSchedule);
+
+            //save time
+            const newTime = new Time();
+            newTime.schedule_id = newSchedule.schedule_id;
+            newTime.start_time = '00:00';
+            newTime.end_time = '23:59';
+            newTime.schedule = newSchedule;
+            await timeRepository.save(newTime);
+          }
+        }
+        break;
+      case 2:
+        //mon 0 - fri 4 까지 오후 6시부터 10시까지 schedule에 넣어서 보내줘야함
+        for (let i = 0; i < 5; i++) {
+          const schedule = await scheduleRepository.findOne({where: {user_id: decoded.user_id, weekday: i}});
+          if (!schedule) {
+            //save schedule
+            const newSchedule = new Schedule();
+            newSchedule.user_id = decoded.user_id;
+            newSchedule.weekday = i;
+            await scheduleRepository.save(newSchedule);
+
+            //save time
+            const newTime = new Time();
+            newTime.schedule_id = newSchedule.schedule_id;
+            newTime.start_time = '18:00';
+            newTime.end_time = '23:59';
+            newTime.schedule = newSchedule;
+            await timeRepository.save(newTime);
+          }
+        }
+        break;
+      case 3:
+        //mon 0 - fri 4 까지 오후 1시부터 5시까지 schedule에 넣어서 보내줘야함
+        for (let i = 0; i < 5; i++) {
+          const schedule = await scheduleRepository.findOne({where: {user_id: decoded.user_id, weekday: i}});
+          if (!schedule) {
+            //save schedule
+            const newSchedule = new Schedule();
+            newSchedule.user_id = decoded.user_id;
+            newSchedule.weekday = i;
+            await scheduleRepository.save(newSchedule);
+
+            //save time
+            const newTime = new Time();
+            newTime.schedule_id = newSchedule.schedule_id;
+            newTime.start_time = '13:00';
+            newTime.end_time = '17:00';
+            newTime.schedule = newSchedule;
+            await timeRepository.save(newTime);
+          }
+        }
+        break;
+    }
+    const schedule = await scheduleRepository.find({where: {user_id: decoded.user_id}});
 
     if (!schedule) {
       res.sendStatus(400);
       return;
     }
+    //shcedule의 weekday 별로 time을 가져와서 json으로 만들어서 보내줘야함
+    const result = [];
 
-    schedule.times = await timeRepository.find({where: {schedule_id: schedule.schedule_id}});
+  for (const s of schedule) {
+    const times = await timeRepository.find({ where: { schedule_id: s.schedule_id } });
+    const timesArray = times.map(t => ({
+      start_time: t.start_time,
+      end_time: t.end_time
+    }));
 
-    res.status(200).json({
-      schedule: schedule
+    result.push({
+      weekday: s.weekday,
+      times: timesArray
     });
+  }
+
+  res.status(200).json(result);
 
   } catch (error) {
     console.error('Error fetching schedule data:', error);
