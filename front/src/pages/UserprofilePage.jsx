@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import "../styles/global.css";
-import "../styles/pages/SchedulePage.css";
+// import "../styles/pages/SchedulePage.css";
 import Button from "../components/generic/Button";
 import singleIcon from "../assets/user/profile/single.png";
 import coupleIcon from "../assets/user/profile/couple.png";
@@ -31,8 +31,15 @@ function UserProfilePage() {
     }
   };
 
+  const handleBackButtonClick = () => {
+    navigate('/login');
+  };
+  const handleOptionOut = async () => {
+    setProfileType(0);
+  };  
+
   const handleNextButtonClick = async () => {
-    if (profileType) {
+    if (profileType >= 0) {
       try {
         const accessToken = getCookie('authorization');
         console.log(accessToken);
@@ -106,7 +113,8 @@ function UserProfilePage() {
       </div>
 
       <div className="button-container">
-        <Button className="back-button" style={styles.backButton}> Back </Button>
+        <Button className="opt-out" onClick={handleOptionOut} style={styles.backButton}> Don't choose </Button>
+        <Button className="back-button" onClick={handleBackButtonClick} style={styles.backButton}> Back </Button>
         <Button onClick={handleNextButtonClick}> Next </Button>
       </div>
     </div>
