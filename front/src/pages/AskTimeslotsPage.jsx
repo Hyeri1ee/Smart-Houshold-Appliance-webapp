@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import AddButton from "../components/generic/AddButton";
 import RemoveButton from "../components/generic/RemoveButton";
 import Checkbox from "../components/generic/Checkbox";
-import {getCookie} from "../helpers/CookieHelper";
+import { getCookie } from "../helpers/CookieHelper";
 import "../styles/global.css";
 import "../styles/pages/AskTimeslotsPage.css";
 
@@ -25,8 +25,47 @@ function AskTimeslotsPage() {
   const [dayTimeSlots, setDayTimeSlots] = useState({});
   const [currentDay, setCurrentDay] = useState(null);
   const [timeSlots, setTimeSlots] = useState([]);
-  const [allDay, setAllDay] = useState(false); //  for tracking "All Day" selection
+  const [allDay, setAllDay] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchSchedule = async () => {
+      const auth = getCookie('authorization');
+      const response = await fetch('http://localhost:1337/api/schedule/getSchedule', {
+        method: 'GET',
+        headers: {
+          'Authorization': auth,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const schedules = data.schedules;
+
+        if (schedules.length > 0) {
+          const scheduleMap = {};
+          const selectedDays = [];
+
+          schedules.forEach(s => {
+            const day = daysOfWeek.find(d => d.id === s.weekday).short;
+            selectedDays.push(day);
+            scheduleMap[day] = s.times.map(time => ({
+              startTime: time.start_time.slice(0, 5),  // Convert to "HH:MM"
+              endTime: time.end_time.slice(0, 5)       // Convert to "HH:MM"
+            }));
+          });
+
+          setSelectedDays(selectedDays);
+          setDayTimeSlots(scheduleMap);
+        }
+      } else {
+        console.error("Failed to fetch existing schedule.");
+      }
+    };
+
+    fetchSchedule();
+  }, []);
 
   const handleAddTimeslot = () => {
     setTempSelectedDays(selectedDays);
@@ -47,63 +86,72 @@ function AskTimeslotsPage() {
     setShowTimeModal(false);
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     console.log("Confirm button clicked");
-    // navigate("/confirmation");
-    navigate("/dashboard");
-  };
-
-  const handleSaveTimeslot = async () => {
-    // If "All Day" is marked, save "All Day" instead of time slots
-    if (allDay) {
-      setDayTimeSlots((prevDayTimeSlots) => ({
-        ...prevDayTimeSlots,
-        [currentDay]: "All Day",
-      }));
-    } else {
-      setDayTimeSlots((prevDayTimeSlots) => ({
-        ...prevDayTimeSlots,
-        [currentDay]: timeSlots,
-      }));
-    }
-    setShowTimeModal(false);
-
-    console.log(timeSlots);
-
     const auth = getCookie('authorization');
 
-    const resp = await fetch('http://localhost:1337/api/schedule', {
+    // Delete existing schedules
+    const deleteResp = await fetch('http://localhost:1337/api/schedule/deleteSchedule', {
+      method: 'DELETE',
+      headers: {
+        'Authorization': auth,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!deleteResp.ok) {
+      console.error("Delete failed!");
+      return;
+    }
+
+    // Add new schedules
+    const timeslotData = selectedDays.map(day => ({
+      weekday: daysOfWeek.find(d => d.short === day).id,
+      times: dayTimeSlots[day] === "All Day" ? [{ start_time: "00:00", end_time: "23:59" }] : dayTimeSlots[day].map(slot => ({
+        start_time: slot.startTime,
+        end_time: slot.endTime
+      }))
+    }));
+
+    console.log("Timeslot Data:", timeslotData); // Debug logging
+
+    const putResp = await fetch('http://localhost:1337/api/schedule/putSchedule', {
       method: 'PUT',
       headers: {
         'Authorization': auth,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify([
-          {
-          "weekday": 2,
-          "times": [
-            {
-              "start_time": "12:00",
-              "end_time": "18:00"
-            }
-          ]
-        }
-      ])
+      body: JSON.stringify(timeslotData)
     });
-    
-    if (!resp.ok) {
+
+    if (!putResp.ok) {
       console.error("Fetch failed!");
       return;
     }
-    
-    const data = await resp.json();;
-    location.href = "/dashboard";
+
+    const data = await putResp.json();
+    navigate("/dashboard");
+  };
+
+  const handleSaveTimeslot = () => {
+    if (allDay) {
+      setDayTimeSlots(prevDayTimeSlots => ({
+        ...prevDayTimeSlots,
+        [currentDay]: "All Day"
+      }));
+    } else {
+      setDayTimeSlots(prevDayTimeSlots => ({
+        ...prevDayTimeSlots,
+        [currentDay]: timeSlots
+      }));
+    }
+    setShowTimeModal(false);
   };
 
   const toggleDay = (day) => {
-    setTempSelectedDays((prevSelectedDays) =>
+    setTempSelectedDays(prevSelectedDays =>
       prevSelectedDays.includes(day)
-        ? prevSelectedDays.filter((d) => d !== day)
+        ? prevSelectedDays.filter(d => d !== day)
         : [...prevSelectedDays, day]
     );
   };
@@ -120,7 +168,7 @@ function AskTimeslotsPage() {
 
   const handleRemoveTimeSlot = (index) => {
     const newTimeSlots = [...timeSlots];
-    newTimeSlots.splice(index, 1); // Remove the element at the given index
+    newTimeSlots.splice(index, 1);
     setTimeSlots(newTimeSlots);
   };
 
@@ -131,7 +179,7 @@ function AskTimeslotsPage() {
   };
 
   const handleAllDay = () => {
-    setAllDay((prevAllDay) => !prevAllDay);
+    setAllDay(prevAllDay => !prevAllDay);
     if (!allDay) {
       setTimeSlots([]);
     } else {
@@ -143,7 +191,7 @@ function AskTimeslotsPage() {
     <div className="app-container">
       <h2 className="fixed-header">When would you like to run your washing machine?</h2>
       <div className="selected-days-container">
-        {selectedDays.map((day) => (
+        {selectedDays.map(day => (
           <div key={day} className="day-box" onClick={() => handleDayModal(day)}>
             <div className="primary-color">{daysOfWeek.find(d => d.short === day).full}</div>
             <div className="separator"></div>
@@ -174,7 +222,7 @@ function AskTimeslotsPage() {
             <h3>Choose Days</h3>
             <form>
               <div className="day-selector">
-                {daysOfWeek.map((day) => (
+                {daysOfWeek.map(day => (
                   <div
                     key={day.short}
                     className={`day-circle ${tempSelectedDays.includes(day.short) ? 'selected' : ''}`}
@@ -195,8 +243,7 @@ function AskTimeslotsPage() {
       {showTimeModal && (
         <div className="modal-overlay">
           <div className="modal">
-            {/* TODO: it should be "add timeslot for [selected day]" */}
-            <h3>Add Timeslot</h3>
+            <h3>Add Timeslot for {daysOfWeek.find(d => d.short === currentDay)?.full}</h3>
             <form>
               <div className="time-slots">
                 {!allDay && timeSlots.map((slot, index) => (
@@ -219,13 +266,13 @@ function AskTimeslotsPage() {
                         />
                       </div>
                     </div>
-                    <RemoveButton onRemove={handleRemoveTimeSlot} index={index} />
+                    <RemoveButton onRemove={() => handleRemoveTimeSlot(index)} />
                   </div>
                 ))}
               </div>
 
               <div id="add-btn">
-                <AddButton onClick={handleAddTimeSlot}></AddButton>
+                <AddButton onClick={handleAddTimeSlot} />
               </div>
               <div id="checkbox-box">
                 <Checkbox onClick={handleAllDay}>Mark all day</Checkbox>

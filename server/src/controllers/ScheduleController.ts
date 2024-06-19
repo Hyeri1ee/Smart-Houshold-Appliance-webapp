@@ -1,14 +1,14 @@
-import {Request, Response} from 'express';
-import {Repository} from 'typeorm'
-import {Schedule} from '../db/entities/Schedule';
-import {getDataSource} from '../db/DatabaseConnect';
-import {User} from "../db/entities/User";
-import {Time} from "../db/entities/Time";
-import {handleJwt} from "./JWTHelper";
+import { Request, Response } from 'express';
+import { Repository } from 'typeorm';
+import { Schedule } from '../db/entities/Schedule';
+import { getDataSource } from '../db/DatabaseConnect';
+import { User } from "../db/entities/User";
+import { Time } from "../db/entities/Time";
+import { handleJwt } from "./JWTHelper";
 
 const timeRegex = /^(?:[01]\d|2[0-3]):[0-5]\d$/;
 
-interface timeRange {
+interface TimeRange {
   start_time: string;
   end_time: string;
 }
@@ -18,11 +18,7 @@ export const checkSchedule = async (req: Request, res: Response): Promise<void> 
   try {
     decoded = handleJwt(req);
   } catch (e) {
-    res
-      .status(400)
-      .json({
-        error: "authorization header missing!"
-      });
+    res.status(400).json({ error: "authorization header missing!" });
     return;
   }
 
@@ -31,34 +27,34 @@ export const checkSchedule = async (req: Request, res: Response): Promise<void> 
     const scheduleRepository = dataSource.getRepository(Schedule);
     const timeRepository = dataSource.getRepository(Time);
 
-    const schedule = await scheduleRepository.findOne({where: {user_id: decoded.user_id}});
+    const schedules = await scheduleRepository.find({ where: { user_id: decoded.user_id } });
 
-    if (!schedule) {
-      res.sendStatus(400);
+    if (!schedules.length) {
+      res.status(404).json({ error: "No schedule found for user." });
       return;
     }
 
-    schedule.times = await timeRepository.find({where: {schedule_id: schedule.schedule_id}});
+    for (const schedule of schedules) {
+      schedule.times = await timeRepository.find({ where: { schedule_id: schedule.schedule_id } });
+    }
 
-    res.status(200).json({
-      schedule: schedule
-    });
+    res.status(200).json({ schedules: schedules });
 
   } catch (error) {
     console.error('Error fetching schedule data:', error);
-    res.status(500).json({error: 'Internal Server Error'});
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 };
 
-const handleTimes = async (times: Time[], timeRepository: Repository<Time>, schedule: Schedule) => {
+const handleTimes = async (times: TimeRange[], timeRepository: Repository<Time>, schedule: Schedule) => {
   const timeDatabaseEntries: Time[] = [];
 
-  for (let i = 0; i < times.length; i++) {
-    const time: Time = new Time();
+  for (const timeEntry of times) {
+    const time = new Time();
     time.schedule = schedule;
     time.schedule_id = schedule.schedule_id;
-    time.start_time = times[i].start_time;
-    time.end_time = times[i].end_time;
+    time.start_time = timeEntry.start_time;
+    time.end_time = timeEntry.end_time;
     timeDatabaseEntries.push(time);
     console.log(time);
     await timeRepository.save(time);
@@ -73,110 +69,109 @@ export const putSchedule = async (req: Request, res: Response) => {
   try {
     decoded = handleJwt(req);
   } catch (e) {
-    return res
-      .status(400)
-      .json({
-        error: "authorization header missing!"
-      });
+    return res.status(400).json({ error: "authorization header missing!" });
   }
 
   if (!Array.isArray(req.body)) {
-    return res
-      .status(400)
-      .json({
-        error: "req body is not an array!"
-      });
+    return res.status(400).json({ error: "req body is not an array!" });
   }
 
-  for (let i = 0; i < req.body.length; i++) {
-    if (!req.body[i].weekday) {
-      return res
-        .status(400)
-        .json({
-          error: "weekday missing from request body"
-        });
+  for (const entry of req.body) {
+    if (typeof entry.weekday === 'undefined') {
+      return res.status(400).json({ error: "weekday missing from request body" });
     }
 
-    if (!req.body[i].times || !Array.isArray(req.body[i].times)) {
-      return res
-        .status(400)
-        .json({
-          error: "times are missing from request body, or not an array."
-        });
+    if (!entry.times || !Array.isArray(entry.times)) {
+      return res.status(400).json({ error: "times are missing from request body, or not an array." });
     }
 
-    const weekday = parseInt(req.body[i].weekday);
-    const times = req.body[i].times;
+    const weekday = parseInt(entry.weekday, 10);
+    const times = entry.times;
 
-    if (isNaN(weekday) || !isFinite(Number(weekday)) || weekday < 0 || weekday > 6) {
-      return res
-        .status(400)
-        .json({
-          error: "weekday is not a whole number, or not between 0 and 6."
-        });
+    if (isNaN(weekday) || weekday < 0 || weekday > 6) {
+      return res.status(400).json({ error: "weekday is not a whole number, or not between 0 and 6." });
     }
 
     try {
-      times.forEach((t: timeRange) => {
+      times.forEach((t: TimeRange) => {
         if (!t.start_time.match(timeRegex) || !t.end_time.match(timeRegex)) {
           throw new Error();
         }
-      })
+      });
     } catch (e) {
-      return res
-        .status(400)
-        .json({
-          error: "Time is in wrong format. Make sure it's a string of HH:MM"
-        })
+      return res.status(400).json({ error: "Time is in wrong format. Make sure it's a string of HH:MM" });
     }
 
-    const dateSource = await getDataSource();
-    const userRepository = dateSource.getRepository(User);
-    const scheduleRepository = dateSource.getRepository(Schedule);
-    const timesRepository = dateSource.getRepository(Time);
+    try {
+      const dataSource = await getDataSource();
+      const userRepository = dataSource.getRepository(User);
+      const scheduleRepository = dataSource.getRepository(Schedule);
+      const timesRepository = dataSource.getRepository(Time);
 
-    const user: User | null = await userRepository.findOne({where: {user_id: decoded.user_id}});
+      const user: User | null = await userRepository.findOne({ where: { user_id: decoded.user_id } });
 
-    if (!user) {
-      return res
-        .status(400)
-        .json({
-          error: "user_id does not match any existing user."
-        })
-    }
-
-    const existingScheduleForWeekday: Schedule | null = await scheduleRepository.findOne({
-      where: {
-        user_id: decoded.user_id,
-        weekday: weekday
+      if (!user) {
+        return res.status(400).json({ error: "user_id does not match any existing user." });
       }
-    });
 
-    if (existingScheduleForWeekday === null) {
-      const newSchedule = scheduleRepository.create({
-        user_id: user.user_id,
-        weekday: weekday,
-        times: times,
-        user: user
-      })
+      const existingScheduleForWeekday = await scheduleRepository.findOne({
+        where: {
+          user_id: decoded.user_id,
+          weekday: weekday
+        }
+      });
 
-      scheduleRepository.save(newSchedule);
-      
-      // const newSchedule: Schedule = new Schedule();
-      // newSchedule.user_id = user.user_id;
-      // newSchedule.weekday = weekday;
+      if (existingScheduleForWeekday === null) {
+        const newSchedule = scheduleRepository.create({
+          user_id: user.user_id,
+          weekday: weekday,
+          user: user
+        });
 
-      // newSchedule.times = await handleTimes(newTimes, timesRepository, newSchedule);
-      // newSchedule.user = user;
-
-      // await scheduleRepository.save(newSchedule);
-      
-      // console.log('schedule id: %d', newSchedule.schedule_id);
-      console.log(await scheduleRepository.findOne({where: {user: user}}));
-    } else {
-      existingScheduleForWeekday.times = await handleTimes(times, timesRepository, existingScheduleForWeekday);
-      await scheduleRepository.save(existingScheduleForWeekday);
+        await scheduleRepository.save(newSchedule);
+        await handleTimes(times, timesRepository, newSchedule);
+      } else {
+        existingScheduleForWeekday.times = await handleTimes(times, timesRepository, existingScheduleForWeekday);
+        await scheduleRepository.save(existingScheduleForWeekday);
+      }
+    } catch (error) {
+      console.error('Error processing schedule:', error);
+      return res.status(500).json({ error: 'Internal Server Error' });
     }
   }
   return res.sendStatus(200);
 }
+
+export const deleteSchedule = async (req: Request, res: Response) => {
+  let decoded;
+  try {
+    decoded = handleJwt(req);
+  } catch (e) {
+    res.status(400).json({ error: "authorization header missing!" });
+    return;
+  }
+
+  try {
+    const dataSource = await getDataSource();
+    const scheduleRepository = dataSource.getRepository(Schedule);
+    const timeRepository = dataSource.getRepository(Time);
+
+    const schedules = await scheduleRepository.find({ where: { user_id: decoded.user_id } });
+
+    if (schedules.length === 0) {
+      res.status(404).json({ error: "No schedules found for user." });
+      return;
+    }
+
+    for (const schedule of schedules) {
+      await timeRepository.delete({ schedule_id: schedule.schedule_id });
+      await scheduleRepository.delete({ schedule_id: schedule.schedule_id });
+    }
+
+    res.status(200).json({ message: "All schedules deleted successfully." });
+
+  } catch (error) {
+    console.error('Error deleting schedule data:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
