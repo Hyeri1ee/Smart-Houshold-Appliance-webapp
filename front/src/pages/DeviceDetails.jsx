@@ -6,7 +6,6 @@ import TimePicker from '../components/generic/TimePicker';
 const WashingMachine = () => {
   const [startOption, setStartOption] = useState('now');
   const [isRunning, setIsRunning] = useState(false);
-  const [progress, setProgress] = useState(0);
   const [currentMode, setCurrentMode] = useState('Cotton');
   const [currentDegree, setCurrentDegree] = useState('40');
   const [currentSpin, setCurrentSpin] = useState('1000');
@@ -15,34 +14,13 @@ const WashingMachine = () => {
   const [countdown, setCountdown] = useState(null);
   const [washerInterval, setWasherInterval] = useState(30000);
   const [decreaseStartTimeHeight, setDecreaseStartTimeHeight] = useState(false);
-  const [programDuration, setProgramDuration] = useState(null);
+  const [endTime, setEndTime] = useState(null);
   const washingMachineId = 'SIEMENS-HCS03WCH1-7BC6383CF794';
-
-  useEffect(() => {
-    let interval = null;
-    if (isRunning && programDuration) {
-      interval = setInterval(() => {
-        setProgress(prev => {
-          const newProgress = prev + (100 / (programDuration / 1000));
-          if (newProgress < 100) {
-            return newProgress;
-          } else {
-            clearInterval(interval);
-            setIsRunning(false);
-            return 100;
-          }
-        });
-      }, 1000);
-    } else {
-      clearInterval(interval);
-    }
-
-    return () => clearInterval(interval);
-  }, [isRunning, programDuration]);
 
   const handleStartStop = () => {
     if (isRunning) {
       setIsRunning(false);
+      setEndTime(null);
     } else if (startOption === 'now') {
       startWashingMachine();
     } else if (startOption === 'schedule' && scheduledTime) {
@@ -74,10 +52,10 @@ const WashingMachine = () => {
 
       const data = await response.json();
       const operationState = data.data.status.find(status => status.key === 'BSH.Common.Status.OperationState');
-      console.log(operationState.value);
       
       if (operationState.value !== 'BSH.Common.EnumType.OperationState.Run') {
         setIsRunning(false);
+        setEndTime(null);
       }
     } catch (error) {
       console.log(error);
@@ -159,7 +137,7 @@ const WashingMachine = () => {
 
       if (response.status === 204 || response.status === 200) {
         setIsRunning(true);
-        setProgress(0);
+        const startTime = Date.now();
 
         const responseGet = await fetch(`https://simulator.home-connect.com/api/homeappliances/${washingMachineId}/programs/active`, {
           method: 'GET',
@@ -173,7 +151,9 @@ const WashingMachine = () => {
         if (responseGet.ok) {
           const data = await responseGet.json();
           const durationOption = data.data.options.find(option => option.key === 'BSH.Common.Option.Duration');
-          setProgramDuration(durationOption.value * 1000);
+          const duration = durationOption.value * 1000;
+          const endTime = new Date(startTime + duration);;
+          setEndTime(endTime);
         } else {
           console.log("Error fetching active program details");
         }
@@ -273,11 +253,8 @@ const WashingMachine = () => {
           <p>Current Mode: <strong>{currentMode}</strong></p>
           <p>Temperature: <strong>{currentDegree}°C</strong></p>
           <p>Spin Speed: <strong>{currentSpin} RPM</strong></p>
-          <div className="progress-container">
-            <div className="progress-bar">
-              <div className="progress" style={{ width: `${progress}%` }}></div>
-            </div>
-            <span className="progress-percentage">{progress.toFixed(2)}%</span>
+          <div className="end-time">
+            <p>Washing program will end at: <strong>{new Date(endTime).toLocaleTimeString()}</strong></p>
           </div>
         </div>
       )}
