@@ -11,8 +11,6 @@ const createUUID = () => {
   );
 }
 
-
-
 /**
  * For the brave souls who dare enter this file: You are the chosen ones,
  * the valiant knights of programming who toil away, without rest,
@@ -21,6 +19,14 @@ const createUUID = () => {
  * never gonna run around and desert you. Never gonna make you cry,
  * never gonna say goodbye. Never gonna tell a lie and hurt you.
  */
+
+interface JobData {
+  isAdvice: boolean,
+  duration: number,
+  program: string,
+}
+
+const jobs: { [id: string] : JobData } = {};
 
 const checkValidInfo = async (req: Request, res: Response) => {
   if (!process.env.CLIENT_ID || !process.env.CLIENT_SECRET) {
@@ -219,8 +225,9 @@ export const addScheduledWash = async (req: Request, res: Response) => {
     if (!response.ok) {
       console.error(`Something went wrong when starting washer with id ${req.body.washerId}`);
     }
-  });
-  } catch (error) {
+
+    delete jobs[`user_id:${decoded.user_id}, washer_id:${req.body.washer_id} UUID:${schedule_id}`];
+  });} catch (error) {
     console.error("Maybe the date wasn't wrong, but something went wrong with the name assignment.\n" +
       "If you're sure the date is correct, please message Nick on discord. If you want to check, look at " +
       "https://www.npmjs.com/package/node-schedule section cron-style scheduling");
@@ -229,6 +236,28 @@ export const addScheduledWash = async (req: Request, res: Response) => {
       .json({
         error: "Invalid date."
       });
+  }
+
+  let duration;
+
+  for (const i of req.body.settings.options) {
+    if (i.key === 'BSH.Common.Option.FinishInRelative') {
+      duration = i.value
+    }
+  }
+
+  if (!duration) {
+    res
+      .status(400)
+      .json({
+        error: "no duration",
+      });
+  }
+
+  jobs[`user_id:${decoded.user_id}, washer_id:${req.body.washer_id} UUID:${schedule_id}`] = {
+    duration: duration,
+    isAdvice: req.body.isAdvice,
+    program: req.body.settings.key
   }
 
   return res
@@ -256,6 +285,7 @@ export const deleteScheduledWash = (req: Request, res: Response) => {
 
   try {
     job = schedule.scheduledJobs[`user_id:${decoded.user_id}, washer_id:${req.body.washer_id} UUID:${req.body.schedule_id}`];
+    delete jobs[`user_id:${decoded.user_id}, washer_id:${req.body.washer_id} UUID:${req.body.schedule_id}`];
   } catch (e) {
     if (e instanceof Error) {
       return res
@@ -286,6 +316,7 @@ export const deleteScheduledWash = (req: Request, res: Response) => {
         message: 'Something went wrong when canceling job',
       });
   }
+
 }
 
 export const getScheduledWash = (req: Request, res: Response) => {
@@ -324,6 +355,8 @@ export const getScheduledWash = (req: Request, res: Response) => {
 
   const date = job.nextInvocation()
 
+  const otherData = jobs[`user_id:${decoded.user_id}, washer_id:${req.body.washer_id} UUID:${req.body.schedule_id}`];
+
   return res
     .status(200)
     .json({
@@ -331,5 +364,8 @@ export const getScheduledWash = (req: Request, res: Response) => {
       month: date.getMonth(),
       day: date.getDate(),
       startTime: date.getTime(),
+      duration: otherData.duration,
+      isAdvice: otherData.isAdvice,
+      program: otherData.program,
     });
 }
