@@ -13,31 +13,32 @@ const WashingMachine = () => {
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [scheduledTime, setScheduledTime] = useState(null);
   const [countdown, setCountdown] = useState(null);
-  const [fetchTimerActive, setFetchTimerActive] = useState(false);
-
+  const [washerInterval, setWasherInterval] = useState(30000);
   const [decreaseStartTimeHeight, setDecreaseStartTimeHeight] = useState(false);
+  const [programDuration, setProgramDuration] = useState(null);
   const washingMachineId = 'SIEMENS-HCS03WCH1-7BC6383CF794';
 
   useEffect(() => {
     let interval = null;
-    if (isRunning) {
+    if (isRunning && programDuration) {
       interval = setInterval(() => {
         setProgress(prev => {
-          if (prev < 100) {
-            return prev + 1;
+          const newProgress = prev + (100 / (programDuration / 1000));
+          if (newProgress < 100) {
+            return newProgress;
           } else {
             clearInterval(interval);
             setIsRunning(false);
-            return 0;
+            return 100;
           }
         });
-      }, 100); // Increment progress every 100ms
+      }, 1000);
     } else {
       clearInterval(interval);
     }
 
     return () => clearInterval(interval);
-  }, [fetchTimerActive, isRunning, washingMachineId]);
+  }, [isRunning, programDuration]);
 
   const handleStartStop = () => {
     if (isRunning) {
@@ -60,6 +61,36 @@ const WashingMachine = () => {
   const increaseStartTimeSectionHeight = () => {
     document.querySelector('.start-time-section').classList.remove('adjusted');
   }
+
+  const fetchWasherStatus = async () => {
+    try {
+      const accessToken = window.sessionStorage.getItem('homeconnect_simulator_auth_token');
+      const response = await fetch(`https://simulator.home-connect.com/api/homeappliances/${washingMachineId}/status`, {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Accept': 'application/vnd.bsh.sdk.v1+json',
+        },
+      });
+
+      const data = await response.json();
+      const operationState = data.data.status.find(status => status.key === 'BSH.Common.Status.OperationState');
+      console.log(operationState.value);
+      
+      if (operationState.value !== 'BSH.Common.EnumType.OperationState.Run') {
+        setIsRunning(false);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    const statusInterval = setInterval(() => {
+      fetchWasherStatus();
+    }, washerInterval);
+
+    return () => clearInterval(statusInterval);
+  }, []);
 
   useEffect(() => {
     if (decreaseStartTimeHeight) {
@@ -129,11 +160,28 @@ const WashingMachine = () => {
       if (response.status === 204 || response.status === 200) {
         setIsRunning(true);
         setProgress(0);
+
+        const responseGet = await fetch(`https://simulator.home-connect.com/api/homeappliances/${washingMachineId}/programs/active`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/vnd.bsh.sdk.v1+json',
+          }
+        });
+
+        if (responseGet.ok) {
+          const data = await responseGet.json();
+          const durationOption = data.data.options.find(option => option.key === 'BSH.Common.Option.Duration');
+          setProgramDuration(durationOption.value * 1000);
+        } else {
+          console.log("Error fetching active program details");
+        }
       } else {
-        console.error("Error starting the washing machine");
+        console.log("Error starting the washing machine");
       }
     } catch (error) {
-      console.error("Error starting the washing machine:", error);
+      console.log(error);
     }
   };
 
@@ -229,7 +277,7 @@ const WashingMachine = () => {
             <div className="progress-bar">
               <div className="progress" style={{ width: `${progress}%` }}></div>
             </div>
-            <span className="progress-percentage">{progress}%</span>
+            <span className="progress-percentage">{progress.toFixed(2)}%</span>
           </div>
         </div>
       )}
@@ -250,7 +298,7 @@ const WashingMachine = () => {
           <label>Temperature:</label>
           <select value={currentDegree} onChange={(e) => setCurrentDegree(e.target.value)}>
             <option value="20">20°C</option>
-            <option value="30">30°C</option>
+            <option value="30°C">30°C</option>
             <option value="40">40°C</option>
             <option value="50">50°C</option>
             <option value="60">60°C</option>
@@ -312,8 +360,6 @@ const WashingMachine = () => {
           />
         </div>
       )}
-
-
 
       {countdown !== null && (
         <div className={`countdown-timer ${countdown !== null ? 'centered-box' : ''}`}>
