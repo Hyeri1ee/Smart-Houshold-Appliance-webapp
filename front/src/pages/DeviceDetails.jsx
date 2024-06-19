@@ -313,8 +313,6 @@ const WashingMachine = () => {
         </div>
       )}
 
-
-
       {countdown !== null && (
         <div className={`countdown-timer ${countdown !== null ? 'centered-box' : ''}`}>
           <div className="countdown-box">

@@ -48,8 +48,6 @@ function AskTimeslotsPage() {
   };
 
   const handleConfirm = () => {
-    console.log("Confirm button clicked");
-    // navigate("/confirmation");
     navigate("/dashboard");
   };
 
@@ -72,7 +70,7 @@ function AskTimeslotsPage() {
 
     const auth = getCookie('authorization');
 
-    const resp = await fetch('http://localhost:1337/api/schedule', {
+    const resp = await fetch('http://localhost:1337/api/user/timeslots', {
       method: 'PUT',
       headers: {
         'Authorization': auth,
@@ -95,9 +93,6 @@ function AskTimeslotsPage() {
       console.error("Fetch failed!");
       return;
     }
-    
-    const data = await resp.json();;
-    location.href = "/dashboard";
   };
 
   const toggleDay = (day) => {
@@ -120,7 +115,7 @@ function AskTimeslotsPage() {
 
   const handleRemoveTimeSlot = (index) => {
     const newTimeSlots = [...timeSlots];
-    newTimeSlots.splice(index, 1); // Remove the element at the given index
+    newTimeSlots.splice(index, 1);
     setTimeSlots(newTimeSlots);
   };
 
