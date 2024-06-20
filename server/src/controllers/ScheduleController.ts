@@ -12,7 +12,34 @@ interface timeRange {
   start_time: string;
   end_time: string;
 }
+export const checkprofileTypeandDefaultSchedule = async (req: Request, res: Response): Promise<void> => {
+  let decoded;
+  try {
+    decoded = handleJwt(req);
+  } catch (e) {
+    res
+      .status(400)
+      .json({
+        error: "authorization header missing!"
+      });
+    return;
+  }
+  
+  try{
+    const dataSource = await getDataSource();
+    const timeRepository = dataSource.getRepository(Time);
+    const users = dataSource.getRepository(User);
+    const user = await users.findOne({where: {user_id: decoded.user_id}});
+    const profileType = (user?.profile_type);
 
+    res.status(200).json({profileType: profileType});
+  }
+  catch (error) {
+    console.error('Error fetching profileType data:', error);
+    res.status(500).json({error: 'Internal Server Error'});
+  }
+
+};
 export const checkSchedule = async (req: Request, res: Response): Promise<void> => {
   let decoded;
   try {

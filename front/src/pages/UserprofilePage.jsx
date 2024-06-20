@@ -137,7 +137,7 @@ function UserProfilePage() {
           <img src={familyIcon} alt="family" style={{ ...styles.checkboxImage, paddingRight: selectedLabel === 'family' ? '15px' : '0px' }} />
         </div>
 
-        <p style={{ marginTop: '10px', cursor: 'pointer',color: 'yellow', textDecoration: 'underline' }} onClick={handleOptionOut}>Skip</p>
+        <p style={{ marginTop: '10px', fontSize: '23px', cursor: 'pointer',color: 'white', textDecoration: 'underline' }} onClick={handleOptionOut}>Skip</p>
 
 
       </div>
