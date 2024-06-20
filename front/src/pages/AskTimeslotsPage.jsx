@@ -57,6 +57,14 @@ function AskTimeslotsPage() {
 
   const handleSaveTimeslot = async () => {
 
+    const resp2 = await fetch('http://localhost:1337/api/schedule', {
+      method: 'GET',
+      headers: {
+        'Authorization': auth,
+        'Content-Type': 'application/json'
+      },
+    });
+    console.log(resp2);
     // If "All Day" is marked, save "All Day" instead of time slots
     if (allDay) {
       setDayTimeSlots((prevDayTimeSlots) => ({

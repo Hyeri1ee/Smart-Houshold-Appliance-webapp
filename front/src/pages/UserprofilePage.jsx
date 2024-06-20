@@ -34,11 +34,37 @@ function UserProfilePage() {
   const handleBackButtonClick = () => {
     navigate('/login');
   };
-  const handleOptionOut = async () => {
-    setProfileType(0);
-  };  
+  const handleOptionOut = async (e) => {
+    e.preventDefault();
 
-  const handleNextButtonClick = async () => {
+    setProfileType(0);
+    try {
+      const accessToken = getCookie('authorization');
+      console.log(accessToken);
+      const response = await fetch('http://localhost:1337/api/user/profile', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({ profile_type: 0 }),
+        credentials: "include",
+      });
+
+      if (response.ok) {
+        navigate('/dashboard');
+      } else {
+        console.error('Failed to update profile type');
+      }
+    } catch (error) {
+      console.error('Error updating profile type:', error);
+    }
+    
+  };
+
+  const handleNextButtonClick = async (e) => {
+    e.preventDefault();
+
     if (profileType >= 0) {
       try {
         const accessToken = getCookie('authorization');
@@ -110,10 +136,13 @@ function UserProfilePage() {
           <p style={styles.checkboxText}>I live with my family</p>
           <img src={familyIcon} alt="family" style={{ ...styles.checkboxImage, paddingRight: selectedLabel === 'family' ? '15px' : '0px' }} />
         </div>
+
+        <p style={{ marginTop: '10px', cursor: 'pointer',color: 'yellow', textDecoration: 'underline' }} onClick={handleOptionOut}>Skip</p>
+
+
       </div>
 
       <div className="button-container">
-        <Button className="opt-out" onClick={handleOptionOut} style={styles.backButton}> Skip </Button>
         <Button className="back-button" onClick={handleBackButtonClick} style={styles.backButton}> Back </Button>
         <Button onClick={handleNextButtonClick}> Next </Button>
       </div>
