@@ -1,5 +1,7 @@
+// File path: controllers/scheduleController.ts
+
 import { Request, Response } from 'express';
-import { Repository } from 'typeorm';
+import { Repository, DataSource } from 'typeorm';
 import { Schedule } from '../db/entities/Schedule';
 import { getDataSource } from '../db/DatabaseConnect';
 import { User } from "../db/entities/User";
@@ -56,7 +58,6 @@ const handleTimes = async (times: TimeRange[], timeRepository: Repository<Time>,
     time.start_time = timeEntry.start_time;
     time.end_time = timeEntry.end_time;
     timeDatabaseEntries.push(time);
-    console.log(time);
     await timeRepository.save(time);
   }
 
@@ -72,8 +73,8 @@ export const putSchedule = async (req: Request, res: Response) => {
     return res.status(400).json({ error: "authorization header missing!" });
   }
 
-  if (!Array.isArray(req.body)) {
-    return res.status(400).json({ error: "req body is not an array!" });
+  if (!Array.isArray(req.body) || req.body.length === 0) {
+    return res.status(400).json({ error: "req body is not an array or is empty!" });
   }
 
   for (const entry of req.body) {
@@ -102,45 +103,43 @@ export const putSchedule = async (req: Request, res: Response) => {
       return res.status(400).json({ error: "Time is in wrong format. Make sure it's a string of HH:MM" });
     }
 
-    try {
-      const dataSource = await getDataSource();
-      const userRepository = dataSource.getRepository(User);
-      const scheduleRepository = dataSource.getRepository(Schedule);
-      const timesRepository = dataSource.getRepository(Time);
+    const dataSource = await getDataSource();
+    const userRepository = dataSource.getRepository(User);
+    const scheduleRepository = dataSource.getRepository(Schedule);
+    const timesRepository = dataSource.getRepository(Time);
 
-      const user: User | null = await userRepository.findOne({ where: { user_id: decoded.user_id } });
+    const user: User | null = await userRepository.findOne({ where: { user_id: decoded.user_id } });
 
-      if (!user) {
-        return res.status(400).json({ error: "user_id does not match any existing user." });
+    if (!user) {
+      return res.status(400).json({ error: "user_id does not match any existing user." });
+    }
+
+    const existingScheduleForWeekday = await scheduleRepository.findOne({
+      where: {
+        user_id: decoded.user_id,
+        weekday: weekday
+      }
+    });
+
+    await dataSource.transaction(async transactionalEntityManager => {
+      if (existingScheduleForWeekday !== null) {
+        await transactionalEntityManager.delete(Time, { schedule_id: existingScheduleForWeekday.schedule_id });
+        await transactionalEntityManager.delete(Schedule, { schedule_id: existingScheduleForWeekday.schedule_id });
       }
 
-      const existingScheduleForWeekday = await scheduleRepository.findOne({
-        where: {
-          user_id: decoded.user_id,
-          weekday: weekday
-        }
+      const newSchedule = scheduleRepository.create({
+        user_id: user.user_id,
+        weekday: weekday,
+        user: user
       });
 
-      if (existingScheduleForWeekday === null) {
-        const newSchedule = scheduleRepository.create({
-          user_id: user.user_id,
-          weekday: weekday,
-          user: user
-        });
-
-        await scheduleRepository.save(newSchedule);
-        await handleTimes(times, timesRepository, newSchedule);
-      } else {
-        existingScheduleForWeekday.times = await handleTimes(times, timesRepository, existingScheduleForWeekday);
-        await scheduleRepository.save(existingScheduleForWeekday);
-      }
-    } catch (error) {
-      console.error('Error processing schedule:', error);
-      return res.status(500).json({ error: 'Internal Server Error' });
-    }
+      const savedSchedule = await transactionalEntityManager.save(newSchedule);
+      await handleTimes(times, transactionalEntityManager.getRepository(Time), savedSchedule);
+    });
   }
+
   return res.sendStatus(200);
-}
+};
 
 export const deleteSchedule = async (req: Request, res: Response) => {
   let decoded;

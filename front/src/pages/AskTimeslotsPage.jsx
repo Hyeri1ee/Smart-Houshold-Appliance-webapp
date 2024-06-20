@@ -51,13 +51,16 @@ function AskTimeslotsPage() {
             const day = daysOfWeek.find(d => d.id === s.weekday).short;
             selectedDays.push(day);
             scheduleMap[day] = s.times.map(time => ({
-              startTime: time.start_time.slice(0, 5),  // Convert to "HH:MM"
-              endTime: time.end_time.slice(0, 5)       // Convert to "HH:MM"
+              startTime: time.start_time.slice(0, 5),
+              endTime: time.end_time.slice(0, 5)
             }));
           });
 
           setSelectedDays(selectedDays);
           setDayTimeSlots(scheduleMap);
+        } else {
+          setSelectedDays([]);
+          setDayTimeSlots({});
         }
       } else {
         console.error("Failed to fetch existing schedule.");
@@ -87,24 +90,15 @@ function AskTimeslotsPage() {
   };
 
   const handleConfirm = async () => {
-    console.log("Confirm button clicked");
-    const auth = getCookie('authorization');
-
-    // Delete existing schedules
-    const deleteResp = await fetch('http://localhost:1337/api/schedule/deleteSchedule', {
-      method: 'DELETE',
-      headers: {
-        'Authorization': auth,
-        'Content-Type': 'application/json'
+    for (const day of selectedDays) {
+      if (!dayTimeSlots[day] || dayTimeSlots[day].length === 0) {
+        alert(`Please select a time for ${daysOfWeek.find(d => d.short === day).full}`);
+        return;
       }
-    });
-
-    if (!deleteResp.ok) {
-      console.error("Delete failed!");
-      return;
     }
 
-    // Add new schedules
+    const auth = getCookie('authorization');
+
     const timeslotData = selectedDays.map(day => ({
       weekday: daysOfWeek.find(d => d.short === day).id,
       times: dayTimeSlots[day] === "All Day" ? [{ start_time: "00:00", end_time: "23:59" }] : dayTimeSlots[day].map(slot => ({
@@ -112,8 +106,6 @@ function AskTimeslotsPage() {
         end_time: slot.endTime
       }))
     }));
-
-    console.log("Timeslot Data:", timeslotData); // Debug logging
 
     const putResp = await fetch('http://localhost:1337/api/schedule/putSchedule', {
       method: 'PUT',
@@ -129,7 +121,6 @@ function AskTimeslotsPage() {
       return;
     }
 
-    const data = await putResp.json();
     navigate("/dashboard");
   };
 
@@ -185,7 +176,7 @@ function AskTimeslotsPage() {
     } else {
       setTimeSlots(dayTimeSlots[currentDay] || []);
     }
-  }
+  };
 
   return (
     <div className="app-container">
