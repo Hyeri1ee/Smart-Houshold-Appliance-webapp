@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AddButton from "../components/generic/AddButton";
 import RemoveButton from "../components/generic/RemoveButton";
@@ -6,7 +6,6 @@ import Checkbox from "../components/generic/Checkbox";
 import {getCookie} from "../helpers/CookieHelper";
 import "../styles/global.css";
 import "../styles/pages/AskTimeslotsPage.css";
-import { set } from "date-fns";
 
 const daysOfWeek = [
   { short: "Mo", full: "Monday", id: 0 },
@@ -28,7 +27,11 @@ function AskTimeslotsPage() {
   const [timeSlots, setTimeSlots] = useState([]);
   const [allDay, setAllDay] = useState(false); //  for tracking "All Day" selection
   const navigate = useNavigate();
-  const [fetchedSchedule, setFetchedSchedule] = useState(null);
+  const userProfileType = null;
+
+  useEffect(() => {
+    profileTypeDefault();
+  }, []);
 
   const handleAddTimeslot = () => {
     setTempSelectedDays(selectedDays);
@@ -55,16 +58,77 @@ function AskTimeslotsPage() {
     navigate("/dashboard");
   };
 
-  const handleSaveTimeslot = async () => {
+  const profileTypeDefault = async () => {
+    const auth = getCookie('authorization');
 
-    const resp2 = await fetch('http://localhost:1337/api/schedule', {
+    const resp = await fetch('http://localhost:1337/api/schedule', {
       method: 'GET',
       headers: {
         'Authorization': auth,
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
     });
-    console.log(resp2);
+
+    const data = await resp.json();
+    if (!resp.ok) {
+      console.error("Fetch failed!");
+      return;
+    }
+    console.log("aa");
+    const userProfileType = data
+    console.log("User profile type: ", userProfileType);
+    defaultSchedule(userProfileType);
+  };
+
+  const defaultSchedule = (userProfileType) = async () => {
+    switch( userProfileType ) {
+      case 0:
+        break;
+      case 1:
+        // Set timeslots and weekday for user profile type 1
+        selectedDays.push("Mo", "Tu", "We", "Th", "Fr", "Sa", "Su");
+        setDayTimeSlots({
+          Mo: [{ startTime: "08:00", endTime: "23:59" }],
+          Tu: [{ startTime: "08:00", endTime: "23:59" }],
+          We: [{ startTime: "08:00", endTime: "23:59" }],
+          Th: [{ startTime: "08:00", endTime: "23:59" }],
+          Fr: [{ startTime: "08:00", endTime: "23:59" }],
+          Sa: [{ startTime: "08:00", endTime: "23:59" }],
+          Su: [{ startTime: "08:00", endTime: "23:59" }],
+        });
+
+      case 2:
+        // Set timeslots and weekday for user profile type 2
+        selectedDays.push("Mo", "We", "Fr", "Su");
+        setDayTimeSlots({
+          Mo: [{ startTime: "15:00", endTime: "23:59" }],
+          We: [{ startTime: "15:00", endTime: "23:59" }],
+          Fr: [{ startTime: "15:00", endTime: "23:59" }],
+          Su: [{ startTime: "15:00", endTime: "23:59" }],
+        });
+
+      case 3:
+        // Set timeslots and weekday for user profile type 3
+        selectedDays.push("Sa", "Su");
+        setDayTimeSlots({
+          Sa: [{ startTime: "28:00", endTime: "22:00" }],
+          Su: [{ startTime: "18:00", endTime: "22:00" }],
+        });
+    }
+  };
+  const scheduleData = Object.entries(dayTimeSlots).map(([day, times]) => {
+    const weekday = daysOfWeek.find((d) => d.short === day).id;
+    const timeslots = Array.isArray(times)
+      ? times.map((slot) => ({ start_time: slot.startTime, end_time: slot.endTime }))
+      : [{ start_time: "00:00", end_time: "23:59" }];
+  
+    return {
+      weekday : weekday,
+      times: timeslots,
+    };
+  });
+
+  const handleSaveTimeslot = async () => {
     // If "All Day" is marked, save "All Day" instead of time slots
     if (allDay) {
       setDayTimeSlots((prevDayTimeSlots) => ({
@@ -78,9 +142,7 @@ function AskTimeslotsPage() {
       }));
     }
     setShowTimeModal(false);
-
-    console.log(timeSlots);
-
+    
     const auth = getCookie('authorization');
 
     const resp = await fetch('http://localhost:1337/api/schedule', {
@@ -89,6 +151,9 @@ function AskTimeslotsPage() {
         'Authorization': auth,
         'Content-Type': 'application/json'
       },
+      body: JSON.stringify(
+          scheduleData
+      )
     });
     
     if (!resp.ok) {
@@ -96,8 +161,6 @@ function AskTimeslotsPage() {
       return;
     }
     
-    const data = await resp.json();
-    console.log(data.schedule);
     location.href = "/dashboard";
   };
 
