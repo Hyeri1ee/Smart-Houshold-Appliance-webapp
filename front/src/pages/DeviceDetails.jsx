@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import '../styles/pages/Washing.css';
 import washingMachineImage from "../assets/device/machine.png";
 import TimePicker from '../components/generic/TimePicker';
@@ -13,7 +13,7 @@ const WashingMachine = () => {
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [scheduledTime, setScheduledTime] = useState(null);
   const [countdown, setCountdown] = useState(null);
-  const [fetchTimerActive, setFetchTimerActive] = useState(false);
+  const [fetchTimerActive] = useState(false);
 
   const [decreaseStartTimeHeight, setDecreaseStartTimeHeight] = useState(false);
   const washingMachineId = 'SIEMENS-HCS03WCH1-7BC6383CF794';
@@ -209,7 +209,7 @@ const WashingMachine = () => {
       }, 1000);
     }
     return () => clearInterval(timer);
-  }, [countdown]);
+  }, [countdown, startWashingMachine]);
 
   return (
     <div className="washing-machine-container">

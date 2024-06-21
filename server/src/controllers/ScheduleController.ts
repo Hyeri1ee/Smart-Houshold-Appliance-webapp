@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import {handleJwt} from "./JWTHelper";
+import { handleJwt } from "./JWTHelper";
 import schedule from "node-schedule";
 import dotenv from 'dotenv';
 dotenv.config();
@@ -26,7 +26,7 @@ interface JobData {
   program: string,
 }
 
-const jobs: { [id: string] : JobData } = {};
+const jobs: { [id: string]: JobData } = {};
 
 const checkValidInfo = async (req: Request, res: Response) => {
   if (!process.env.CLIENT_ID || !process.env.CLIENT_SECRET) {
@@ -42,17 +42,16 @@ const checkValidInfo = async (req: Request, res: Response) => {
     'client_secret': process.env.CLIENT_SECRET,
   }
 
-  const resp = await fetch(`${
-      'https://simulator.home-connect.com' +
-      '/security/oauth/token'
+  const resp = await fetch(`${'https://simulator.home-connect.com' +
+    '/security/oauth/token'
     }`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      // In the new block because it needs to be x-www-form-urlencoded iirc, code from the prototype
-      body: new URLSearchParams(requestData).toString()
-    }
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    // In the new block because it needs to be x-www-form-urlencoded iirc, code from the prototype
+    body: new URLSearchParams(requestData).toString()
+  }
   );
 
   if (!resp.ok) {
@@ -76,7 +75,7 @@ const checkValidInfo = async (req: Request, res: Response) => {
     return false;
   }
 
-  const response = await fetch(`https://simulator.home-connect.com/api/homeappliances/${req.body.washerId}/programs/available`, {
+  const response = await fetch(`https://simulator.home-connect.com/api/homeappliances/${req.body.washer_id}/programs/available`, {
     method: 'GET',
     headers: {
       'Authorization': `Bearer ${accessToken}`,
@@ -88,17 +87,16 @@ const checkValidInfo = async (req: Request, res: Response) => {
     res
       .status(400)
       .json({
-      error: 'Failed to fetch appliance available programs'
-    });
+        error: 'Failed to fetch appliance available programs'
+      });
 
     return false;
   }
 
   const data = await response.json();
-
   let valid: boolean = false;
 
-  for (const program of data.data.progams) {
+  for (const program of data.data.programs) {
     if (program.key === req.body.settings.data.key) {
       valid = true
     }
@@ -114,15 +112,15 @@ const checkValidInfo = async (req: Request, res: Response) => {
   }
 
   valid = false;
-
   const availableOptionsResp =
-    await fetch(`https://simulator.home-connect.com/api/homeappliances/${req.body.washerId}/programs/available/${req.body.settings.data.key}`, {
-    method: 'GET',
-    headers: {
-      'Authorization': `Bearer ${accessToken}`,
-      'Accept': 'application/vnd.bsh.sdk.v1+json',
-    },
-  });
+    await fetch(`https://simulator.home-connect.com/api/homeappliances/${req.body.washer_id}/programs/available/${req.body.settings.data.key}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        // 'Accept': 'application/vnd.bsh.sdk.v1+json',
+      },
+    });
+  
 
   const availableOptions = await availableOptionsResp.json();
   for (const optionIn of req.body.settings.data.options) {
@@ -180,23 +178,22 @@ export const addScheduledWash = async (req: Request, res: Response) => {
   let schedule_id = createUUID();
 
   try {
-    schedule.scheduleJob(`user_id:${decoded.user_id}, washer_id:${req.body.washer_id} UUID:${schedule_id}`, req.body.date,async () => {
-    if (!process.env.CLIENT_ID || !process.env.CLIENT_SECRET) {
-      console.error('PLEASE (RE-)RUN \'./make-key.sh\'! You are missing the client_id and client_secret!\nif you ask about this on discord, you owe Nick a box of chocolates.')
-      return;
-    }
+    schedule.scheduleJob(`user_id:${decoded.user_id}, washer_id:${req.body.washer_id} UUID:${schedule_id}`, req.body.date, async () => {
+      if (!process.env.CLIENT_ID || !process.env.CLIENT_SECRET) {
+        console.error('PLEASE (RE-)RUN \'./make-key.sh\'! You are missing the client_id and client_secret!\nif you ask about this on discord, you owe Nick a box of chocolates.')
+        return;
+      }
 
-    const requestData = {
-      'grant_type': 'refresh_token',
-      'refresh_token': req.body.homeconnectrefresh,
-      'client_id': process.env.CLIENT_ID,
-      'client_secret': process.env.CLIENT_SECRET,
-    }
+      const requestData = {
+        'grant_type': 'refresh_token',
+        'refresh_token': req.body.homeconnectrefresh,
+        'client_id': process.env.CLIENT_ID,
+        'client_secret': process.env.CLIENT_SECRET,
+      }
 
-    const resp = await fetch(`${
-        'https://simulator.home-connect.com' +
+      const resp = await fetch(`${'https://simulator.home-connect.com' +
         '/security/oauth/token'
-      }`, {
+        }`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -204,40 +201,41 @@ export const addScheduledWash = async (req: Request, res: Response) => {
         // In the new block because it needs to be x-www-form-urlencoded iirc, code from the prototype
         body: new URLSearchParams(requestData).toString()
       }
-    );
+      );
 
-    if (!resp.ok) {
-      console.error("Something went wrong when getting auth token");
-      return;
-    }
+      if (!resp.ok) {
+        console.error("Something went wrong when getting auth token");
+        return;
+      }
 
-    let homeconnectAccessToken;
-    try {
-      homeconnectAccessToken = (await resp.json()).access_token;
-    } catch (e) {
-      console.error("Access token was not returned with request, which is weird, since the status is ok.");
-      return;
-    }
+      let homeconnectAccessToken;
+      try {
+        homeconnectAccessToken = (await resp.json()).access_token;
+      } catch (e) {
+        console.error("Access token was not returned with request, which is weird, since the status is ok.");
+        return;
+      }
 
-    // Make request
-    const response = await fetch(`https://simulator.home-connect.com/api/homeappliances/${req.body.washerId}/programs/active`, {
-      method: 'PUT',
-      headers: {
-        'Authorization': `Bearer ${homeconnectAccessToken}`,
-        'Content-Type': 'application/json',
-        'Accept': 'application/vnd.bsh.sdk.v1+json',
-      },
-      body: JSON.stringify({
-        "data": req.body.settings,
-      }),
+      // Make request
+      const response = await fetch(`https://simulator.home-connect.com/api/homeappliances/${req.body.washer_id}/programs/active`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${homeconnectAccessToken}`,
+          // 'Content-Type': 'application/json',
+          // 'Accept': 'application/vnd.bsh.sdk.v1+json',
+        },
+        body: JSON.stringify({
+          "data": req.body.settings.data,
+        }),
+      });
+
+      if (!response.ok) {
+        console.error(`Something went wrong when starting washer with id ${req.body.washer_id}`);
+      }
+
+      delete jobs[`user_id:${decoded.user_id}, washer_id:${req.body.washer_id} UUID:${schedule_id}`];
     });
-
-    if (!response.ok) {
-      console.error(`Something went wrong when starting washer with id ${req.body.washerId}`);
-    }
-
-    delete jobs[`user_id:${decoded.user_id}, washer_id:${req.body.washer_id} UUID:${schedule_id}`];
-  });} catch (error) {
+  } catch (error) {
     console.error("Maybe the date wasn't wrong, but something went wrong with the name assignment.\n" +
       "If you're sure the date is correct, please message Nick on discord. If you want to check, look at " +
       "https://www.npmjs.com/package/node-schedule section cron-style scheduling");
@@ -250,7 +248,7 @@ export const addScheduledWash = async (req: Request, res: Response) => {
 
   let duration;
 
-  for (const i of req.body.settings.options) {
+  for (const i of req.body.settings.data.options) {
     if (i.key === 'BSH.Common.Option.FinishInRelative') {
       duration = i.value
     }
@@ -269,6 +267,8 @@ export const addScheduledWash = async (req: Request, res: Response) => {
     isAdvice: req.body.isAdvice,
     program: req.body.settings.key
   }
+
+  console.log(JSON.stringify(jobs));
 
   return res
     .status(200)
@@ -362,7 +362,8 @@ export const getScheduledWash = (req: Request, res: Response) => {
         message: 'something went wrong when getting job',
       });
   }
-
+  console.log(JSON.stringify(jobs));
+  console.log(`Looking for job: user_id:${decoded.user_id}, washer_id:${req.body.washer_id} UUID:${req.body.schedule_id}`)
   const date = job.nextInvocation()
 
   const otherData = jobs[`user_id:${decoded.user_id}, washer_id:${req.body.washer_id} UUID:${req.body.schedule_id}`];

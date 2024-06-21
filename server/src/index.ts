@@ -4,7 +4,7 @@ import {loginRoute} from './routers/LoginRoute';
 import {registerRoute} from './routers/RegisterRoute';
 import {adviceRoute} from "./routers/AdviceRoute";
 import {userRoute} from "./routers/UserRoute";
-import {washingScheduleRoute} from "./routers/ScheduledWashingController";
+import {washingScheduleRoute} from "./routers/ScheduledWashingRoute";
 
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
@@ -27,7 +27,7 @@ app.use('/api/register', registerRoute);
 app.use('/api/login', loginRoute);
 app.use('/api/user', userRoute);
 app.use('/api/advice', adviceRoute);
-app.use('/api/schedule/', washingScheduleRoute);
+app.use('/api/schedule', washingScheduleRoute);
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
