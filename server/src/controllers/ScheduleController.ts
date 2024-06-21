@@ -1,5 +1,3 @@
-// File path: controllers/scheduleController.ts
-
 import { Request, Response } from 'express';
 import { Repository, DataSource } from 'typeorm';
 import { Schedule } from '../db/entities/Schedule';
@@ -171,6 +169,57 @@ export const deleteSchedule = async (req: Request, res: Response) => {
 
   } catch (error) {
     console.error('Error deleting schedule data:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+export const deleteDaySchedule = async (req: Request, res: Response) => {
+  let decoded;
+  try {
+    decoded = handleJwt(req);
+  } catch (e) {
+    res.status(400).json({ error: "authorization header missing!" });
+    return;
+  }
+
+  const { dayId } = req.params;
+
+  if (!dayId) {
+    res.status(400).json({ error: "dayId is missing from request parameters" });
+    return;
+  }
+
+  const weekday = parseInt(dayId, 10);
+
+  if (isNaN(weekday) || weekday < 0 || weekday > 6) {
+    res.status(400).json({ error: "dayId is not a whole number, or not between 0 and 6." });
+    return;
+  }
+
+  try {
+    const dataSource = await getDataSource();
+    const scheduleRepository = dataSource.getRepository(Schedule);
+    const timeRepository = dataSource.getRepository(Time);
+
+    const schedule = await scheduleRepository.findOne({
+      where: {
+        user_id: decoded.user_id,
+        weekday: weekday
+      }
+    });
+
+    if (!schedule) {
+      res.status(404).json({ error: "No schedule found for the specified day." });
+      return;
+    }
+
+    await timeRepository.delete({ schedule_id: schedule.schedule_id });
+    await scheduleRepository.delete({ schedule_id: schedule.schedule_id });
+
+    res.status(200).json({ message: `Schedule for day ${weekday} deleted successfully.` });
+
+  } catch (error) {
+    console.error('Error deleting day schedule:', error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };

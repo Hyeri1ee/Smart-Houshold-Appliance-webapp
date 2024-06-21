@@ -211,3 +211,37 @@ input {
 .day-circle.selected {
   background-color: var(--accent);
 }
+.selected-days-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.day-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.day-box {
+  flex-grow: 1;
+  cursor: pointer;
+}
+
+.separator {
+  height: 1px;
+  background-color: #ccc;
+  margin: 5px 0;
+}
+
+.primary-color {
+  font-weight: bold;
+}
+
+.secondary-color {
+  color: var(--text);
+}
+
+.time-slot-display {
+  margin-left: 20px;
+}

@@ -178,25 +178,53 @@ function AskTimeslotsPage() {
     }
   };
 
+  const handleRemoveDay = async (day) => {
+    const auth = getCookie('authorization');
+    const dayId = daysOfWeek.find(d => d.short === day).id;
+    const response = await fetch(`http://localhost:1337/api/schedule/deleteDay/${dayId}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': auth,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (response.ok) {
+      setSelectedDays(selectedDays.filter(d => d !== day));
+      setDayTimeSlots(prevDayTimeSlots => {
+        const newDayTimeSlots = { ...prevDayTimeSlots };
+        delete newDayTimeSlots[day];
+        return newDayTimeSlots;
+      });
+    } else {
+      console.error("Failed to delete the schedule.");
+    }
+  };
+
   return (
     <div className="app-container">
       <h2 className="fixed-header">When would you like to run your washing machine?</h2>
       <div className="selected-days-container">
         {selectedDays.map(day => (
-          <div key={day} className="day-box" onClick={() => handleDayModal(day)}>
-            <div className="primary-color">{daysOfWeek.find(d => d.short === day).full}</div>
-            <div className="separator"></div>
-            {dayTimeSlots[day] && typeof dayTimeSlots[day] === 'string' ? (
-              <div className="time-slot-display secondary-color">
-                {dayTimeSlots[day]}
+          <div key={day} className="day-container">
+            <div className="day-box" onClick={() => handleDayModal(day)}>
+              <div className="primary-color">
+                {daysOfWeek.find(d => d.short === day).full}
               </div>
-            ) : (
-              dayTimeSlots[day] && dayTimeSlots[day].map((slot, index) => (
-                <div key={index} className="time-slot-display secondary-color">
-                  {`${slot.startTime} - ${slot.endTime}`}
+              <div className="separator"></div>
+              {dayTimeSlots[day] && typeof dayTimeSlots[day] === 'string' ? (
+                <div className="time-slot-display secondary-color">
+                  {dayTimeSlots[day]}
                 </div>
-              ))
-            )}
+              ) : (
+                dayTimeSlots[day] && dayTimeSlots[day].map((slot, index) => (
+                  <div key={index} className="time-slot-display secondary-color">
+                    {`${slot.startTime} - ${slot.endTime}`}
+                  </div>
+                ))
+              )}
+            </div>
+            <RemoveButton onRemove={() => handleRemoveDay(day)} />
           </div>
         ))}
       </div>
