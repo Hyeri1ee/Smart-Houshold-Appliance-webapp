@@ -40,7 +40,7 @@ function AskTimeslotsPage() {
 
   const handleCloseDaysModal = () => {
     setTempSelectedDays([]);
-    setShowDaysModal(false);
+    setShowDaysModal(true);
   };
 
   const handleSaveDays = () => {
@@ -52,10 +52,28 @@ function AskTimeslotsPage() {
     setShowTimeModal(false);
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     console.log("Confirm button clicked");
-    // navigate("/confirmation");
-    navigate("/dashboard");
+    const auth = getCookie('authorization');
+  
+    const resp = await fetch('http://localhost:1337/api/schedule', {
+      method: 'PUT',
+      headers: {
+        'Authorization': auth,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(
+          scheduleData
+      )
+    });
+    
+    if (!resp.ok) {
+      console.error("Fetch failed!");
+      return;
+    }
+    
+    console.log(scheduleData);
+    //navigate("/dashboard");
   };
 
   const profileTypeDefault = async () => {
@@ -74,32 +92,37 @@ function AskTimeslotsPage() {
       console.error("Fetch failed!");
       return;
     }
-    console.log("aa");
-    const userProfileType = data
-    console.log("User profile type: ", userProfileType);
-    defaultSchedule(userProfileType);
+    const userdefualtSchedule = data
+    defaultSchedule(data.profileType);
   };
 
-  const defaultSchedule = (userProfileType) = async () => {
-    switch( userProfileType ) {
+  const defaultSchedule =  async (userProfile) => {
+
+    switch( userProfile ) {
       case 0:
         break;
       case 1:
         // Set timeslots and weekday for user profile type 1
-        selectedDays.push("Mo", "Tu", "We", "Th", "Fr", "Sa", "Su");
-        setDayTimeSlots({
-          Mo: [{ startTime: "08:00", endTime: "23:59" }],
-          Tu: [{ startTime: "08:00", endTime: "23:59" }],
-          We: [{ startTime: "08:00", endTime: "23:59" }],
-          Th: [{ startTime: "08:00", endTime: "23:59" }],
-          Fr: [{ startTime: "08:00", endTime: "23:59" }],
-          Sa: [{ startTime: "08:00", endTime: "23:59" }],
-          Su: [{ startTime: "08:00", endTime: "23:59" }],
+        setSelectedDays(prevDays => {
+          const newDays = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
+          return [...new Set(newDays)];
         });
+        setDayTimeSlots({
+        Mo: [{ startTime: "08:00", endTime: "12:00" }, { startTime: "14:00", endTime: "18:00" }],
+        Tu: [{ startTime: "08:00", endTime: "12:00" }, { startTime: "14:00", endTime: "18:00" }],
+        We: [{ startTime: "08:00", endTime: "12:00" }, { startTime: "14:00", endTime: "18:00" }],
+        Th: [{ startTime: "08:00", endTime: "12:00" }, { startTime: "14:00", endTime: "18:00" }],
+        Fr: [{ startTime: "08:00", endTime: "12:00" }, { startTime: "14:00", endTime: "18:00" }],
+        Sa: [{ startTime: "08:00", endTime: "12:00" }, { startTime: "14:00", endTime: "18:00" }],
+        Su: [{ startTime: "08:00", endTime: "12:00" }, { startTime: "14:00", endTime: "18:00" }],
+      });
 
       case 2:
         // Set timeslots and weekday for user profile type 2
-        selectedDays.push("Mo", "We", "Fr", "Su");
+        setSelectedDays(prevDays => {
+          const newDays = ["Mo", "We", "Fr", "Su"];
+          return [...new Set(newDays)];
+        });
         setDayTimeSlots({
           Mo: [{ startTime: "15:00", endTime: "23:59" }],
           We: [{ startTime: "15:00", endTime: "23:59" }],
@@ -109,9 +132,12 @@ function AskTimeslotsPage() {
 
       case 3:
         // Set timeslots and weekday for user profile type 3
-        selectedDays.push("Sa", "Su");
+        setSelectedDays(prevDays => {
+          const newDays = ["Sa", "Su"];
+          return [...new Set(newDays)];
+        });
         setDayTimeSlots({
-          Sa: [{ startTime: "28:00", endTime: "22:00" }],
+          Sa: [{ startTime: "18:00", endTime: "22:00" }],
           Su: [{ startTime: "18:00", endTime: "22:00" }],
         });
     }
@@ -143,25 +169,6 @@ function AskTimeslotsPage() {
     }
     setShowTimeModal(false);
     
-    const auth = getCookie('authorization');
-
-    const resp = await fetch('http://localhost:1337/api/schedule', {
-      method: 'PUT',
-      headers: {
-        'Authorization': auth,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(
-          scheduleData
-      )
-    });
-    
-    if (!resp.ok) {
-      console.error("Fetch failed!");
-      return;
-    }
-    
-    location.href = "/dashboard";
   };
 
   const toggleDay = (day) => {

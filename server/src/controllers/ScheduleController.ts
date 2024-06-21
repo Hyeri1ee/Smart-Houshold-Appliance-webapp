@@ -5,6 +5,7 @@ import {getDataSource} from '../db/DatabaseConnect';
 import {User} from "../db/entities/User";
 import {Time} from "../db/entities/Time";
 import {handleJwt} from "./JWTHelper";
+import { profile } from 'console';
 
 const timeRegex = /^(?:[01]\d|2[0-3]):[0-5]\d$/;
 
@@ -122,7 +123,7 @@ export const checkSchedule = async (req: Request, res: Response): Promise<void> 
     });
   }
 
-  res.status(200).json(result);
+  res.status(200).json({profileType : profileType});
 
   } catch (error) {
     console.error('Error fetching schedule data:', error);
@@ -225,6 +226,7 @@ export const putSchedule = async (req: Request, res: Response) => {
         })
     }
 
+    //SAVE row in schedule table
     const existingScheduleForWeekday: Schedule | null = await scheduleRepository.findOne({
       where: {
         user_id: decoded.user_id,
@@ -240,23 +242,19 @@ export const putSchedule = async (req: Request, res: Response) => {
         user: user
       })
 
-      scheduleRepository.save(newSchedule);
-      
-      // const newSchedule: Schedule = new Schedule();
-      // newSchedule.user_id = user.user_id;
-      // newSchedule.weekday = weekday;
 
-      // newSchedule.times = await handleTimes(newTimes, timesRepository, newSchedule);
-      // newSchedule.user = user;
-
-      // await scheduleRepository.save(newSchedule);
-      
-      // console.log('schedule id: %d', newSchedule.schedule_id);
-      console.log(await scheduleRepository.findOne({where: {user: user}}));
+    scheduleRepository.save(newSchedule);
+          
     } else {
       existingScheduleForWeekday.times = await handleTimes(times, timesRepository, existingScheduleForWeekday);
       await scheduleRepository.save(existingScheduleForWeekday);
     }
+
+    //SAVE row in time table
+
+    const newTime = timesRepository.create({
+        
+    })
   }
   return res.sendStatus(200);
 }
