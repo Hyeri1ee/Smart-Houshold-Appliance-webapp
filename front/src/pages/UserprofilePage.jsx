@@ -155,15 +155,18 @@ const styles = {
     position: "relative",
     top: "50px",
     textAlign: "center",
+    color: 'var(--text)',
   },
   header1: {
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 16,
+    color: 'var(--text)',
   },
   header2: {
     fontSize: 26,
     fontWeight: "bold",
+    color: 'var(--text)',
   },
   checkboxContainer: {
     textAlign: "center",
@@ -173,7 +176,8 @@ const styles = {
     marginTop: "80px",
     height: "450px",
     width: "380px",
-    color: '#404040'
+    color: '#404040',
+    
   },
   checkboxDiv: {
     height: '90px',
@@ -187,7 +191,7 @@ const styles = {
     border: "1px solid #ddd",
     borderRadius: "4px",
     width: "260px",
-    backgroundColor: "#ffffff",
+    backgroundColor: 'var(--background)',
   },
   checkboxText: {
     flex: 2,
@@ -202,7 +206,7 @@ const styles = {
   },
   backButton: {
     backgroundColor: "#FFF9C4",
-    border: "1px solid #ddd",
+    border: "1px solid var(--text)",
   },
 };
 
