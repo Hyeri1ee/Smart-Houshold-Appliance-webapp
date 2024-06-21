@@ -6,7 +6,7 @@ import { GlobalStateContext } from '../components/generic/GlobalStateContext';
 
 const DeviceDetails = () => {
   const accessToken = window.sessionStorage.getItem('homeconnect_simulator_auth_token');
-  const { haId, setHaId, programs, setPrograms } = useContext(GlobalStateContext);
+  const { washingMachineId, setwashingMachineId, programs, setPrograms } = useContext(GlobalStateContext);
   const [startOption, setStartOption] = useState('now');
   const [isRunning, setIsRunning] = useState(false);
   const [currentMode, setCurrentMode] = useState('');
@@ -20,8 +20,8 @@ const DeviceDetails = () => {
   const [endTime, setEndTime] = useState(null);
 
   useEffect(() => {
-    //check if there is already a stored haId
-    if (!haId) {
+    //check if there is already a stored washingMachineId
+    if (!washingMachineId) {
       const fetchData = async () => {
         try {
           const response = await fetch(`https://simulator.home-connect.com/api/homeappliances`, {
@@ -39,9 +39,9 @@ const DeviceDetails = () => {
             const washer = data.data.homeappliances.find(appliance => appliance.name === "Washer Simulator");
 
             if (washer) {
-              setHaId(washer.haId);
+              setwashingMachineId(washer.washingMachineId);
               // fetch all washing machine available programs
-              const programsResponse = await fetch(`https://simulator.home-connect.com/api/homeappliances/${washer.haId}/programs/available`, {
+              const programsResponse = await fetch(`https://simulator.home-connect.com/api/homeappliances/${washer.washingMachineId}/programs/available`, {
                 method: 'GET',
                 headers: {
                   'Authorization': `${accessToken}`,
@@ -57,7 +57,7 @@ const DeviceDetails = () => {
                 const tempPrograms = [];
                 // fetch all settings for all programs
                 for (let programKey of programKeys) {
-                  const programResponse = await fetch(`https://simulator.home-connect.com/api/homeappliances/${washer.haId}/programs/available/${programKey}`, {
+                  const programResponse = await fetch(`https://simulator.home-connect.com/api/homeappliances/${washer.washingMachineId}/programs/available/${programKey}`, {
                     method: 'GET',
                     headers: {
                       'Authorization': `${accessToken}`,
@@ -94,7 +94,7 @@ const DeviceDetails = () => {
               console.error("Washer not found");
             }
           } else {
-            console.error("error retrieving haId");
+            console.error("error retrieving washingMachineId");
           }
         } catch (error) {
           console.error("error retrieving data:");
@@ -103,7 +103,7 @@ const DeviceDetails = () => {
 
       fetchData();
     }
-  }, [haId, setHaId, setPrograms, accessToken]);
+  }, [washingMachineId, setwashingMachineId, setPrograms, accessToken]);
 
   useEffect(() => {
     console.log('programs:', programs);
@@ -152,8 +152,7 @@ const DeviceDetails = () => {
 
   const fetchWasherStatus = async () => {
     try {
-      // simulator.home - connect.com / api / homeappliances / ${ washingMachineId } /status
-      const response = await fetch(`https://google.com`, {
+      const response = await fetch(`https://simulator.home-connect.com/api/homeappliances/${washingMachineId}/status`, {
         headers: {
           'Authorization': `Bearer ${accessToken}`,
           'Accept': 'application/vnd.bsh.sdk.v1+json',
@@ -174,8 +173,7 @@ const DeviceDetails = () => {
 
   const stopWashingMachine = async () => {
     try {
-      // simulator.home - connect.com / api / homeappliances / ${ washingMachineId } /programs/active
-      const response = await fetch(`https://google.com`, {
+      const response = await fetch(`https://simulator.home-connect.com/api/homeappliances/${washingMachineId}/programs/active`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${accessToken}`,
@@ -216,7 +214,7 @@ const DeviceDetails = () => {
       const temperatureKey = selectedProgram.options.find(option => option.optionKey === 'LaundryCare.Washer.Option.Temperature').allowedValues.find(value => value === currentDegree);
       const spinKey = selectedProgram.options.find(option => option.optionKey === 'LaundryCare.Washer.Option.SpinSpeed').allowedValues.find(value => value === currentSpin);
 
-      const response = await fetch(`https://simulator.home-connect.com/api/homeappliances/${haId}/programs/active`, {
+      const response = await fetch(`https://simulator.home-connect.com/api/homeappliances/${washingMachineId}/programs/active`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${accessToken}`,
@@ -244,7 +242,7 @@ const DeviceDetails = () => {
         setIsRunning(true);
         const startTime = Date.now();
 
-        const responseGet = await fetch(`https://simulator.home-connect.com/api/homeappliances/${haId}/programs/active`, {
+        const responseGet = await fetch(`https://simulator.home-connect.com/api/homeappliances/${washingMachineId}/programs/active`, {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${accessToken}`,

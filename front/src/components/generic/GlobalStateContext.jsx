@@ -1,4 +1,4 @@
-//retrieve haId and programs only once at the beginning of the session
+//retrieve washingMachineId and programs only once at the beginning of the session
 import { createContext } from 'react';
 import PropTypes from 'prop-types';
 import { useState, useEffect } from 'react';
@@ -6,11 +6,11 @@ import { useState, useEffect } from 'react';
 export const GlobalStateContext = createContext();
 
 export const GlobalStateProvider = ({ children }) => {
-    const [haId, setHaId] = useState('');
+    const [washingMachineId, setwashingMachineId] = useState('');
     const [programs, setPrograms] = useState([]);
 
     useEffect(() => {
-        if (!haId) {
+        if (!washingMachineId) {
             const fetchData = async () => {
                 try {
                     const accessToken = window.sessionStorage.getItem('homeconnect_simulator_auth_token');
@@ -28,9 +28,9 @@ export const GlobalStateProvider = ({ children }) => {
                         const washer = data.data.homeappliances.find(appliance => appliance.name === "Washer Simulator");
 
                         if (!programs) {
-                            setHaId(washer.haId);
+                            setwashingMachineId(washer.washingMachineId);
 
-                            const programsResponse = await fetch(`https://simulator.home-connect.com/api/homeappliances/${washer.haId}/programs/available`, {
+                            const programsResponse = await fetch(`https://simulator.home-connect.com/api/homeappliances/${washer.washingMachineId}/programs/available`, {
                                 method: 'GET',
                                 headers: {
                                     'Authorization': `${accessToken}`,
@@ -46,7 +46,7 @@ export const GlobalStateProvider = ({ children }) => {
                                 const tempPrograms = [];
 
                                 for (let programKey of programKeys) {
-                                    const programResponse = await fetch(`https://simulator.home-connect.com/api/homeappliances/${washer.haId}/programs/available/${programKey}`, {
+                                    const programResponse = await fetch(`https://simulator.home-connect.com/api/homeappliances/${washer.washingMachineId}/programs/available/${programKey}`, {
                                         method: 'GET',
                                         headers: {
                                             'Authorization': `${accessToken}`,
@@ -88,10 +88,10 @@ export const GlobalStateProvider = ({ children }) => {
 
             fetchData();
         }
-    }, [haId, programs]);
+    }, [washingMachineId, programs]);
 
     return (
-        <GlobalStateContext.Provider value={{ haId, setHaId, programs, setPrograms }}>
+        <GlobalStateContext.Provider value={{ washingMachineId, setwashingMachineId, programs, setPrograms }}>
             {children}
         </GlobalStateContext.Provider>
     );
