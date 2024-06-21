@@ -1,21 +1,132 @@
-import React, { useState, useEffect } from 'react';
-import '../styles/pages/Washing.css';
+import { useState, useEffect, useContext } from 'react';
+import '../styles/pages/DeviceDetails.css';
 import washingMachineImage from "../assets/device/machine.png";
 import TimePicker from '../components/generic/TimePicker';
+import { GlobalStateContext } from '../components/generic/GlobalStateContext';
 
-const WashingMachine = () => {
+const DeviceDetails = () => {
+  const accessToken = window.sessionStorage.getItem('homeconnect_simulator_auth_token');
+  const { haId, setHaId, programs, setPrograms } = useContext(GlobalStateContext);
   const [startOption, setStartOption] = useState('now');
   const [isRunning, setIsRunning] = useState(false);
-  const [currentMode, setCurrentMode] = useState('Cotton');
-  const [currentDegree, setCurrentDegree] = useState('40');
-  const [currentSpin, setCurrentSpin] = useState('1000');
+  const [currentMode, setCurrentMode] = useState('');
+  const [currentDegree, setCurrentDegree] = useState('');
+  const [currentSpin, setCurrentSpin] = useState('');
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [scheduledTime, setScheduledTime] = useState(null);
   const [countdown, setCountdown] = useState(null);
-  const [washerInterval, setWasherInterval] = useState(30000);
+  const [washerInterval] = useState(30000);
   const [decreaseStartTimeHeight, setDecreaseStartTimeHeight] = useState(false);
   const [endTime, setEndTime] = useState(null);
-  const washingMachineId = 'SIEMENS-HCS03WCH1-7BC6383CF794';
+
+  useEffect(() => {
+    //check if there is already a stored haId
+    if (!haId) {
+      const fetchData = async () => {
+        try {
+          const response = await fetch(`https://simulator.home-connect.com/api/homeappliances`, {
+            method: 'GET',
+            headers: {
+              'Authorization': `${accessToken}`,
+              'Content-Type': 'application/json',
+              'Accept': 'application/vnd.bsh.sdk.v1+json',
+            }
+          });
+
+          if (response.status === 200) {
+            const data = await response.json();
+            //only grab the washing machine
+            const washer = data.data.homeappliances.find(appliance => appliance.name === "Washer Simulator");
+
+            if (washer) {
+              setHaId(washer.haId);
+              // fetch all washing machine available programs
+              const programsResponse = await fetch(`https://simulator.home-connect.com/api/homeappliances/${washer.haId}/programs/available`, {
+                method: 'GET',
+                headers: {
+                  'Authorization': `${accessToken}`,
+                  'Content-Type': 'application/json',
+                  'Accept': 'application/vnd.bsh.sdk.v1+json',
+                }
+              });
+
+              if (programsResponse.status === 200) {
+                const programsData = await programsResponse.json();
+                const programKeys = programsData.data.programs.map(program => program.key);
+
+                const tempPrograms = [];
+                // fetch all settings for all programs
+                for (let programKey of programKeys) {
+                  const programResponse = await fetch(`https://simulator.home-connect.com/api/homeappliances/${washer.haId}/programs/available/${programKey}`, {
+                    method: 'GET',
+                    headers: {
+                      'Authorization': `${accessToken}`,
+                      'Content-Type': 'application/json',
+                      'Accept': 'application/vnd.bsh.sdk.v1+json',
+                    }
+                  });
+
+                  if (programResponse.status === 200) {
+                    const programData = await programResponse.json();
+                    const options = programData.data.options.map(option => ({
+                      optionKey: option.key,
+                      allowedValues: option.constraints.allowedvalues
+                    }));
+
+                    tempPrograms.push({
+                      programKey,
+                      options
+                    });
+                  } else {
+                    console.error(`error retrieving details for program ${programKey}`);
+                  }
+                }
+
+                setPrograms(tempPrograms);
+                //set the first program as the default selection
+                if (tempPrograms.length > 0) {
+                  setCurrentMode(tempPrograms[0].programKey);
+                }
+              } else {
+                console.error("error retrieving program keys");
+              }
+            } else {
+              console.error("Washer not found");
+            }
+          } else {
+            console.error("error retrieving haId");
+          }
+        } catch (error) {
+          console.error("error retrieving data:");
+        }
+      };
+
+      fetchData();
+    }
+  }, [haId, setHaId, setPrograms, accessToken]);
+
+  useEffect(() => {
+    console.log('programs:', programs);
+  }, [programs]);
+
+  useEffect(() => {
+    if (programs.length > 0) {
+      //set first program and related settings as default values to be displayed in dropdown
+      setCurrentMode(programs[0].programKey);
+
+      if (programs[0].options.length > 0) {
+        const firstOptions = programs[0].options;
+
+        if (firstOptions[0].allowedValues.length > 2) {
+          setCurrentDegree(firstOptions[0].allowedValues[2]);
+        }
+
+        if (firstOptions.length > 1 && firstOptions[1].allowedValues.length > 0) {
+          setCurrentSpin(firstOptions[1].allowedValues[0]);
+        }
+      }
+    }
+  }, [programs]);
 
   const handleStartStop = () => {
     if (isRunning) {
@@ -41,8 +152,8 @@ const WashingMachine = () => {
 
   const fetchWasherStatus = async () => {
     try {
-      const accessToken = window.sessionStorage.getItem('homeconnect_simulator_auth_token');
-      const response = await fetch(`https://simulator.home-connect.com/api/homeappliances/${washingMachineId}/status`, {
+      // simulator.home - connect.com / api / homeappliances / ${ washingMachineId } /status
+      const response = await fetch(`https://google.com`, {
         headers: {
           'Authorization': `Bearer ${accessToken}`,
           'Accept': 'application/vnd.bsh.sdk.v1+json',
@@ -63,8 +174,8 @@ const WashingMachine = () => {
 
   const stopWashingMachine = async () => {
     try {
-      const accessToken = window.sessionStorage.getItem('homeconnect_simulator_auth_token');
-      const response = await fetch(`https://simulator.home-connect.com/api/homeappliances/${washingMachineId}/programs/active`, {
+      // simulator.home - connect.com / api / homeappliances / ${ washingMachineId } /programs/active
+      const response = await fetch(`https://google.com`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${accessToken}`,
@@ -89,7 +200,7 @@ const WashingMachine = () => {
     }, washerInterval);
 
     return () => clearInterval(statusInterval);
-  }, []);
+  }, [washerInterval, fetchWasherStatus]);
 
   useEffect(() => {
     if (decreaseStartTimeHeight) {
@@ -101,38 +212,11 @@ const WashingMachine = () => {
 
   const startWashingMachine = async () => {
     try {
-      const accessToken = window.sessionStorage.getItem('homeconnect_simulator_auth_token');
-      const programKey = {
-        'Cotton': 'LaundryCare.Washer.Program.Cotton',
-        'EasyCare': 'LaundryCare.Washer.Program.EasyCare',
-        'Mix': 'LaundryCare.Washer.Program.Mix',
-        'DelicatesSilk': 'LaundryCare.Washer.Program.DelicatesSilk',
-        'Wool': 'LaundryCare.Washer.Program.Wool'
-      }[currentMode];
+      const selectedProgram = programs.find(program => program.programKey === currentMode);
+      const temperatureKey = selectedProgram.options.find(option => option.optionKey === 'LaundryCare.Washer.Option.Temperature').allowedValues.find(value => value === currentDegree);
+      const spinKey = selectedProgram.options.find(option => option.optionKey === 'LaundryCare.Washer.Option.SpinSpeed').allowedValues.find(value => value === currentSpin);
 
-      const temperatureKey = {
-        '20': 'LaundryCare.Washer.EnumType.Temperature.GC20',
-        '30': 'LaundryCare.Washer.EnumType.Temperature.GC30',
-        '40': 'LaundryCare.Washer.EnumType.Temperature.GC40',
-        '50': 'LaundryCare.Washer.EnumType.Temperature.GC50',
-        '60': 'LaundryCare.Washer.EnumType.Temperature.GC60',
-        '70': 'LaundryCare.Washer.EnumType.Temperature.GC70',
-        '80': 'LaundryCare.Washer.EnumType.Temperature.GC80',
-        '90': 'LaundryCare.Washer.EnumType.Temperature.GC90'
-      }[currentDegree];
-
-      const spinKey = {
-        '400': 'LaundryCare.Washer.EnumType.SpinSpeed.RPM400',
-        '600': 'LaundryCare.Washer.EnumType.SpinSpeed.RPM600',
-        '800': 'LaundryCare.Washer.EnumType.SpinSpeed.RPM800',
-        '1000': 'LaundryCare.Washer.EnumType.SpinSpeed.RPM1000',
-        '1200': 'LaundryCare.Washer.EnumType.SpinSpeed.RPM1200',
-        '1400': 'LaundryCare.Washer.EnumType.SpinSpeed.RPM1400',
-        '1600': 'LaundryCare.Washer.EnumType.SpinSpeed.RPM1600'
-      }[currentSpin];
-
-
-      const response = await fetch(`https://simulator.home-connect.com/api/homeappliances/${washingMachineId}/programs/active`, {
+      const response = await fetch(`https://simulator.home-connect.com/api/homeappliances/${haId}/programs/active`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${accessToken}`,
@@ -141,7 +225,7 @@ const WashingMachine = () => {
         },
         body: JSON.stringify({
           "data": {
-            "key": programKey,
+            "key": currentMode,
             "options": [
               {
                 "key": "LaundryCare.Washer.Option.Temperature",
@@ -160,7 +244,7 @@ const WashingMachine = () => {
         setIsRunning(true);
         const startTime = Date.now();
 
-        const responseGet = await fetch(`https://simulator.home-connect.com/api/homeappliances/${washingMachineId}/programs/active`, {
+        const responseGet = await fetch(`https://simulator.home-connect.com/api/homeappliances/${haId}/programs/active`, {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${accessToken}`,
@@ -173,7 +257,7 @@ const WashingMachine = () => {
           const data = await responseGet.json();
           const durationOption = data.data.options.find(option => option.key === 'BSH.Common.Option.Duration');
           const duration = durationOption.value * 1000;
-          const endTime = new Date(startTime + duration);;
+          const endTime = new Date(startTime + duration);
           setEndTime(endTime);
         } else {
           console.log("Error fetching active program details");
@@ -258,7 +342,26 @@ const WashingMachine = () => {
       }, 1000);
     }
     return () => clearInterval(timer);
-  }, [countdown]);
+  }, [countdown, startWashingMachine]);
+
+  // what is displayed on the temperature and spin dropdown values depends on the program selected from the mode dropdown
+  const handleModeChange = (e) => {
+    const selectedMode = e.target.value;
+    setCurrentMode(selectedMode);
+    const selectedProgram = programs.find(program => program.programKey === selectedMode);
+    if (selectedProgram) {
+      setCurrentDegree(selectedProgram.options.find(option => option.optionKey === 'LaundryCare.Washer.Option.Temperature').allowedValues[0]);
+      setCurrentSpin(selectedProgram.options.find(option => option.optionKey === 'LaundryCare.Washer.Option.SpinSpeed').allowedValues[0]);
+    }
+  };
+
+  const selectedProgram = programs.find(program => program.programKey === currentMode);
+  const temperatureOptions = selectedProgram ? selectedProgram.options.find(option => option.optionKey === 'LaundryCare.Washer.Option.Temperature').allowedValues : [];
+  const spinOptions = selectedProgram ? selectedProgram.options.find(option => option.optionKey === 'LaundryCare.Washer.Option.SpinSpeed').allowedValues : [];
+
+  const formatCamelCase = (str) => {
+    return str.replace(/([a-z])([A-Z])/g, '$1 $2');
+  };
 
   return (
     <div className="washing-machine-container">
@@ -271,9 +374,9 @@ const WashingMachine = () => {
       {isRunning && (
         <div className="running-section">
           <h2>Running</h2>
-          <p>Current Mode: <strong>{currentMode}</strong></p>
-          <p>Temperature: <strong>{currentDegree}°C</strong></p>
-          <p>Spin Speed: <strong>{currentSpin} RPM</strong></p>
+          <p>Current Mode: {formatCamelCase(currentMode.split('.').slice(3).join('.'))}</p>
+          <p>Temperature: {currentDegree !== 'LaundryCare.Washer.EnumType.Temperature.Cold' ? currentDegree.split('.').slice(4).join('.').replace(/^GC/, '') + '°C' : 'Cold'}</p>
+          <p>Spin Speed: {currentSpin !== 'LaundryCare.Washer.EnumType.SpinSpeed.Off' ? currentSpin.split('.').slice(4).join('.').replace(/^RPM/, '') + ' RPM' : 'Off'}</p>
           <div className="end-time">
             <p>Washing program will end at: <strong>{new Date(endTime).toLocaleTimeString()}</strong></p>
           </div>
@@ -284,70 +387,75 @@ const WashingMachine = () => {
       <>
       <div className={`controls-section ${countdown !== null ? 'blur' : ''}`}>
         <h2>Controls</h2>
-          <div>
-            <label>Mode:</label>
-            <select value={currentMode} onChange={(e) => setCurrentMode(e.target.value)}>
-              <option value="Cotton">Cotton</option>
-              <option value="EasyCare">Easy Care</option>
-              <option value="Mix">Mix</option>
-              <option value="DelicatesSilk">Silk</option>
-              <option value="Wool">Wool</option>
-            </select>
+            <div className='setting-container'>
+              <div className='label-box'>
+                <label>Mode:</label>
+              </div>
+              <select value={currentMode} onChange={handleModeChange}>
+                {programs.map((program) => (
+                  <option key={program.programKey} value={program.programKey}>{formatCamelCase(program.programKey.split('.').slice(3).join('.'))}</option>
+                ))}
+              </select>
           </div>
-          <div>
-            <label>Temperature:</label>
-            <select value={currentDegree} onChange={(e) => setCurrentDegree(e.target.value)}>
-              <option value="20">20°C</option>
-              <option value="30°C">30°C</option>
-              <option value="40">40°C</option>
-              <option value="50">50°C</option>
-              <option value="60">60°C</option>
-              <option value="70">70°C</option>
-              <option value="80">80°C</option>
-              <option value="90">90°C</option>
-            </select>
+            <div className='setting-container'>
+              <div className='label-box'>
+                <label>Temperature:</label>
+              </div>
+              <select value={currentDegree} onChange={(e) => setCurrentDegree(e.target.value)}>
+                {temperatureOptions.map((temp) => (
+                  <option key={temp} value={temp}>
+                    {temp !== 'LaundryCare.Washer.EnumType.Temperature.Cold' ? temp.split('.').slice(4).join('.').replace(/^GC/, '') + '°C' : 'Cold'}
+                  </option>
+                ))}
+              </select>
           </div>
-          <div>
-            <label>Spin Speed:</label>
-            <select value={currentSpin} onChange={(e) => setCurrentSpin(e.target.value)}>
-              <option value="400">400 RPM</option>
-              <option value="600">600 RPM</option>
-              <option value="800">800 RPM</option>
-              <option value="1000">1000 RPM</option>
-              <option value="1200">1200 RPM</option>
-              <option value="1400">1400 RPM</option>
-              <option value="1600">1600 RPM</option>
-            </select>
-          </div>
+            <div className='setting-container'>
+              <div className='label-box'>
+                <label>Spin Speed:</label>
+              </div>
+              <select value={currentSpin} onChange={(e) => setCurrentSpin(e.target.value)}>
+                {spinOptions.map((spin) => (
+                  <option key={spin} value={spin}>
+                    {spin !== 'LaundryCare.Washer.EnumType.SpinSpeed.Off' ? spin.split('.').slice(4).join('.').replace(/^RPM/, '') + ' RPM' : 'Off'}
+                  </option>
+                ))}
+              </select>
+            </div>
         </div>
         <div className={`start-time-section ${countdown !== null ? 'blur' : ''}`}>
             <h2>Start Time</h2>
-            <label>
-              <input
-                type="radio"
-                value="now"
-                checked={startOption === 'now'}
-                onChange={() => {
-                  setStartOption('now');
-                  setDecreaseStartTimeHeight(false);
-                }}
-                />
-              Start Now
-            </label>
-            <label>
-              <input
-                type="radio"
-                value="schedule"
-                checked={startOption === 'schedule'}
-                onChange={handleScheduleStart}                 
-                />
-              Schedule Start
-            </label>
-            {startOption === 'schedule' && scheduledTime && (
-              <div className="scheduled-time">
-                Scheduled Time: {scheduledTime.toLocaleString()}
+            <div id='radio-group'>
+              <div className='radio-box'>
+                <div>
+                  <input
+                    type="radio"
+                    value="now"
+                    checked={startOption === 'now'}
+                    onChange={() => {
+                      setStartOption('now');
+                      setDecreaseStartTimeHeight(false);
+                    }}
+                  />
+                </div>
+                <label>Start Now</label>
               </div>
-            )}
+              <div className='radio-box'>
+                <div>
+                  <input
+                    type="radio"
+                    value="schedule"
+                    checked={startOption === 'schedule'}
+                    onChange={handleScheduleStart}
+                  />
+                </div>
+                <label>Schedule Start</label>
+              </div>
+              {startOption === 'schedule' && scheduledTime && (
+                <div className="scheduled-time">
+                  Scheduled Time: {scheduledTime.toLocaleString()}
+                </div>
+              )}
+            </div>
           </div>
 
       {showTimePicker && (
@@ -383,4 +491,4 @@ const WashingMachine = () => {
   );
 };
 
-export default WashingMachine;
+export default DeviceDetails;
