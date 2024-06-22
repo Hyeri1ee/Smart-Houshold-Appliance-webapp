@@ -39,9 +39,9 @@ const DeviceDetails = () => {
             const washer = data.data.homeappliances.find(appliance => appliance.name === "Washer Simulator");
 
             if (washer) {
-              setwashingMachineId(washer.washingMachineId);
+              setwashingMachineId(washer.haId);
               // fetch all washing machine available programs
-              const programsResponse = await fetch(`https://simulator.home-connect.com/api/homeappliances/${washer.washingMachineId}/programs/available`, {
+              const programsResponse = await fetch(`https://simulator.home-connect.com/api/homeappliances/${washer.haId}/programs/available`, {
                 method: 'GET',
                 headers: {
                   'Authorization': `${accessToken}`,
@@ -57,7 +57,7 @@ const DeviceDetails = () => {
                 const tempPrograms = [];
                 // fetch all settings for all programs
                 for (let programKey of programKeys) {
-                  const programResponse = await fetch(`https://simulator.home-connect.com/api/homeappliances/${washer.washingMachineId}/programs/available/${programKey}`, {
+                  const programResponse = await fetch(`https://simulator.home-connect.com/api/homeappliances/${washer.haId}/programs/available/${programKey}`, {
                     method: 'GET',
                     headers: {
                       'Authorization': `${accessToken}`,

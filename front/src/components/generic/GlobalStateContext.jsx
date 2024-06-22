@@ -28,9 +28,9 @@ export const GlobalStateProvider = ({ children }) => {
                         const washer = data.data.homeappliances.find(appliance => appliance.name === "Washer Simulator");
 
                         if (!programs) {
-                            setwashingMachineId(washer.washingMachineId);
+                            setwashingMachineId(washer.haId);
 
-                            const programsResponse = await fetch(`https://simulator.home-connect.com/api/homeappliances/${washer.washingMachineId}/programs/available`, {
+                            const programsResponse = await fetch(`https://simulator.home-connect.com/api/homeappliances/${washer.haId}/programs/available`, {
                                 method: 'GET',
                                 headers: {
                                     'Authorization': `${accessToken}`,
@@ -46,7 +46,7 @@ export const GlobalStateProvider = ({ children }) => {
                                 const tempPrograms = [];
 
                                 for (let programKey of programKeys) {
-                                    const programResponse = await fetch(`https://simulator.home-connect.com/api/homeappliances/${washer.washingMachineId}/programs/available/${programKey}`, {
+                                    const programResponse = await fetch(`https://simulator.home-connect.com/api/homeappliances/${washer.haId}/programs/available/${programKey}`, {
                                         method: 'GET',
                                         headers: {
                                             'Authorization': `${accessToken}`,
