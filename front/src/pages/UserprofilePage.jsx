@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import "../styles/global.css";
-// import "../styles/pages/SchedulePage.css";
 import Button from "../components/generic/Button";
 import singleIcon from "../assets/user/profile/single.png";
 import coupleIcon from "../assets/user/profile/couple.png";
@@ -34,6 +33,7 @@ function UserProfilePage() {
   const handleBackButtonClick = () => {
     navigate('/login');
   };
+
   const handleOptionOut = async (e) => {
     e.preventDefault();
 
@@ -59,7 +59,6 @@ function UserProfilePage() {
     } catch (error) {
       console.error('Error updating profile type:', error);
     }
-    
   };
 
   const handleNextButtonClick = async (e) => {
@@ -107,7 +106,8 @@ function UserProfilePage() {
         <div
           style={{
             ...styles.checkboxDiv,
-            backgroundColor: selectedLabel === 'single' ? '#e0e0e0' : '#ffffff',
+            outline: selectedLabel === 'single' ? '4px solid var(--primary)' : '1px solid #ddd',
+            backgroundColor: 'var(--whitesmoke)',
           }}
           onClick={() => handleLabelClick('single')}
         >
@@ -118,28 +118,28 @@ function UserProfilePage() {
         <div
           style={{
             ...styles.checkboxDiv,
-            backgroundColor: selectedLabel === 'couple' ? '#e0e0e0' : '#ffffff',
+            outline: selectedLabel === 'couple' ? '4px solid var(--primary)' : '1px solid #ddd',
+            backgroundColor: 'var(--whitesmoke)',
           }}
           onClick={() => handleLabelClick('couple')}
         >
           <p style={styles.checkboxText}>I live with my partner or a housemate</p>
-          <img src={coupleIcon} alt="couple" style={{ ...styles.checkboxImage, paddingRight: selectedLabel === 'couple' ? '10px' : '0px' }} />
+          <img src={coupleIcon} alt="couple" style={styles.checkboxImage} />
         </div>
 
         <div
           style={{
             ...styles.checkboxDiv,
-            backgroundColor: selectedLabel === 'family' ? '#e0e0e0' : '#ffffff',
+            outline: selectedLabel === 'family' ? '4px solid var(--primary)' : '1px solid #ddd',
+            backgroundColor: 'var(--whitesmoke)',
           }}
           onClick={() => handleLabelClick('family')}
         >
           <p style={styles.checkboxText}>I live with my family</p>
-          <img src={familyIcon} alt="family" style={{ ...styles.checkboxImage, paddingRight: selectedLabel === 'family' ? '15px' : '0px' }} />
+          <img src={familyIcon} alt="family" style={styles.checkboxImage} />
         </div>
 
-        <p style={{ marginTop: '10px', fontSize: '23px', cursor: 'pointer',color: 'white', textDecoration: 'underline' }} onClick={handleOptionOut}>Skip</p>
-
-
+        <p style={styles.skip} onClick={handleOptionOut}>Skip</p>
       </div>
 
       <div className="button-container">
@@ -153,14 +153,13 @@ function UserProfilePage() {
 const styles = {
   fixedHeader: {
     position: "relative",
-    top: "50px",
+    top: "10px",
     textAlign: "center",
     color: 'var(--text)',
   },
   header1: {
     fontSize: 18,
     fontWeight: "bold",
-    marginBottom: 16,
     color: 'var(--text)',
   },
   header2: {
@@ -173,14 +172,13 @@ const styles = {
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    marginTop: "80px",
+    marginTop: "30px",
     height: "450px",
-    width: "380px",
-    color: '#404040',
-    
+    width: "100vw",
+    color: '#404040'
   },
   checkboxDiv: {
-    height: '90px',
+    height: '18%',
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
@@ -188,10 +186,11 @@ const styles = {
     padding: "0px",
     marginBottom: "20px",
     cursor: "pointer",
-    border: "1px solid #ddd",
     borderRadius: "4px",
-    width: "260px",
-    backgroundColor: 'var(--background)',
+    width: "80%",
+    boxSizing: "border-box",
+    transition: "border 0.3s ease",
+    backgroundColor: 'var(--whitesmoke)',
   },
   checkboxText: {
     flex: 2,
@@ -208,6 +207,13 @@ const styles = {
     backgroundColor: "#FFF9C4",
     border: "1px solid var(--text)",
   },
+  skip: {
+    marginTop: '10px',
+    fontSize: '20px',
+    cursor: 'pointer',
+    color: 'white',
+    textDecoration: 'underline'
+  }
 };
 
 export default UserProfilePage;
