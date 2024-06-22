@@ -78,7 +78,6 @@ function AskTimeslotsPage() {
 
   const profileTypeDefault = async () => {
     const auth = getCookie('authorization');
-
     const resp = await fetch('http://localhost:1337/api/schedule', {
       method: 'GET',
       headers: {
@@ -92,7 +91,7 @@ function AskTimeslotsPage() {
       console.error("Fetch failed!");
       return;
     }
-    const userdefualtSchedule = data
+    console.log(data.profileType);
     defaultSchedule(data.profileType);
   };
 
