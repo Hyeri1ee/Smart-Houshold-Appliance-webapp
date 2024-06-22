@@ -52,7 +52,6 @@ function UserProfilePage() {
       });
 
       if (response.ok) {
-        navigate('/dashboard');
         navigate('/user/profile');
       } else {
         console.error('Failed to update profile type');
@@ -68,7 +67,7 @@ function UserProfilePage() {
     if (profileType >= 0) {
       try {
         const accessToken = getCookie('authorization');
-        console.log(accessToken);
+        //console.log(accessToken);
         const response = await fetch('http://localhost:1337/api/user/profile', {
           method: 'POST',
           headers: {
@@ -80,6 +79,7 @@ function UserProfilePage() {
         });
 
         if (response.ok) {
+          document.cookie = `authorization=${accessToken}`;
           navigate('/dashboard');
         } else {
           console.error('Failed to update profile type');
