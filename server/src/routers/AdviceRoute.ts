@@ -1,6 +1,10 @@
-import express from "express";
-import { assignSchedulesToPeakTimes } from "../controllers/AdviceController";
+import express from 'express';
+import { assignSchedulesToPeakTimes, sendRecommendationNotification, saveSubscription } from '../controllers/AdviceController';
 
-export const  adviceRoute = express.Router();
+const adviceRoute = express.Router();
 
-adviceRoute.get("/", assignSchedulesToPeakTimes);
+adviceRoute.get('/', assignSchedulesToPeakTimes);
+adviceRoute.post('/send-notification', sendRecommendationNotification);
+adviceRoute.post('/save-subscription', saveSubscription);
+
+export default adviceRoute;
