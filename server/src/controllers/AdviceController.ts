@@ -57,8 +57,8 @@ const getTimeIndex = (weatherData: WeatherData[], epoch: number): number => {
 };
 
 const parseTime = (timeStr: string): number => {
-  const [hours, minutes, seconds] = timeStr.split(':').map(Number);
-  return hours * 3600 + minutes * 60 + seconds;
+  const [hours, minutes] = timeStr.split(':').map(Number);
+  return hours * 3600 + minutes * 60;
 };
 
 const formatTime = (epoch: number): string => {
@@ -180,7 +180,7 @@ export const assignSchedulesToPeakTimes = async (req: Request, res: Response, ne
     time = `${start} - ${end}`;
   }
 
-  const message = `Your optimal washer time is: ${time} on ${date}`;
+  const message = `The best time to use your washing machine is ${time} on ${date}`;
 
   return res.status(200).json({ time, date });
 };
@@ -268,7 +268,7 @@ export const sendRecommendationNotification = async (req: Request, res: Response
     time = `${start} - ${end}`;
   }
 
-  const message = `Your optimal washer time is: ${time} on ${date}`;
+  const message = `The best time to use your washing machine is ${time} on ${date}`;
   console.log('Final message:', message);
 
   await sendPushNotification(notificationToken, message);
