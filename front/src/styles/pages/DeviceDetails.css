@@ -3,7 +3,7 @@
   height: 100vh;
   margin: 0;
   padding: 0;
-  text-align: left;
+  text-align: center;
   background-color: var(--background);
   color: var(--text);
   box-sizing: border-box;
@@ -12,21 +12,22 @@
 }
 
 h1 {
-  font-size: 4vh !important;
+  font-size: 3.5vh !important;
   color: var(--text);
-  margin: 5vh 0 5vh !important;
-  font-weight: bold;
+  margin: 4vh 0 !important;
+  font-weight: bold !important;
   line-height: 1;
+  letter-spacing: 0.5px;
   text-align: center;
 }
 
 h2 {
-  text-align: left;
+  text-align: center;
   font-size: 3vh !important;
-  color: var(--text);
-  margin-bottom: 3vh;
-  font-weight: bold;
+  color: var(--text); 
+  font-weight: 400 !important;
   line-height: 1;
+  letter-spacing: .5px;
 }
 
 .image-section {
@@ -37,7 +38,7 @@ h2 {
   align-items: center;
   justify-content: center;
   padding: 0;
-  margin: 0 auto 3vh auto;
+  margin: 0 auto;
   position: relative;
 }
 
@@ -56,42 +57,16 @@ h2 {
   border-radius: 0;
 }
 
-.progress-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-}
-
-.progress-bar {
-  flex: 1;
-  height: 10px;
-  border-radius: 5px;
-  overflow: hidden;
-  margin: 10px auto;
-  position: relative;
-}
-
-.progress {
-  height: 100%;
-  background-color: var(--primary);
-  transition: width 0.1s;
-}
-
-.progress-percentage {
-  min-width: 50px;
-  text-align: left;
-  color: var(--text);
-  font-weight: bold;
-}
-
 .controls-section,
 .start-time-section {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 8vh;
   transition: filter 0.2s;
+}
+
+.start-time-section {
+  margin-bottom: 10px;
 }
 
 .adjusted {
@@ -103,7 +78,7 @@ select {
   color: var(--text);
   border-radius: 5px;
   border: 1px solid var(--text);
-  margin-left: .5em;
+  margin-left: 0.5em;
 }
 
 .controls-section.blur,
@@ -139,7 +114,7 @@ select {
 }
 
 .start-time-section label:first-of-type {
-  margin-bottom: .5em;
+  margin-bottom: 0.5em;
 }
 
 .scheduled-time {
@@ -149,8 +124,22 @@ select {
   max-height: 3vh;
 }
 
-input[type="radio"] {
-  margin-right: 10px;
+input[type='radio'] {
+  width: 24px;
+}
+
+#radio-group {
+  display: flex;
+  flex-direction: column;
+  width: 80%;
+}
+
+.radio-box {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  height: 3vh;
+  margin-bottom: 2px;
 }
 
 .bottom-buttons {
@@ -209,3 +198,23 @@ input[type="radio"] {
 .centered-box {
   z-index: 2;
 }
+
+.setting-container {
+  width: 80%;
+  display: flex;
+  justify-content: center;
+  margin: 0 0 6px 0;
+}
+
+.label-box {
+  display: flex;
+  align-items: center;
+  width: 50%;
+  height: 5vh;
+}
+
+select {
+  height: 5vh;
+  min-width: 16vh;
+}
+
