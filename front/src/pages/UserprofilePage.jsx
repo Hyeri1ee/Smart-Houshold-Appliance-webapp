@@ -52,7 +52,7 @@ function UserProfilePage() {
       });
 
       if (response.ok) {
-        navigate('/user/profile');
+        navigate('/user/timeslots');
       } else {
         console.error('Failed to update profile type');
       }
@@ -64,7 +64,6 @@ function UserProfilePage() {
   const handleNextButtonClick = async (e) => {
     e.preventDefault();
 
-    if (profileType > 0) {
       try {
         const accessToken = getCookie('authorization');
         //console.log(accessToken);
@@ -90,9 +89,6 @@ function UserProfilePage() {
       } catch (error) {
         console.error('Error updating profile type:', error);
       }
-    } else {
-      alert('Please select a household type.');
-    }
   };
 
   return (
@@ -146,8 +142,8 @@ function UserProfilePage() {
         <p style={styles.skip} onClick={handleOptionOut}>Skip</p>
       </div>
 
-      <div className="button-container">
-        <Button className="back-button" onClick={handleBackButtonClick} style={styles.backButton}> Back </Button>
+      <div style={styles.buttonsContainer} className="button-container">
+        <Button onClick={handleBackButtonClick} style={styles.backButton}> Back </Button>
         <Button onClick={handleNextButtonClick}> Next </Button>
       </div>
     </div>
@@ -179,7 +175,7 @@ const styles = {
     marginTop: "30px",
     height: "450px",
     width: "100vw",
-    color: '#404040'
+    color: 'var(--gray)'
   },
   checkboxDiv: {
     height: '18%',
@@ -206,6 +202,9 @@ const styles = {
     width: "40px",
     height: "60px",
     marginLeft: "auto",
+  },
+  buttonsContainer: {
+    width: '90%'
   },
   backButton: {
     backgroundColor: "#FFF9C4",
