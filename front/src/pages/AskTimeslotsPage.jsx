@@ -61,22 +61,23 @@ function AskTimeslotsPage() {
 
   const profileTypeDefault = async () => {
     const accessToken = getCookie('authorization');
-    console.log(accessToken);
-    // const resp = await fetch('http://localhost:1337/api/schedule', {
-    //   method: 'GET',
-    //   headers: {
-    //     'Authorization': `Bearer ${accessToken}`,
-    //     'Content-Type': 'application/json',
-    //   },
-    // });
 
-    // const data = await resp.json();
-    // if (!resp.ok) {
-    //   console.error("Fetch failed!");
-    //   return;
-    // }
-    // console.log(data.profileType);
-    defaultSchedule(2);
+    const resp = await fetch('http://localhost:1337/api/schedule', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    const data = await resp.json();
+    if (!resp.ok) {
+      console.error("Fetch failed!");
+      return;
+    }
+    console.log("aaa");
+    console.log(data.profileType);
+    defaultSchedule(data.profileType);
   };
 
   const defaultSchedule =  async (userProfile) => {
