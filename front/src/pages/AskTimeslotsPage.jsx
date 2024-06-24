@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AddButton from "../components/generic/AddButton";
 import RemoveButton from "../components/generic/RemoveButton";
@@ -27,6 +27,12 @@ function AskTimeslotsPage() {
   const [timeSlots, setTimeSlots] = useState([]);
   const [allDay, setAllDay] = useState(false); //  for tracking "All Day" selection
   const navigate = useNavigate();
+  const userProfileType = null;
+
+  useEffect(() => {
+    profileTypeDefault();
+  }, []);
+
 
   const handleAddTimeslot = () => {
     setTempSelectedDays(selectedDays);
@@ -51,6 +57,76 @@ function AskTimeslotsPage() {
     console.log("Confirm button clicked");
     // navigate("/confirmation");
     navigate("/dashboard");
+  };
+
+  const profileTypeDefault = async () => {
+    const accessToken = getCookie('authorization');
+    console.log(accessToken);
+    // const resp = await fetch('http://localhost:1337/api/schedule', {
+    //   method: 'GET',
+    //   headers: {
+    //     'Authorization': `Bearer ${accessToken}`,
+    //     'Content-Type': 'application/json',
+    //   },
+    // });
+
+    // const data = await resp.json();
+    // if (!resp.ok) {
+    //   console.error("Fetch failed!");
+    //   return;
+    // }
+    // console.log(data.profileType);
+    defaultSchedule(2);
+  };
+
+  const defaultSchedule =  async (userProfile) => {
+
+    switch( userProfile ) {
+      case 0:
+        break;
+      case 1:
+        // Set timeslots and weekday for user profile type 1
+        setSelectedDays(prevDays => {
+          const newDays = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
+          return [...new Set(newDays)];
+        });
+        setDayTimeSlots({
+        Mo: [{ startTime: "08:00", endTime: "12:00" }, { startTime: "14:00", endTime: "18:00" }],
+        Tu: [{ startTime: "08:00", endTime: "12:00" }, { startTime: "14:00", endTime: "18:00" }],
+        We: [{ startTime: "08:00", endTime: "12:00" }, { startTime: "14:00", endTime: "18:00" }],
+        Th: [{ startTime: "08:00", endTime: "12:00" }, { startTime: "14:00", endTime: "18:00" }],
+        Fr: [{ startTime: "08:00", endTime: "12:00" }, { startTime: "14:00", endTime: "18:00" }],
+        Sa: [{ startTime: "08:00", endTime: "12:00" }, { startTime: "14:00", endTime: "18:00" }],
+        Su: [{ startTime: "08:00", endTime: "12:00" }, { startTime: "14:00", endTime: "18:00" }],
+      });
+      break;
+
+      case 2:
+        // Set timeslots and weekday for user profile type 2
+        setSelectedDays(prevDays => {
+          const newDays = ["Mo", "We", "Fr", "Su"];
+          return [...new Set(newDays)];
+        });
+        setDayTimeSlots({
+          Mo: [{ startTime: "15:00", endTime: "23:59" }],
+          We: [{ startTime: "15:00", endTime: "23:59" }],
+          Fr: [{ startTime: "15:00", endTime: "23:59" }],
+          Su: [{ startTime: "15:00", endTime: "23:59" }],
+        });
+        break;
+
+      case 3:
+        // Set timeslots and weekday for user profile type 3
+        setSelectedDays(prevDays => {
+          const newDays = ["Sa", "Su"];
+          return [...new Set(newDays)];
+        });
+        setDayTimeSlots({
+          Sa: [{ startTime: "18:00", endTime: "22:00" }],
+          Su: [{ startTime: "18:00", endTime: "22:00" }],
+        });
+        break;
+    }
   };
 
   const handleSaveTimeslot = async () => {

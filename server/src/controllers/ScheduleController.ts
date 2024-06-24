@@ -26,29 +26,15 @@ export const checkSchedule = async (req: Request, res: Response): Promise<void> 
     return;
   }
 
-  try {
-    const dataSource = await getDataSource();
-    const scheduleRepository = dataSource.getRepository(Schedule);
-    const timeRepository = dataSource.getRepository(Time);
+  const dataSource = await getDataSource();
+  const users = dataSource.getRepository(User);
+  const user = await users.findOne({where: {user_id: decoded.user_id}});
+  const profileType = (user?.profile_type);
 
-    const schedule = await scheduleRepository.findOne({where: {user_id: decoded.user_id}});
+  res.status(200).json({profileType : profileType});
 
-    if (!schedule) {
-      res.sendStatus(400);
-      return;
-    }
-
-    schedule.times = await timeRepository.find({where: {schedule_id: schedule.schedule_id}});
-
-    res.status(200).json({
-      schedule: schedule
-    });
-
-  } catch (error) {
-    console.error('Error fetching schedule data:', error);
-    res.status(500).json({error: 'Internal Server Error'});
-  }
 };
+
 
 const handleTimes = async (times: Time[], timeRepository: Repository<Time>, schedule: Schedule) => {
   const timeDatabaseEntries: Time[] = [];

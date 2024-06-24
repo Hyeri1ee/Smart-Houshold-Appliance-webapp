@@ -82,8 +82,7 @@ function UserProfilePage() {
           const data = await response.json();
           console.log(accessToken);
           document.cookie = `authorization=${data.token}`;          
-          window.location.href = '/dashboard';
-
+          navigate('/dashboard');
         } else {
           console.error('Failed to update profile type');
         }

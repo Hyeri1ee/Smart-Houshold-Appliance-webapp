@@ -4,4 +4,4 @@ import {putSchedule, checkSchedule} from "../controllers/ScheduleController";
 export const scheduleRoute = express.Router();
 
 scheduleRoute.get("/", checkSchedule);
-scheduleRoute.put("/", putSchedule);
+//scheduleRoute.put("/", putSchedule);
