@@ -46,9 +46,9 @@ function HomeConnectSimulatorLogin() {
       import.meta.env.VITE_REACT_APP_SIMULATOR_HOMECONNECT_URL +
       import.meta.env.VITE_REACT_APP_AUTHORIZATION_CODE_ENDPOINT +
       '?response_type=' + import.meta.env.VITE_REACT_APP_RESPONSE_TYPE +
-      '&client_id=' + import.meta.env.VITE_REACT_APP_CLIENT_ID +
-      '&scope=IdentifyAppliance%20Monitor%20Control%20Settings%20Washer' +
-      '&redirect_uri=' + encodeURIComponent(import.meta.env.VITE_REACT_APP_REDIRECT_URI)
+      '&client_id=' + import.meta.env.VITE_REACT_APP_CLIENT_ID
+      // '&scope=IdentifyAppliance%20Monitor%20Control%20Settings%20Washer'
+      // '&redirect_uri=' + encodeURIComponent(import.meta.env.VITE_REACT_APP_REDIRECT_URI)
     }`;
     return;
   }

@@ -466,6 +466,8 @@ const DeviceDetails = () => {
         </div>
       )}
 
+        //TODO
+        //Countdown is never null, so something here is wrong!
       {countdown !== null && (
         <div className={`countdown-timer ${countdown !== null ? 'centered-box' : ''}`}>
           <div className="countdown-box">
