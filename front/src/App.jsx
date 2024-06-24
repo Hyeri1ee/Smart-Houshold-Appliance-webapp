@@ -28,7 +28,7 @@ function App() {
   const location = useLocation();
 
   // exclude navbar from login and register
-  const shouldRenderNavBar = !["/login", "/register", "/user/timeslots"].includes(location.pathname);
+  const shouldRenderNavBar = !["/login", "/register", "/user/timeslots","/user/profile"].includes(location.pathname);
 
   return (
     <GlobalStateProvider>
