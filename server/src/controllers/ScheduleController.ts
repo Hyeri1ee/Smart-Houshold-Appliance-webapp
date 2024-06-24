@@ -22,7 +22,6 @@ const createUUID = () => {
 
 interface JobData {
   isAdvice: boolean,
-  duration: number,
   program: string,
 }
 
@@ -117,7 +116,7 @@ const checkValidInfo = async (req: Request, res: Response) => {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${accessToken}`,
-        // 'Accept': 'application/vnd.bsh.sdk.v1+json',
+        'Accept': 'application/vnd.bsh.sdk.v1+json',
       },
     });
   
@@ -166,7 +165,7 @@ export const addScheduledWash = async (req: Request, res: Response) => {
         body: req.body,
         homeconnectrefresh: req.body.homeconnectrefresh,
         date: req.body.date,
-        washer_id: req.body.washerId,
+        washer_id: req.body.washer_id,
         settings: req.body.settings,
       });
   }
@@ -221,8 +220,8 @@ export const addScheduledWash = async (req: Request, res: Response) => {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${homeconnectAccessToken}`,
-          // 'Content-Type': 'application/json',
-          // 'Accept': 'application/vnd.bsh.sdk.v1+json',
+          'Content-Type': 'application/json',
+          'Accept': 'application/vnd.bsh.sdk.v1+json',
         },
         body: JSON.stringify({
           "data": req.body.settings.data,
@@ -246,24 +245,10 @@ export const addScheduledWash = async (req: Request, res: Response) => {
       });
   }
 
-  let duration;
-
-  for (const i of req.body.settings.data.options) {
-    if (i.key === 'BSH.Common.Option.FinishInRelative') {
-      duration = i.value
-    }
-  }
-
-  if (!duration) {
-    res
-      .status(400)
-      .json({
-        error: "no duration",
-      });
-  }
+  console.log(JSON.stringify(jobs));
+  console.log(`Looking for job: user_id:${decoded.user_id}, washer_id:${req.body.washer_id} UUID:${schedule_id}`)
 
   jobs[`user_id:${decoded.user_id}, washer_id:${req.body.washer_id} UUID:${schedule_id}`] = {
-    duration: duration,
     isAdvice: req.body.isAdvice,
     program: req.body.settings.key
   }
@@ -375,7 +360,6 @@ export const getScheduledWash = (req: Request, res: Response) => {
       month: date.getMonth(),
       day: date.getDate(),
       startTime: date.getTime(),
-      duration: otherData.duration,
       isAdvice: otherData.isAdvice,
       program: otherData.program,
     });
