@@ -107,7 +107,7 @@ input[type='radio'] {
 .radio-box {
   display: flex;
   justify-content: flex-start;
-  align-items: flex-start
+  align-items: flex-start;
   height: 3vh;
   margin-bottom: 2px;
 }

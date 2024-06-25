@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 import "../styles/global.css";
-// import "../styles/pages/SchedulePage.css";
 import Button from "../components/generic/Button";
 import singleIcon from "../assets/user/profile/single.png";
 import coupleIcon from "../assets/user/profile/couple.png";
@@ -31,11 +30,43 @@ function UserProfilePage() {
     }
   };
 
-  const handleNextButtonClick = async () => {
-    if (profileType) {
+  const handleBackButtonClick = () => {
+    navigate('/login');
+  };
+
+  const handleOptionOut = async (e) => {
+    e.preventDefault();
+
+    setProfileType(0);
+    try {
+      const accessToken = getCookie('authorization');
+      //console.log(accessToken);
+      const response = await fetch('http://localhost:1337/api/user/profile', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({ profile_type: 0 }),
+        credentials: "include",
+      });
+
+      if (response.ok) {
+        navigate('/user/timeslots');
+      } else {
+        console.error('Failed to update profile type');
+      }
+    } catch (error) {
+      console.error('Error updating profile type:', error);
+    }
+  };
+
+  const handleNextButtonClick = async (e) => {
+    e.preventDefault();
+
       try {
         const accessToken = getCookie('authorization');
-        console.log(accessToken);
+        //console.log(accessToken);
         const response = await fetch('http://localhost:1337/api/user/profile', {
           method: 'POST',
           headers: {
@@ -47,16 +78,17 @@ function UserProfilePage() {
         });
 
         if (response.ok) {
-          navigate('/dashboard');
+          const data = await response.json();
+          console.log(accessToken);
+          document.cookie = `authorization=${data.token}`;          
+          window.location.href = '/dashboard';
+
         } else {
           console.error('Failed to update profile type');
         }
       } catch (error) {
         console.error('Error updating profile type:', error);
       }
-    } else {
-      alert('Please select a household type.');
-    }
   };
 
   return (
@@ -74,7 +106,8 @@ function UserProfilePage() {
         <div
           style={{
             ...styles.checkboxDiv,
-            backgroundColor: selectedLabel === 'single' ? '#e0e0e0' : '#ffffff',
+            outline: selectedLabel === 'single' ? '4px solid var(--primary)' : '1px solid #ddd',
+            backgroundColor: 'var(--whitesmoke)',
           }}
           onClick={() => handleLabelClick('single')}
         >
@@ -85,28 +118,32 @@ function UserProfilePage() {
         <div
           style={{
             ...styles.checkboxDiv,
-            backgroundColor: selectedLabel === 'couple' ? '#e0e0e0' : '#ffffff',
+            outline: selectedLabel === 'couple' ? '4px solid var(--primary)' : '1px solid #ddd',
+            backgroundColor: 'var(--whitesmoke)',
           }}
           onClick={() => handleLabelClick('couple')}
         >
           <p style={styles.checkboxText}>I live with my partner or a housemate</p>
-          <img src={coupleIcon} alt="couple" style={{ ...styles.checkboxImage, paddingRight: selectedLabel === 'couple' ? '10px' : '0px' }} />
+          <img src={coupleIcon} alt="couple" style={styles.checkboxImage} />
         </div>
 
         <div
           style={{
             ...styles.checkboxDiv,
-            backgroundColor: selectedLabel === 'family' ? '#e0e0e0' : '#ffffff',
+            outline: selectedLabel === 'family' ? '4px solid var(--primary)' : '1px solid #ddd',
+            backgroundColor: 'var(--whitesmoke)',
           }}
           onClick={() => handleLabelClick('family')}
         >
           <p style={styles.checkboxText}>I live with my family</p>
-          <img src={familyIcon} alt="family" style={{ ...styles.checkboxImage, paddingRight: selectedLabel === 'family' ? '15px' : '0px' }} />
+          <img src={familyIcon} alt="family" style={styles.checkboxImage} />
         </div>
+
+        <p style={styles.skip} onClick={handleOptionOut}>Skip</p>
       </div>
 
-      <div className="button-container">
-        <Button className="back-button" style={styles.backButton}> Back </Button>
+      <div style={styles.buttonsContainer} className="button-container">
+        <Button onClick={handleBackButtonClick} style={styles.backButton}> Back </Button>
         <Button onClick={handleNextButtonClick}> Next </Button>
       </div>
     </div>
@@ -116,30 +153,32 @@ function UserProfilePage() {
 const styles = {
   fixedHeader: {
     position: "relative",
-    top: "50px",
+    top: "10px",
     textAlign: "center",
+    color: 'var(--text)',
   },
   header1: {
     fontSize: 18,
     fontWeight: "bold",
-    marginBottom: 16,
+    color: 'var(--text)',
   },
   header2: {
     fontSize: 26,
     fontWeight: "bold",
+    color: 'var(--text)',
   },
   checkboxContainer: {
     textAlign: "center",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    marginTop: "80px",
+    marginTop: "30px",
     height: "450px",
-    width: "380px",
-    color: '#404040'
+    width: "100vw",
+    color: 'var(--gray)'
   },
   checkboxDiv: {
-    height: '90px',
+    height: '18%',
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
@@ -147,10 +186,11 @@ const styles = {
     padding: "0px",
     marginBottom: "20px",
     cursor: "pointer",
-    border: "1px solid #ddd",
     borderRadius: "4px",
-    width: "260px",
-    backgroundColor: "#ffffff",
+    width: "80%",
+    boxSizing: "border-box",
+    transition: "border 0.3s ease",
+    backgroundColor: 'var(--whitesmoke)',
   },
   checkboxText: {
     flex: 2,
@@ -160,13 +200,23 @@ const styles = {
   checkboxImage: {
     flex: 1,
     width: "40px",
-    height: "auto",
+    height: "60px",
     marginLeft: "auto",
+  },
+  buttonsContainer: {
+    width: '90%'
   },
   backButton: {
     backgroundColor: "#FFF9C4",
-    border: "1px solid #ddd",
+    border: "1px solid var(--text)",
   },
+  skip: {
+    marginTop: '10px',
+    fontSize: '20px',
+    cursor: 'pointer',
+    color: 'white',
+    textDecoration: 'underline'
+  }
 };
 
 export default UserProfilePage;
