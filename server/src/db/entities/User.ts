@@ -22,8 +22,8 @@ export class User {
   @Column({ type: 'boolean', nullable: false, default: true })
   ifFirstLogin: boolean;
 
-  @Column({ type: 'json', nullable: true })
-  subscription: any;
+  @Column({ type: 'text', nullable: true })
+  subscription: string;
 
   @OneToOne(() => Location)
   @JoinColumn()

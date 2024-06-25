@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { getCookie } from "./helpers/CookieHelper";
+import { getCookie } from "../helpers/CookieHelper";
 
 const VAPID_PUBLIC_KEY = 'BJ8UyQy743ovPUSrBBUZEuMigZ0ihYD7_7JKmGAhM2vpKRvSILSPB5GhxJu4cbUsCm50hBIdVXRgnt7vp3nuNJw';
 
@@ -14,7 +14,6 @@ const PushNotificationComponent = () => {
   useEffect(() => {
     async function requestNotificationPermission() {
       if (!('Notification' in window)) {
-        console.error('This browser does not support notifications.');
         return;
       }
 
@@ -24,52 +23,59 @@ const PushNotificationComponent = () => {
       }
 
       if (permission !== 'granted') {
-        console.error('Notification permission denied');
         return;
       }
-      console.log('Notification permission granted');
     }
 
     async function subscribeToPushNotifications() {
       try {
         const registration = await navigator.serviceWorker.register('/ServiceWorker.js');
-        console.log('Service Worker registered:', registration);
 
         const subscription = await registration.pushManager.subscribe({
           userVisibleOnly: true,
           applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
         });
 
-        console.log('Push Subscription:', subscription);
-
-        const authorization = getCookie("authorization"); // Fetch the JWT from cookies
+        const authorization = getCookie("authorization");
         if (!authorization) {
           throw new Error('No authorization token found');
         }
 
-        await fetch('http://localhost:1337/api/advice/save-subscription', {
+        await fetch('http://localhost:1337/api/notification/save-subscription', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': authorization, // Include the JWT token in the headers
+            'Authorization': authorization,
           },
           body: JSON.stringify({ subscription }),
         });
 
-        console.log('Subscription saved');
+        const adviceResponse = await fetch('http://localhost:1337/api/advice', {
+          method: 'GET',
+          headers: {
+            'Authorization': authorization,
+          },
+        });
 
-        await fetch('http://localhost:1337/api/advice/send-notification', {
+        if (!adviceResponse.ok) {
+          throw new Error('Failed to fetch advice');
+        }
+
+        const adviceData = await adviceResponse.json();
+        const { time, date } = adviceData;
+
+        await fetch('http://localhost:1337/api/notification/send-notification', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': authorization, // Include the JWT token in the headers
+            'Authorization': authorization,
           },
           body: JSON.stringify({
             notificationToken: subscription,
+            time,
+            date,
           }),
         });
-
-        console.log('Notification triggered');
 
       } catch (error) {
         console.error('Error subscribing to push notifications:', error);

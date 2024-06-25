@@ -13,7 +13,7 @@ import "./styles/reset.css";
 import "./styles/global.css";
 import axios from 'axios';
 import TimeslotAsking from "./pages/AskTimeslotsPage";
-import PushNotificationComponent from "./PushNotificationContainer";
+import PushNotificationComponent from "./components/PushNotificationContainer";
 
 axios.defaults.baseURL = 'http://localhost:1337';
 axios.defaults.withCredentials = true;

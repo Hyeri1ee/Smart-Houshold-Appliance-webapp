@@ -3,7 +3,8 @@ import * as dbConnect from './db/DatabaseConnect';
 import { loginRoute } from './routers/LoginRoute';
 import { registerRoute } from './routers/RegisterRoute';
 import { scheduleRoute } from './routers/ScheduleRoute';
-import adviceRoute from './routers/AdviceRoute'; // Default import
+import adviceRoute from './routers/AdviceRoute';
+import notificationRoute from './routers/NotificationRoute';
 import { userRoute } from './routers/UserRoute';
 import { userProfileRoute } from './routers/UserProfileRoute';
 import { solarRoute } from './routers/SolarRoute';
@@ -31,6 +32,7 @@ app.use('/api/login', loginRoute);
 app.use('/api/solar', solarRoute);
 app.use('/api/schedule', scheduleRoute);
 app.use('/api/advice', adviceRoute); // Correct import usage
+app.use('/api/notification', notificationRoute); // Adding notification routes
 app.use('/api/user', userRoute);
 app.use('/api/user/profile', userProfileRoute);
 app.use('/api/schedule/wash', washingScheduleRoute);

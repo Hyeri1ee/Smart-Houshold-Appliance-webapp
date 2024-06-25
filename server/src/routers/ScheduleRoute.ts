@@ -3,7 +3,7 @@ import { putSchedule, checkSchedule, deleteSchedule, deleteDaySchedule } from ".
 
 export const scheduleRoute = express.Router();
 
-scheduleRoute.get("/getSchedule", checkSchedule);
-scheduleRoute.put("/putSchedule", putSchedule);
-scheduleRoute.delete("/deleteSchedule", deleteSchedule);
+scheduleRoute.get("/getTimeslots", checkSchedule);
+scheduleRoute.put("/putTimeslots", putSchedule);
+scheduleRoute.delete("/deleteTimeslots", deleteSchedule);
 scheduleRoute.delete("/deleteDay/:dayId", deleteDaySchedule);
