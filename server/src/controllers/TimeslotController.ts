@@ -13,7 +13,7 @@ interface TimeRange {
   end_time: string;
 }
 
-export const checkSchedule = async (req: Request, res: Response): Promise<void> => {
+export const checkTimeslot = async (req: Request, res: Response): Promise<void> => {
   let decoded;
   try {
     decoded = handleJwt(req);
@@ -62,7 +62,7 @@ const handleTimes = async (times: TimeRange[], timeRepository: Repository<Time>,
   return timeDatabaseEntries;
 }
 
-export const putSchedule = async (req: Request, res: Response) => {
+export const putTimeslot = async (req: Request, res: Response) => {
   let decoded;
 
   try {
@@ -139,7 +139,7 @@ export const putSchedule = async (req: Request, res: Response) => {
   return res.sendStatus(200);
 };
 
-export const deleteSchedule = async (req: Request, res: Response) => {
+export const deleteTimeslot = async (req: Request, res: Response) => {
   let decoded;
   try {
     decoded = handleJwt(req);
@@ -173,7 +173,7 @@ export const deleteSchedule = async (req: Request, res: Response) => {
   }
 };
 
-export const deleteDaySchedule = async (req: Request, res: Response) => {
+export const deleteDayTimeslot = async (req: Request, res: Response) => {
   let decoded;
   try {
     decoded = handleJwt(req);

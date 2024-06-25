@@ -2,7 +2,7 @@ import express from 'express';
 import * as dbConnect from './db/DatabaseConnect';
 import {loginRoute} from './routers/LoginRoute';
 import {registerRoute} from './routers/RegisterRoute';
-import {scheduleRoute} from "./routers/ScheduleRoute";
+import {timeslotRoute} from "./routers/TimeslotRoute";
 import {adviceRoute} from "./routers/AdviceRoute";
 import {userRoute} from "./routers/UserRoute";
 import {userProfileRoute} from './routers/UserProfileRoute';
@@ -29,7 +29,7 @@ app.use(cookieParser())
 app.use('/api/register', registerRoute);
 app.use('/api/login', loginRoute);
 app.use('/api/solar', solarRoute);
-app.use('/api/schedule', scheduleRoute);
+app.use('/api/timeslot', timeslotRoute);
 app.use('/api/advice', adviceRoute);
 app.use('/api/user', userRoute);
 app.use('/api/user/profile', userProfileRoute);

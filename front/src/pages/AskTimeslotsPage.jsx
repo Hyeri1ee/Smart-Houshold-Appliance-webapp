@@ -29,9 +29,9 @@ function AskTimeslotsPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchSchedule = async () => {
+    const fetchTimeslots = async () => {
       const auth = getCookie('authorization');
-      const response = await fetch('http://localhost:1337/api/schedule/getSchedule', {
+      const response = await fetch('http://localhost:1337/api/timeslot/getTimeslots', {
         method: 'GET',
         headers: {
           'Authorization': auth,
@@ -41,33 +41,33 @@ function AskTimeslotsPage() {
 
       if (response.ok) {
         const data = await response.json();
-        const schedules = data.schedules;
+        const timeslots = data.schedules;
 
-        if (schedules.length > 0) {
-          const scheduleMap = {};
+        if (timeslots.length > 0) {
+          const timeslotMap = {};
           const selectedDays = [];
 
-          schedules.forEach(s => {
+          timeslots.forEach(s => {
             const day = daysOfWeek.find(d => d.id === s.weekday).short;
             selectedDays.push(day);
-            scheduleMap[day] = s.times.map(time => ({
+            timeslotMap[day] = s.times.map(time => ({
               startTime: time.start_time.slice(0, 5),
               endTime: time.end_time.slice(0, 5)
             }));
           });
 
           setSelectedDays(selectedDays);
-          setDayTimeSlots(scheduleMap);
+          setDayTimeSlots(timeslotMap);
         } else {
           setSelectedDays([]);
           setDayTimeSlots({});
         }
       } else {
-        console.error("Failed to fetch existing schedule.");
+        console.error("Failed to fetch existing timeslots.");
       }
     };
 
-    fetchSchedule();
+    fetchTimeslots();
   }, []);
 
   const handleAddTimeslot = () => {
@@ -107,7 +107,7 @@ function AskTimeslotsPage() {
       }))
     }));
 
-    const putResp = await fetch('http://localhost:1337/api/schedule/putSchedule', {
+    const putResp = await fetch('http://localhost:1337/api/timeslot/putTimeslot', {
       method: 'PUT',
       headers: {
         'Authorization': auth,
@@ -181,7 +181,7 @@ function AskTimeslotsPage() {
   const handleRemoveDay = async (day) => {
     const auth = getCookie('authorization');
     const dayId = daysOfWeek.find(d => d.short === day).id;
-    const response = await fetch(`http://localhost:1337/api/schedule/deleteDay/${dayId}`, {
+    const response = await fetch(`http://localhost:1337/api/timeslot/deleteDay/${dayId}`, {
       method: 'DELETE',
       headers: {
         'Authorization': auth,
@@ -197,7 +197,7 @@ function AskTimeslotsPage() {
         return newDayTimeSlots;
       });
     } else {
-      console.error("Failed to delete the schedule.");
+      console.error("Failed to delete the timeslot.");
     }
   };
 
