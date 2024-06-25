@@ -131,6 +131,88 @@ export const putSchedule = async (req: Request, res: Response) => {
         })
     }
 
+    
+  return res.sendStatus(200);
+}}
+
+export const saveSchedule = async (req: Request, res: Response) => { 
+  let decoded;
+
+  try {
+    decoded = handleJwt(req);
+  } catch (e) {
+    return res
+      .status(400)
+      .json({
+        error: "authorization header missing!"
+      });
+  }
+
+  if (!Array.isArray(req.body)) {
+    return res
+      .status(400)
+      .json({
+        error: "req body is not an array!"
+      });
+  }
+
+  for (let i = 0; i < req.body.length; i++) {
+    if (!req.body[i].weekday) {
+      return res
+        .status(400)
+        .json({
+          error: "weekday missing from request body"
+        });
+    }
+
+    if (!req.body[i].times || !Array.isArray(req.body[i].times)) {
+      return res
+        .status(400)
+        .json({
+          error: "times are missing from request body, or not an array."
+        });
+    }
+
+    const weekday = parseInt(req.body[i].weekday);
+    const times = req.body[i].times;
+
+    if (isNaN(weekday) || !isFinite(Number(weekday)) || weekday < 0 || weekday > 6) {
+      return res
+        .status(400)
+        .json({
+          error: "weekday is not a whole number, or not between 0 and 6."
+        });
+    }
+
+    try {
+      times.forEach((t: timeRange) => {
+        if (!t.start_time.match(timeRegex) || !t.end_time.match(timeRegex)) {
+          throw new Error();
+        }
+      })
+    } catch (e) {
+      return res
+        .status(400)
+        .json({
+          error: "Time is in wrong format. Make sure it's a string of HH:MM"
+        })
+    }
+
+    const dateSource = await getDataSource();
+    const userRepository = dateSource.getRepository(User);
+    const scheduleRepository = dateSource.getRepository(Schedule);
+    const timesRepository = dateSource.getRepository(Time);
+
+    const user: User | null = await userRepository.findOne({where: {user_id: decoded.user_id}});
+
+    if (!user) {
+      return res
+        .status(400)
+        .json({
+          error: "user_id does not match any existing user."
+        })
+    }
+
     const existingScheduleForWeekday: Schedule | null = await scheduleRepository.findOne({
       where: {
         user_id: decoded.user_id,
@@ -138,31 +220,32 @@ export const putSchedule = async (req: Request, res: Response) => {
       }
     });
 
+    let schedule: Schedule;
+
     if (existingScheduleForWeekday === null) {
       const newSchedule = scheduleRepository.create({
         user_id: user.user_id,
         weekday: weekday,
-        times: times,
         user: user
       })
 
-      scheduleRepository.save(newSchedule);
+      schedule = await scheduleRepository.save(newSchedule);
       
-      // const newSchedule: Schedule = new Schedule();
-      // newSchedule.user_id = user.user_id;
-      // newSchedule.weekday = weekday;
-
-      // newSchedule.times = await handleTimes(newTimes, timesRepository, newSchedule);
-      // newSchedule.user = user;
-
-      // await scheduleRepository.save(newSchedule);
-      
-      // console.log('schedule id: %d', newSchedule.schedule_id);
-      console.log(await scheduleRepository.findOne({where: {user: user}}));
     } else {
-      existingScheduleForWeekday.times = await handleTimes(times, timesRepository, existingScheduleForWeekday);
-      await scheduleRepository.save(existingScheduleForWeekday);
+      schedule = existingScheduleForWeekday;
+      await timesRepository.delete({ schedule_id: schedule.schedule_id });
     }
+    for (const time of times) {
+      const newTime = timesRepository.create({
+        schedule_id: schedule.schedule_id,
+        start_time: time.start_time,
+        end_time: time.end_time,
+        schedule: schedule
+      });
+    
+      await timesRepository.save(newTime);
   }
-  return res.sendStatus(200);
+   
+}
+return res.sendStatus(200);
 }

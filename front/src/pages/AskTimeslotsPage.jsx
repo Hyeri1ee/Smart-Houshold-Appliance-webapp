@@ -53,19 +53,48 @@ function AskTimeslotsPage() {
     setShowTimeModal(false);
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = async() => {
     console.log("Confirm button clicked");
-    // navigate("/confirmation");
+    const auth = getCookie('authorization');
+  
+    const getDayNumber = (day) => {
+      return daysOfWeek.find(d => d.short === day).id;
+    };
+  
+    const scheduleData = Object.entries(dayTimeSlots).map(([day, slots]) => ({
+      weekday: getDayNumber(day),
+      times: slots === "All Day" 
+        ? [{ start_time: "00:00", end_time: "23:59" }]
+        : slots.map(slot => ({
+            start_time: slot.startTime,
+            end_time: slot.endTime
+          }))
+    }));
+  
+    const resp = await fetch('http://localhost:1337/api/schedule', {
+      method: 'POST',
+      headers: {
+        'Authorization': auth,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(scheduleData)
+    });
+    
+    if (!resp.ok) {
+      console.error("Fetch failed!");
+      return;
+    }
+    
+    console.log(scheduleData);
     navigate("/dashboard");
   };
 
   const profileTypeDefault = async () => {
     const accessToken = getCookie('authorization');
-
     const resp = await fetch('http://localhost:1337/api/schedule', {
       method: 'GET',
       headers: {
-        'Authorization': `Bearer ${accessToken}`,
+        'Authorization': accessToken,
         'Content-Type': 'application/json',
       },
     });
@@ -75,8 +104,6 @@ function AskTimeslotsPage() {
       console.error("Fetch failed!");
       return;
     }
-    console.log("aaa");
-    console.log(data.profileType);
     defaultSchedule(data.profileType);
   };
 
@@ -88,50 +115,47 @@ function AskTimeslotsPage() {
       case 1:
         // Set timeslots and weekday for user profile type 1
         setSelectedDays(prevDays => {
-          const newDays = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
+          const newDays = ["Tu", "Fr", "Sa"];
           return [...new Set(newDays)];
         });
         setDayTimeSlots({
-        Mo: [{ startTime: "08:00", endTime: "12:00" }, { startTime: "14:00", endTime: "18:00" }],
-        Tu: [{ startTime: "08:00", endTime: "12:00" }, { startTime: "14:00", endTime: "18:00" }],
-        We: [{ startTime: "08:00", endTime: "12:00" }, { startTime: "14:00", endTime: "18:00" }],
-        Th: [{ startTime: "08:00", endTime: "12:00" }, { startTime: "14:00", endTime: "18:00" }],
-        Fr: [{ startTime: "08:00", endTime: "12:00" }, { startTime: "14:00", endTime: "18:00" }],
-        Sa: [{ startTime: "08:00", endTime: "12:00" }, { startTime: "14:00", endTime: "18:00" }],
-        Su: [{ startTime: "08:00", endTime: "12:00" }, { startTime: "14:00", endTime: "18:00" }],
+        Tu: [{ startTime: "08:00", endTime: "10:00" }, { startTime: "18:00", endTime: "21:00" }],
+        Fr: [{ startTime: "08:00", endTime: "10:00" }, { startTime: "18:00", endTime: "21:00" }],
+        Sa: [{ startTime: "08:00", endTime: "10:00" }, { startTime: "18:00", endTime: "21:00" }],
       });
       break;
 
       case 2:
         // Set timeslots and weekday for user profile type 2
         setSelectedDays(prevDays => {
-          const newDays = ["Mo", "We", "Fr", "Su"];
+          const newDays = ["Tu", "Fr", "Sa"];
           return [...new Set(newDays)];
         });
         setDayTimeSlots({
-          Mo: [{ startTime: "15:00", endTime: "23:59" }],
-          We: [{ startTime: "15:00", endTime: "23:59" }],
-          Fr: [{ startTime: "15:00", endTime: "23:59" }],
-          Su: [{ startTime: "15:00", endTime: "23:59" }],
+          Tu: [{ startTime: "08:00", endTime: "21:00" }],
+          Fr: [{ startTime: "08:00", endTime: "21:00" }],
+          Sa: [{ startTime: "08:00", endTime: "21:00" }],
         });
         break;
 
       case 3:
         // Set timeslots and weekday for user profile type 3
         setSelectedDays(prevDays => {
-          const newDays = ["Sa", "Su"];
+          const newDays = ["Mo","We","Fr","Sa", "Su"];
           return [...new Set(newDays)];
         });
         setDayTimeSlots({
-          Sa: [{ startTime: "18:00", endTime: "22:00" }],
-          Su: [{ startTime: "18:00", endTime: "22:00" }],
+          Mo: [{ startTime: "07:00", endTime: "22:00" }],
+          We: [{ startTime: "07:00", endTime: "22:00" }],
+          Fr: [{ startTime: "07:00", endTime: "22:00" }],
+          Sa: [{ startTime: "07:00", endTime: "22:00" }],
+          Su: [{ startTime: "07:00", endTime: "22:00" }],
         });
         break;
     }
   };
 
   const handleSaveTimeslot = async () => {
-    // If "All Day" is marked, save "All Day" instead of time slots
     if (allDay) {
       setDayTimeSlots((prevDayTimeSlots) => ({
         ...prevDayTimeSlots,
@@ -144,28 +168,30 @@ function AskTimeslotsPage() {
       }));
     }
     setShowTimeModal(false);
-
-    console.log(timeSlots);
-
+  
     const auth = getCookie('authorization');
-
+  
+    const getDayNumber = (day) => {
+      return daysOfWeek.find(d => d.short === day).id;
+    };
+  
+    const scheduleData = Object.entries(dayTimeSlots).map(([day, slots]) => ({
+      weekday: getDayNumber(day),
+      times: slots === "All Day" 
+        ? [{ start_time: "00:00", end_time: "23:59" }]
+        : slots.map(slot => ({
+            start_time: slot.startTime,
+            end_time: slot.endTime
+          }))
+    }));
+  
     const resp = await fetch('http://localhost:1337/api/schedule', {
       method: 'PUT',
       headers: {
         'Authorization': auth,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify([
-          {
-          "weekday": 2,
-          "times": [
-            {
-              "start_time": "12:00",
-              "end_time": "18:00"
-            }
-          ]
-        }
-      ])
+      body: JSON.stringify(scheduleData)
     });
     
     if (!resp.ok) {
@@ -173,16 +199,6 @@ function AskTimeslotsPage() {
       return;
     }
     
-    const data = await resp.json();;
-    location.href = "/dashboard";
-  };
-
-  const toggleDay = (day) => {
-    setTempSelectedDays((prevSelectedDays) =>
-      prevSelectedDays.includes(day)
-        ? prevSelectedDays.filter((d) => d !== day)
-        : [...prevSelectedDays, day]
-    );
   };
 
   const handleTimeChange = (index, field, value) => {
@@ -215,6 +231,14 @@ function AskTimeslotsPage() {
       setTimeSlots(dayTimeSlots[currentDay] || []);
     }
   }
+  const toggleDay = (day) => {
+    setTempSelectedDays((prevSelectedDays) =>
+      prevSelectedDays.includes(day)
+        ? prevSelectedDays.filter((d) => d !== day)
+        : [...prevSelectedDays, day]
+    );
+  };
+
 
   return (
     <div className="app-container">
