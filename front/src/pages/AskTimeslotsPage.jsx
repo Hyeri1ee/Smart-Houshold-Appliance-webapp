@@ -86,7 +86,7 @@ function AskTimeslotsPage() {
     }
     
     console.log(scheduleData);
-    navigate("/dashboard");
+
   };
 
   const profileTypeDefault = async () => {
@@ -186,6 +186,7 @@ function AskTimeslotsPage() {
     }));
   
     const resp = await fetch('http://localhost:1337/api/schedule', {
+
       method: 'PUT',
       headers: {
         'Authorization': auth,
@@ -198,7 +199,15 @@ function AskTimeslotsPage() {
       console.error("Fetch failed!");
       return;
     }
-    
+
+  };
+
+  const toggleDay = (day) => {
+    setTempSelectedDays((prevSelectedDays) =>
+      prevSelectedDays.includes(day)
+        ? prevSelectedDays.filter((d) => d !== day)
+        : [...prevSelectedDays, day]
+    );
   };
 
   const handleTimeChange = (index, field, value) => {
@@ -213,7 +222,7 @@ function AskTimeslotsPage() {
 
   const handleRemoveTimeSlot = (index) => {
     const newTimeSlots = [...timeSlots];
-    newTimeSlots.splice(index, 1); // Remove the element at the given index
+    newTimeSlots.splice(index, 1);
     setTimeSlots(newTimeSlots);
   };
 
@@ -231,14 +240,6 @@ function AskTimeslotsPage() {
       setTimeSlots(dayTimeSlots[currentDay] || []);
     }
   }
-  const toggleDay = (day) => {
-    setTempSelectedDays((prevSelectedDays) =>
-      prevSelectedDays.includes(day)
-        ? prevSelectedDays.filter((d) => d !== day)
-        : [...prevSelectedDays, day]
-    );
-  };
-
 
   return (
     <div className="app-container">

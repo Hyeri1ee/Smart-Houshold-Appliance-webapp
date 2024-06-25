@@ -8,16 +8,32 @@ const DeviceDetails = () => {
   const accessToken = window.sessionStorage.getItem('homeconnect_simulator_auth_token');
   const { washingMachineId, setwashingMachineId, programs, setPrograms } = useContext(GlobalStateContext);
   const [startOption, setStartOption] = useState('now');
-  const [isRunning, setIsRunning] = useState(false);
-  const [currentMode, setCurrentMode] = useState('');
-  const [currentDegree, setCurrentDegree] = useState('');
-  const [currentSpin, setCurrentSpin] = useState('');
+  const [isRunning, setIsRunning] = useState(() => {
+    const saved = window.sessionStorage.getItem('isRunning');
+    return saved ? JSON.parse(saved) : false;
+  });
+  const [currentMode, setCurrentMode] = useState(() => window.sessionStorage.getItem('currentMode') || '');
+  const [currentDegree, setCurrentDegree] = useState(() => window.sessionStorage.getItem('currentDegree') || '');
+  const [currentSpin, setCurrentSpin] = useState(() => window.sessionStorage.getItem('currentSpin') || '');
+  const [endTime, setEndTime] = useState(() => {
+    const saved = window.sessionStorage.getItem('endTime');
+    return saved ? new Date(saved) : null;
+  });
+  const [decreaseStartTimeHeight, setDecreaseStartTimeHeight] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [scheduledTime, setScheduledTime] = useState(null);
   const [countdown, setCountdown] = useState(null);
   const [washerInterval] = useState(30000);
-  const [decreaseStartTimeHeight, setDecreaseStartTimeHeight] = useState(false);
-  const [endTime, setEndTime] = useState(null);
+
+  useEffect(() => {
+    // check if the current time is past the end time
+    if (endTime && new Date() > endTime) {
+      setIsRunning(false);
+      window.sessionStorage.removeItem('endTime');
+    } else if (endTime) {
+      setIsRunning(true);
+    }
+  }, [endTime]);
 
   useEffect(() => {
     //check if there is already a stored washingMachineId
@@ -128,6 +144,20 @@ const DeviceDetails = () => {
     }
   }, [programs]);
 
+  const reduceStartTimeSectionHeight = () => {
+    const element = document.querySelector('.start-time-section');
+    if (element) {
+      element.classList.add('adjusted');
+    }
+  }
+
+  const increaseStartTimeSectionHeight = () => {
+    const element = document.querySelector('.start-time-section');
+    if (element) {
+      element.classList.remove('adjusted');
+    }
+  }
+
   const handleStartStop = () => {
     if (isRunning) {
       stopWashingMachine();
@@ -142,14 +172,6 @@ const DeviceDetails = () => {
     }
   };
 
-  const reduceStartTimeSectionHeight = () => {
-    document.querySelector('.start-time-section').classList.add('adjusted');
-  }
-
-  const increaseStartTimeSectionHeight = () => {
-    document.querySelector('.start-time-section').classList.remove('adjusted');
-  }
-
   const fetchWasherStatus = async () => {
     try {
       const response = await fetch(`https://simulator.home-connect.com/api/homeappliances/${washingMachineId}/status`, {
@@ -161,10 +183,12 @@ const DeviceDetails = () => {
 
       const data = await response.json();
       const operationState = data.data.status.find(status => status.key === 'BSH.Common.Status.OperationState');
-      
+
       if (operationState.value !== 'BSH.Common.EnumType.OperationState.Run') {
         setIsRunning(false);
         setEndTime(null);
+        window.sessionStorage.removeItem('isRunning');
+        window.sessionStorage.removeItem('endTime');
       }
     } catch (error) {
       console.log(error);
@@ -184,6 +208,8 @@ const DeviceDetails = () => {
       if (response.status === 204 || response.status === 200) {
         setIsRunning(false);
         setEndTime(null);
+        window.sessionStorage.removeItem('isRunning');
+        window.sessionStorage.removeItem('endTime');
       } else {
         console.log("Error stopping the washing machine");
       }
@@ -193,14 +219,6 @@ const DeviceDetails = () => {
   };
 
   useEffect(() => {
-    const statusInterval = setInterval(() => {
-      fetchWasherStatus();
-    }, washerInterval);
-
-    return () => clearInterval(statusInterval);
-  }, [washerInterval, fetchWasherStatus]);
-
-  useEffect(() => {
     if (decreaseStartTimeHeight) {
       reduceStartTimeSectionHeight();
     } else {
@@ -208,7 +226,16 @@ const DeviceDetails = () => {
     }
   }, [decreaseStartTimeHeight]);
 
+  useEffect(() => {
+    const statusInterval = setInterval(() => {
+      fetchWasherStatus();
+    }, washerInterval);
+
+    return () => clearInterval(statusInterval);
+  }, [washerInterval, fetchWasherStatus]);
+
   const startWashingMachine = async () => {
+    const startTime = Date.now();
     try {
       const selectedProgram = programs.find(program => program.programKey === currentMode);
       const temperatureKey = selectedProgram.options.find(option => option.optionKey === 'LaundryCare.Washer.Option.Temperature').allowedValues.find(value => value === currentDegree);
@@ -240,28 +267,15 @@ const DeviceDetails = () => {
 
       if (response.status === 204 || response.status === 200) {
         setIsRunning(true);
-        const startTime = Date.now();
-
-        const responseGet = await fetch(`https://simulator.home-connect.com/api/homeappliances/${washingMachineId}/programs/active`, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${accessToken}`,
-            'Content-Type': 'application/json',
-            'Accept': 'application/vnd.bsh.sdk.v1+json',
-          }
-        });
-
-        if (responseGet.ok) {
-          const data = await responseGet.json();
-          const durationOption = data.data.options.find(option => option.key === 'BSH.Common.Option.Duration');
-          const duration = durationOption.value * 1000;
-          const endTime = new Date(startTime + duration);
-          setEndTime(endTime);
-        } else {
-          console.log("Error fetching active program details");
-        }
+        window.sessionStorage.setItem('isRunning', JSON.stringify(true));
+        window.sessionStorage.setItem('currentMode', currentMode);
+        window.sessionStorage.setItem('currentDegree', currentDegree);
+        window.sessionStorage.setItem('currentSpin', currentSpin);
+        const endTime = new Date(startTime + 360 * 1000); // 6 mins
+        setEndTime(endTime);
+        window.sessionStorage.setItem('endTime', endTime.toISOString());
       } else {
-        console.log("Error starting the washing machine");
+        console.error("Error starting the washing machine: " + response.statusText);
       }
     } catch (error) {
       console.log(error);
@@ -285,6 +299,7 @@ const DeviceDetails = () => {
 
   const handleCancelSchedule = () => {
     setStartOption('now');
+    setDecreaseStartTimeHeight(false);
     setScheduledTime(null);
     setCountdown(null);
     window.localStorage.removeItem('scheduledTime');
@@ -372,19 +387,45 @@ const DeviceDetails = () => {
       {isRunning && (
         <div className="running-section">
           <h2>Running</h2>
-          <p>Current Mode: {formatCamelCase(currentMode.split('.').slice(3).join('.'))}</p>
-          <p>Temperature: {currentDegree !== 'LaundryCare.Washer.EnumType.Temperature.Cold' ? currentDegree.split('.').slice(4).join('.').replace(/^GC/, '') + '°C' : 'Cold'}</p>
-          <p>Spin Speed: {currentSpin !== 'LaundryCare.Washer.EnumType.SpinSpeed.Off' ? currentSpin.split('.').slice(4).join('.').replace(/^RPM/, '') + ' RPM' : 'Off'}</p>
-          <div className="end-time">
-            <p>Washing program will end at: <strong>{new Date(endTime).toLocaleTimeString()}</strong></p>
+          <div className='started-setting-container'>
+            <div className='label-box'>
+              <label>Current Mode:</label>
+            </div>
+            <div className='started-setting-p'>
+            <p>{formatCamelCase((window.sessionStorage.getItem('currentMode')).split('.').slice(3).join('.'))}</p>
+          </div>
+            </div>
+          <div className='started-setting-container'>
+            <div className='label-box'>
+              <label>Temperature:</label>
+            </div>
+            <div className='started-setting-p'>
+              <p>{currentDegree !== 'LaundryCare.Washer.EnumType.Temperature.Cold' ? currentDegree.split('.').slice(4).join('.').replace(/^GC/, '') + '°C' : 'Cold'}</p>
+            </div>
+          </div>
+          <div className='started-setting-container'>
+            <div className='label-box'>
+              <label>Spin speed:</label>
+            </div>
+            <div className='started-setting-p'>
+              <p>{currentSpin !== 'LaundryCare.Washer.EnumType.SpinSpeed.Off' ? currentSpin.split('.').slice(4).join('.').replace(/^RPM/, '') + ' RPM' : 'Off'}</p>
+            </div>
+          </div>
+          <div className='started-setting-container end-time'>
+            <div className='label-box'>
+              <label>End time:</label>
+            </div>
+            <div className='started-setting-p'>
+              <p>{new Date(endTime).toLocaleTimeString()}</p>
+              </div>
           </div>
         </div>
       )}
 
       {!isRunning && (
-      <>
-      <div className={`controls-section ${countdown !== null ? 'blur' : ''}`}>
-        <h2>Controls</h2>
+        <>
+          <div className={`controls-section ${countdown !== null ? 'blur' : ''}`}>
+            <h2>Controls</h2>
             <div className='setting-container'>
               <div className='label-box'>
                 <label>Mode:</label>
@@ -394,7 +435,7 @@ const DeviceDetails = () => {
                   <option key={program.programKey} value={program.programKey}>{formatCamelCase(program.programKey.split('.').slice(3).join('.'))}</option>
                 ))}
               </select>
-          </div>
+            </div>
             <div className='setting-container'>
               <div className='label-box'>
                 <label>Temperature:</label>
@@ -406,7 +447,7 @@ const DeviceDetails = () => {
                   </option>
                 ))}
               </select>
-          </div>
+            </div>
             <div className='setting-container'>
               <div className='label-box'>
                 <label>Spin Speed:</label>
@@ -419,8 +460,8 @@ const DeviceDetails = () => {
                 ))}
               </select>
             </div>
-        </div>
-        <div className={`start-time-section ${countdown !== null ? 'blur' : ''}`}>
+          </div>
+          <div className={`start-time-section ${countdown !== null ? 'blur' : ''}`}>
             <h2>Start Time</h2>
             <div id='radio-group'>
               <div className='radio-box'>
@@ -429,10 +470,6 @@ const DeviceDetails = () => {
                     type="radio"
                     value="now"
                     checked={startOption === 'now'}
-                    onChange={() => {
-                      setStartOption('now');
-                      setDecreaseStartTimeHeight(false);
-                    }}
                   />
                 </div>
                 <label>Start Now</label>
@@ -456,16 +493,18 @@ const DeviceDetails = () => {
             </div>
           </div>
 
-      {showTimePicker && (
-        <div>
-          <div className="overlay"></div>
-          <TimePicker
-            onClose={handleTimePickerClose}
-            onConfirm={handleTimePickerConfirm}
-          />
-        </div>
-      )}
+          {showTimePicker && (
+            <div>
+              <div className="overlay"></div>
+              <TimePicker
+                onClose={handleTimePickerClose}
+                onConfirm={handleTimePickerConfirm}
+              />
+            </div>
+          )}
 
+        {/* TODO:
+        //Countdown is never null, so something here is wrong! */}
       {countdown !== null && (
         <div className={`countdown-timer ${countdown !== null ? 'centered-box' : ''}`}>
           <div className="countdown-box">
@@ -476,10 +515,9 @@ const DeviceDetails = () => {
       </>
     )}
 
-    <div className="bottom-buttons">
-        <button className="bottom-button" onClick={() => setIsRunning(false)}>Back</button>
+      <div className="bottom-buttons">
         <button
-          className={`bottom-button ${isRunning ? 'stop-button' : ''}`}
+          className={`bottom-button ${isRunning ? 'stop-button' : 'start-button'}`}
           onClick={countdown !== null ? handleCancelSchedule : handleStartStop}
         >
           {isRunning ? 'Stop' : countdown !== null ? 'Cancel' : startOption === 'schedule' ? 'Schedule Start' : 'Start'}
