@@ -291,8 +291,67 @@ const DeviceDetails = () => {
     setShowTimePicker(false);
   };
 
+  // TODO: edit this code to schedule washing machine in backend
+  const addScheduledWashingMachine = async (selectedTime) => {
+    if (!selectedTime) {
+      console.error("Scheduled time is not defined");
+      return;
+    }
+    // console.log('second time scheduled time: ' + scheduledTime.toLocaleString());
+
+    //TODO: format date so that it displays in a node-schedule kind of way:
+    //minute hour day month weekday
+    //so 6/23/2024, 7:30:00 PM would be:
+    //30 19 23 6 *
+    //the weekday should always be *
+    const date = new Date(selectedTime);
+    const minutes = date.getMinutes();
+    const hours = date.getHours();
+    const day = date.getDate();
+    const month = date.getMonth() + 1;
+    const weekday = '*'; //any
+
+    const formattedDate = `${minutes} ${hours} ${day} ${month} ${weekday}`;
+    console.log('formattedDate: ' + formattedDate);
+
+    console.log(accessToken);
+    const refreshSimulatorToken = window.localStorage.getItem('refresh_simulator_token');
+
+    const response = await fetch('http://localhost:1337/api/schedule/', {
+      method: 'POST',
+      headers: {
+        'Authorization': `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJmaXJzdF9uYW1lIjoibGlzYSIsImVtYWlsIjoibGlzYUBsaXNhLmxpc2EiLCJpYXQiOjE3MTkyOTgyMTIsImV4cCI6MTcxOTMwMTgxMn0.nf33XAT93y07ujsP_YDk5I5cuSmoanyxpcCLOQCXXC8`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        homeconnectrefresh: refreshSimulatorToken,
+        date: formattedDate,
+        washer_id: washingMachineId,
+        settings: {
+          data: {
+            key: currentMode,
+            options: [
+              { key: 'LaundryCare.Washer.Option.Temperature', value: currentDegree },
+              { key: 'LaundryCare.Washer.Option.SpinSpeed', value: currentSpin },
+            ],
+          },
+        },
+      }),
+    });
+
+    if (response.ok) {
+      const responseData = await response.json();
+      console.log('Schedule added successfully:', responseData);
+    } else {
+      console.error('Failed to add schedule:', response.status, response.statusText);
+    }
+  };
+
   const handleTimePickerConfirm = (selectedTime) => {
     setScheduledTime(selectedTime);
+    // console.log("FIRST TIME SCHEDULED TIME: " + scheduledTime);
+    // console.log("Selected time: " + selectedTime);
+    addScheduledWashingMachine(selectedTime);
     setDecreaseStartTimeHeight(true);
     setShowTimePicker(false);
   };
@@ -503,15 +562,14 @@ const DeviceDetails = () => {
             </div>
           )}
 
-        {/* TODO:
-        //Countdown is never null, so something here is wrong! */}
-      {countdown !== null && (
-        <div className={`countdown-timer ${countdown !== null ? 'centered-box' : ''}`}>
-          <div className="countdown-box">
-            Time until start: {formatCountdown(countdown)}
-          </div>
-        </div>
-      )}
+          {countdown !== null && (
+            <div className={`countdown-timer ${countdown !== null ? 'centered-box' : ''}`}>
+              <div className="countdown-box">
+                {/* Time until start: {formatCountdown(countdown)} */}
+                Washing machine scheduled for: {scheduledTime.toLocaleString()}
+              </div>
+            </div>
+          )}
       </>
     )}
 
