@@ -1,10 +1,10 @@
 import {Column, Entity, ManyToOne, OneToMany, PrimaryColumn, PrimaryGeneratedColumn, Unique} from "typeorm";
 import {User} from "./User";
-import {Time} from "./Time";
+import {TimeslotTime} from "./TimeslotTime";
 
 @Entity()
 @Unique(["user_id", "weekday"])
-export class Schedule {
+export class Timeslot {
   @PrimaryGeneratedColumn()
   schedule_id: number;
 
@@ -14,9 +14,9 @@ export class Schedule {
   @Column({type: 'smallint', nullable: true})
   weekday: number;
 
-  @OneToMany(() => Time, (time) => time.schedule)
-  times: Time[]
+  @OneToMany(() => TimeslotTime, (time) => time.schedule)
+  times: TimeslotTime[]
 
-  @ManyToOne(() => User, (user) => user.schedule)
+  @ManyToOne(() => User, (user) => user.timeslots)
   user: User;
 }

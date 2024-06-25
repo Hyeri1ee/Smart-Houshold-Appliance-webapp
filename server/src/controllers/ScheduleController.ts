@@ -258,7 +258,7 @@ export const addScheduledWash = async (req: Request, res: Response) => {
   return res
     .status(200)
     .json({
-      message: "Schedule successfully added.",
+      message: "Timeslot successfully added.",
       schedule_id: schedule_id,
     });
 };

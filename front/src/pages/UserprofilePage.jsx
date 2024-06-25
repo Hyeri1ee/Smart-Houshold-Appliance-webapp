@@ -40,7 +40,6 @@ function UserProfilePage() {
     setProfileType(0);
     try {
       const accessToken = getCookie('authorization');
-      //console.log(accessToken);
       const response = await fetch('http://localhost:1337/api/user/profile', {
         method: 'POST',
         headers: {
@@ -66,7 +65,6 @@ function UserProfilePage() {
 
       try {
         const accessToken = getCookie('authorization');
-        //console.log(accessToken);
         const response = await fetch('http://localhost:1337/api/user/profile', {
           method: 'POST',
           headers: {

@@ -1,9 +1,9 @@
 import {Request, Response} from 'express';
 import {Repository} from 'typeorm'
-import {Schedule} from '../db/entities/Schedule';
+import {Timeslot} from '../db/entities/Timeslot';
 import {getDataSource} from '../db/DatabaseConnect';
 import {User} from "../db/entities/User";
-import {Time} from "../db/entities/Time";
+import {TimeslotTime} from "../db/entities/TimeslotTime";
 import {handleJwt} from "./JWTHelper";
 
 const timeRegex = /^(?:[01]\d|2[0-3]):[0-5]\d$/;
@@ -28,8 +28,8 @@ export const checkTimeslots = async (req: Request, res: Response): Promise<void>
 
   try {
     const dataSource = await getDataSource();
-    const scheduleRepository = dataSource.getRepository(Schedule);
-    const timeRepository = dataSource.getRepository(Time);
+    const scheduleRepository = dataSource.getRepository(Timeslot);
+    const timeRepository = dataSource.getRepository(TimeslotTime);
 
     const schedule = await scheduleRepository.findOne({where: {user_id: decoded.user_id}});
 
@@ -50,11 +50,11 @@ export const checkTimeslots = async (req: Request, res: Response): Promise<void>
   }
 };
 
-const handleTimes = async (times: Time[], timeRepository: Repository<Time>, schedule: Schedule) => {
-  const timeDatabaseEntries: Time[] = [];
+const handleTimes = async (times: TimeslotTime[], timeRepository: Repository<TimeslotTime>, schedule: Timeslot) => {
+  const timeDatabaseEntries: TimeslotTime[] = [];
 
   for (let i = 0; i < times.length; i++) {
-    const time: Time = new Time();
+    const time: TimeslotTime = new TimeslotTime();
     time.schedule = schedule;
     time.schedule_id = schedule.schedule_id;
     time.start_time = times[i].start_time;
@@ -126,14 +126,14 @@ export const putTimeslots = async (req: Request, res: Response) => {
       return res
         .status(400)
         .json({
-          error: "Time is in wrong format. Make sure it's a string of HH:MM"
+          error: "TimeslotTime is in wrong format. Make sure it's a string of HH:MM"
         })
     }
 
     const dateSource = await getDataSource();
     const userRepository = dateSource.getRepository(User);
-    const scheduleRepository = dateSource.getRepository(Schedule);
-    const timesRepository = dateSource.getRepository(Time);
+    const scheduleRepository = dateSource.getRepository(Timeslot);
+    const timesRepository = dateSource.getRepository(TimeslotTime);
 
     const user: User | null = await userRepository.findOne({where: {user_id: decoded.user_id}});
 
@@ -145,7 +145,7 @@ export const putTimeslots = async (req: Request, res: Response) => {
         })
     }
 
-    const existingScheduleForWeekday: Schedule | null = await scheduleRepository.findOne({
+    const existingScheduleForWeekday: Timeslot | null = await scheduleRepository.findOne({
       where: {
         user_id: decoded.user_id,
         weekday: weekday

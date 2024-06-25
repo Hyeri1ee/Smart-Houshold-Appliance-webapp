@@ -1,6 +1,7 @@
 import {Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn,} from "typeorm";
-import {Schedule} from "./Schedule";
+import {Timeslot} from "./Timeslot";
 import {Location} from "./Location";
+import {ScheduleEntry} from "./ScheduleEntry";
 
 @Entity()
 export class User {
@@ -19,14 +20,13 @@ export class User {
   @Column({ type: 'smallint', nullable: true })
   profile_type: number;
 
-  @Column({ type : 'boolean', nullable: false, default: true })
-  ifFirstLogin: boolean;
-
-
   @OneToOne(() => Location)
   @JoinColumn()
   location: Location;
 
-  @OneToMany(() => Schedule, (schedule) => schedule.user)
-  schedule: Schedule[];
+  @OneToMany(() => Timeslot, (schedule) => schedule.user)
+  timeslots: Timeslot[];
+
+  @OneToMany(() => Timeslot, (schedule) => schedule.user)
+  schedule: ScheduleEntry[];
 }

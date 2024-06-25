@@ -484,7 +484,7 @@ const DeviceDetails = () => {
           className={`bottom-button ${isRunning ? 'stop-button' : ''}`}
           onClick={countdown !== null ? handleCancelSchedule : handleStartStop}
         >
-          {isRunning ? 'Stop' : countdown !== null ? 'Cancel' : startOption === 'schedule' ? 'Schedule Start' : 'Start'}
+          {isRunning ? 'Stop' : countdown !== null ? 'Cancel' : startOption === 'schedule' ? 'Timeslot Start' : 'Start'}
         </button>
       </div>
     </div>

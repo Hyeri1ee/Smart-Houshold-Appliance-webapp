@@ -1,10 +1,9 @@
-import {NextFunction, Request, Response} from 'express';
+import {Request, Response} from 'express';
 import {handleJwt} from "./JWTHelper";
 import 'dotenv/config';
 import {getDataSource} from "../db/DatabaseConnect";
-import {Schedule} from "../db/entities/Schedule";
-import {Time} from "../db/entities/Time";
-import * as string_decoder from "node:string_decoder";
+import {Timeslot} from "../db/entities/Timeslot";
+import {TimeslotTime} from "../db/entities/TimeslotTime";
 
 interface WeatherData {
   epoch: number;
@@ -121,7 +120,7 @@ const findOptimal = (data: WeatherData[]): WeatherData | null => {
   return highestEnergyData;
 }
 
-export const assignSchedulesToPeakTimes = async (req: Request, res: Response, next: NextFunction) => {
+export const assignSchedulesToPeakTimes = async (req: Request, res: Response) => {
   let decoded;
   try {
     decoded = handleJwt(req);
@@ -141,7 +140,7 @@ export const assignSchedulesToPeakTimes = async (req: Request, res: Response, ne
   const dataSource = await getDataSource();
 
   const schedule=
-    await dataSource.getRepository(Schedule).findOne({where: {user_id: decoded.user_id}});
+    await dataSource.getRepository(Timeslot).findOne({where: {user_id: decoded.user_id}});
 
   console.log(schedule);
 
@@ -149,12 +148,12 @@ export const assignSchedulesToPeakTimes = async (req: Request, res: Response, ne
     return res
       .status(400)
       .json({
-        error: 'Schedule not found',
+        error: 'Timeslot not found',
       });
   }
 
   const times =
-  await dataSource.getRepository(Time).find({where: {schedule_id: schedule.schedule_id}})
+  await dataSource.getRepository(TimeslotTime).find({where: {schedule_id: schedule.schedule_id}})
 
   let maxOverlapSeconds = -1;
   let recommendation = {

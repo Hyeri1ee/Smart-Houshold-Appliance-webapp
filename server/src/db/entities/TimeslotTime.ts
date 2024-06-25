@@ -1,8 +1,8 @@
 import {Column, Entity, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn} from "typeorm";
-import {Schedule} from "./Schedule";
+import {Timeslot} from "./Timeslot";
 
 @Entity()
-export class Time {
+export class TimeslotTime {
   @PrimaryGeneratedColumn()
   time_id: number;
 
@@ -15,6 +15,6 @@ export class Time {
   @Column({type: 'time', nullable: false})
   end_time: string;
 
-  @ManyToOne(() => Schedule, (schedule) => schedule.times)
-  schedule: Schedule;
+  @ManyToOne(() => Timeslot, (schedule) => schedule.times)
+  schedule: Timeslot;
 }
