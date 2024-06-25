@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AddButton from "../components/generic/AddButton";
 import RemoveButton from "../components/generic/RemoveButton";
@@ -27,6 +27,12 @@ function AskTimeslotsPage() {
   const [timeSlots, setTimeSlots] = useState([]);
   const [allDay, setAllDay] = useState(false); //  for tracking "All Day" selection
   const navigate = useNavigate();
+  const userProfileType = null;
+
+  useEffect(() => {
+    profileTypeDefault();
+  }, []);
+
 
   const handleAddTimeslot = () => {
     setTempSelectedDays(selectedDays);
@@ -47,12 +53,109 @@ function AskTimeslotsPage() {
     setShowTimeModal(false);
   };
 
-  const handleConfirm = () => {
-    navigate("/dashboard");
+  const handleConfirm = async() => {
+    console.log("Confirm button clicked");
+    const auth = getCookie('authorization');
+  
+    const getDayNumber = (day) => {
+      return daysOfWeek.find(d => d.short === day).id;
+    };
+  
+    const scheduleData = Object.entries(dayTimeSlots).map(([day, slots]) => ({
+      weekday: getDayNumber(day),
+      times: slots === "All Day" 
+        ? [{ start_time: "00:00", end_time: "23:59" }]
+        : slots.map(slot => ({
+            start_time: slot.startTime,
+            end_time: slot.endTime
+          }))
+    }));
+  
+    const resp = await fetch('http://localhost:1337/api/schedule', {
+      method: 'POST',
+      headers: {
+        'Authorization': auth,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(scheduleData)
+    });
+    
+    if (!resp.ok) {
+      console.error("Fetch failed!");
+      return;
+    }
+    
+    console.log(scheduleData);
+
+  };
+
+  const profileTypeDefault = async () => {
+    const accessToken = getCookie('authorization');
+    const resp = await fetch('http://localhost:1337/api/schedule', {
+      method: 'GET',
+      headers: {
+        'Authorization': accessToken,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    const data = await resp.json();
+    if (!resp.ok) {
+      console.error("Fetch failed!");
+      return;
+    }
+    defaultSchedule(data.profileType);
+  };
+
+  const defaultSchedule =  async (userProfile) => {
+
+    switch( userProfile ) {
+      case 0:
+        break;
+      case 1:
+        // Set timeslots and weekday for user profile type 1
+        setSelectedDays(prevDays => {
+          const newDays = ["Tu", "Fr", "Sa"];
+          return [...new Set(newDays)];
+        });
+        setDayTimeSlots({
+        Tu: [{ startTime: "08:00", endTime: "10:00" }, { startTime: "18:00", endTime: "21:00" }],
+        Fr: [{ startTime: "08:00", endTime: "10:00" }, { startTime: "18:00", endTime: "21:00" }],
+        Sa: [{ startTime: "08:00", endTime: "10:00" }, { startTime: "18:00", endTime: "21:00" }],
+      });
+      break;
+
+      case 2:
+        // Set timeslots and weekday for user profile type 2
+        setSelectedDays(prevDays => {
+          const newDays = ["Tu", "Fr", "Sa"];
+          return [...new Set(newDays)];
+        });
+        setDayTimeSlots({
+          Tu: [{ startTime: "08:00", endTime: "21:00" }],
+          Fr: [{ startTime: "08:00", endTime: "21:00" }],
+          Sa: [{ startTime: "08:00", endTime: "21:00" }],
+        });
+        break;
+
+      case 3:
+        // Set timeslots and weekday for user profile type 3
+        setSelectedDays(prevDays => {
+          const newDays = ["Mo","We","Fr","Sa", "Su"];
+          return [...new Set(newDays)];
+        });
+        setDayTimeSlots({
+          Mo: [{ startTime: "07:00", endTime: "22:00" }],
+          We: [{ startTime: "07:00", endTime: "22:00" }],
+          Fr: [{ startTime: "07:00", endTime: "22:00" }],
+          Sa: [{ startTime: "07:00", endTime: "22:00" }],
+          Su: [{ startTime: "07:00", endTime: "22:00" }],
+        });
+        break;
+    }
   };
 
   const handleSaveTimeslot = async () => {
-    // If "All Day" is marked, save "All Day" instead of time slots
     if (allDay) {
       setDayTimeSlots((prevDayTimeSlots) => ({
         ...prevDayTimeSlots,
@@ -65,34 +168,38 @@ function AskTimeslotsPage() {
       }));
     }
     setShowTimeModal(false);
-
-    console.log(timeSlots);
-
+  
     const auth = getCookie('authorization');
+  
+    const getDayNumber = (day) => {
+      return daysOfWeek.find(d => d.short === day).id;
+    };
+  
+    const scheduleData = Object.entries(dayTimeSlots).map(([day, slots]) => ({
+      weekday: getDayNumber(day),
+      times: slots === "All Day" 
+        ? [{ start_time: "00:00", end_time: "23:59" }]
+        : slots.map(slot => ({
+            start_time: slot.startTime,
+            end_time: slot.endTime
+          }))
+    }));
+  
+    const resp = await fetch('http://localhost:1337/api/schedule', {
 
-    const resp = await fetch('http://localhost:1337/api/user/timeslots', {
       method: 'PUT',
       headers: {
         'Authorization': auth,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify([
-          {
-          "weekday": 2,
-          "times": [
-            {
-              "start_time": "12:00",
-              "end_time": "18:00"
-            }
-          ]
-        }
-      ])
+      body: JSON.stringify(scheduleData)
     });
     
     if (!resp.ok) {
       console.error("Fetch failed!");
       return;
     }
+
   };
 
   const toggleDay = (day) => {
