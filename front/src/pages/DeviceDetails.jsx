@@ -3,9 +3,12 @@ import '../styles/pages/DeviceDetails.css';
 import washingMachineImage from "../assets/device/machine.png";
 import TimePicker from '../components/generic/TimePicker';
 import { GlobalStateContext } from '../components/generic/GlobalStateContext';
+import { getCookie } from "../helpers/CookieHelper";
 
 const DeviceDetails = () => {
   const accessToken = window.sessionStorage.getItem('homeconnect_simulator_auth_token');
+  const refreshSimulatorToken = window.localStorage.getItem('refresh_simulator_token');
+  const authToken = getCookie("authorization");
   const { washingMachineId, setwashingMachineId, programs, setPrograms } = useContext(GlobalStateContext);
   const [startOption, setStartOption] = useState('now');
   const [isRunning, setIsRunning] = useState(() => {
@@ -292,19 +295,18 @@ const DeviceDetails = () => {
   };
 
   // TODO: edit this code to schedule washing machine in backend
-  const addScheduledWashingMachine = async (selectedTime) => {
-    if (!selectedTime) {
+  const addScheduledWashingMachine = async (scheduledTime) => {
+    if (!scheduledTime) {
       console.error("Scheduled time is not defined");
       return;
     }
-    // console.log('second time scheduled time: ' + scheduledTime.toLocaleString());
+    console.log('scheduled time: ' + scheduledTime);
 
-    //TODO: format date so that it displays in a node-schedule kind of way:
     //minute hour day month weekday
     //so 6/23/2024, 7:30:00 PM would be:
     //30 19 23 6 *
     //the weekday should always be *
-    const date = new Date(selectedTime);
+    const date = new Date(scheduledTime);
     const minutes = date.getMinutes();
     const hours = date.getHours();
     const day = date.getDate();
@@ -314,13 +316,14 @@ const DeviceDetails = () => {
     const formattedDate = `${minutes} ${hours} ${day} ${month} ${weekday}`;
     console.log('formattedDate: ' + formattedDate);
 
-    console.log(accessToken);
-    const refreshSimulatorToken = window.localStorage.getItem('refresh_simulator_token');
-
+    // TODO: here is my added code to schedule the washing machine
+    console.log('washing machine id: ' + washingMachineId);
+    console.log('current settings: ' + currentMode, currentDegree, currentSpin);
+    console.log('auth token: ' + authToken);
     const response = await fetch('http://localhost:1337/api/schedule/', {
       method: 'POST',
       headers: {
-        'Authorization': `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJmaXJzdF9uYW1lIjoibGlzYSIsImVtYWlsIjoibGlzYUBsaXNhLmxpc2EiLCJpYXQiOjE3MTkyOTgyMTIsImV4cCI6MTcxOTMwMTgxMn0.nf33XAT93y07ujsP_YDk5I5cuSmoanyxpcCLOQCXXC8`,
+        'Authorization': `${authToken}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -351,7 +354,7 @@ const DeviceDetails = () => {
     setScheduledTime(selectedTime);
     // console.log("FIRST TIME SCHEDULED TIME: " + scheduledTime);
     // console.log("Selected time: " + selectedTime);
-    addScheduledWashingMachine(selectedTime);
+    // addScheduledWashingMachine(selectedTime);
     setDecreaseStartTimeHeight(true);
     setShowTimePicker(false);
   };
@@ -576,7 +579,15 @@ const DeviceDetails = () => {
       <div className="bottom-buttons">
         <button
           className={`bottom-button ${isRunning ? 'stop-button' : 'start-button'}`}
-          onClick={countdown !== null ? handleCancelSchedule : handleStartStop}
+          onClick={() => {
+            if (countdown !== null) {
+              handleCancelSchedule();
+            } else if (startOption === 'schedule' && !isRunning) {
+              addScheduledWashingMachine(scheduledTime);
+            } else {
+              handleStartStop();
+            }
+          }}
         >
           {isRunning ? 'Stop' : countdown !== null ? 'Cancel' : startOption === 'schedule' ? 'Schedule Start' : 'Start'}
         </button>
