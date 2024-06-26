@@ -3,7 +3,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Schedule from "./pages/SchedulePage";
-import UserProfilePage from "./pages/UserProfilePage";
+import UserProfilePage from "./pages/UserprofilePage";
 import HomeConnectLogin from "./pages/HomeConnectLogin";
 import LoginFailed from "./pages/LoginFailed";
 import DeviceDetails from "./pages/DeviceDetails";
@@ -15,6 +15,8 @@ import axios from 'axios';
 import TimeslotAsking from "./pages/AskTimeslotsPage";
 import { GlobalStateProvider } from './components/generic/GlobalStateContext';
 import PushNotificationComponent from "./components/PushNotificationContainer";
+import SettingPage from './pages/SettingPage';
+
 
 axios.defaults.baseURL = 'http://localhost:1337';
 axios.defaults.withCredentials = true;
@@ -46,6 +48,7 @@ function App() {
           <Route path="device/details" element={<DeviceDetails />} />
           <Route path="user/profile" element={<UserProfilePage />} />
           <Route path="user/timeslots" element={<TimeslotAsking />} />
+          <Route path="user/settings" element={<SettingPage />} />
           <Route path="push" element={<PushNotificationComponent/>}/>
         </Routes>
         {shouldRenderNavBar && <BottomNavBar />}
