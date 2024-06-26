@@ -1,9 +1,9 @@
 {
   "host": "localhost",
-  "port": 5432,
+  "port": 5433,
   "username": "postgres",
   "password": "1234",
-  "dbName": "hboict",
+  "dbName": "doom-toaster",
   "synchronize": true,
   "logging": false
 }
