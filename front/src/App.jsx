@@ -4,6 +4,7 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Schedule from "./pages/SchedulePage";
 import UserProfilePage from "./pages/UserprofilePage";
+import UserProfilePage from "./pages/UserprofilePage";
 import HomeConnectLogin from "./pages/HomeConnectLogin";
 import LoginFailed from "./pages/LoginFailed";
 import DeviceDetails from "./pages/DeviceDetails";
