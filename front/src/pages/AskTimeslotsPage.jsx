@@ -31,7 +31,7 @@ function AskTimeslotsPage() {
   useEffect(() => {
     const fetchTimeslots = async () => {
       const auth = getCookie('authorization');
-      const response = await fetch('http://localhost:1337/api/timeslot/getTimeslots', {
+      const response = await fetch('http://localhost:1337/api/timeslots', {
         method: 'GET',
         headers: {
           'Authorization': auth,
@@ -107,7 +107,7 @@ function AskTimeslotsPage() {
       }))
     }));
 
-    const putResp = await fetch('http://localhost:1337/api/timeslot/putTimeslot', {
+    const putResp = await fetch('http://localhost:1337/api/timeslots', {
       method: 'PUT',
       headers: {
         'Authorization': auth,
@@ -181,7 +181,7 @@ function AskTimeslotsPage() {
   const handleRemoveDay = async (day) => {
     const auth = getCookie('authorization');
     const dayId = daysOfWeek.find(d => d.short === day).id;
-    const response = await fetch(`http://localhost:1337/api/timeslot/deleteDay/${dayId}`, {
+    const response = await fetch(`http://localhost:1337/api/days/${dayId}/timeslots`, {
       method: 'DELETE',
       headers: {
         'Authorization': auth,

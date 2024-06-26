@@ -3,7 +3,7 @@ import { putTimeslot, checkTimeslot, deleteTimeslot, deleteDayTimeslot } from ".
 
 export const timeslotRoute = express.Router();
 
-timeslotRoute.get("/getTimeslots", checkTimeslot);
-timeslotRoute.put("/putTimeslot", putTimeslot);
-timeslotRoute.delete("/deleteTimeslot", deleteTimeslot);
-timeslotRoute.delete("/deleteDay/:dayId", deleteDayTimeslot);
+timeslotRoute.get("/timeslots", checkTimeslot);
+timeslotRoute.put("/timeslots/:timeslotId", putTimeslot);
+timeslotRoute.delete("/timeslots/:timeslotId", deleteTimeslot);
+timeslotRoute.delete("/days/:dayId/timeslots", deleteDayTimeslot);
