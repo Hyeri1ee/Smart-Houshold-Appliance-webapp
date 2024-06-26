@@ -7,7 +7,6 @@ import { getCookie } from "../helpers/CookieHelper";
 
 const DeviceDetails = () => {
   const accessToken = window.sessionStorage.getItem('homeconnect_simulator_auth_token');
-  const refreshSimulatorToken = window.localStorage.getItem('refresh_simulator_token');
   const authToken = getCookie("authorization");
   const { washingMachineId, setwashingMachineId, programs, setPrograms } = useContext(GlobalStateContext);
   const [startOption, setStartOption] = useState('now');
@@ -294,7 +293,6 @@ const DeviceDetails = () => {
     setShowTimePicker(false);
   };
 
-  // TODO: edit this code to schedule washing machine in backend
   const addScheduledWashingMachine = async (scheduledTime) => {
     if (!scheduledTime) {
       console.error("Scheduled time is not defined");
@@ -320,41 +318,41 @@ const DeviceDetails = () => {
     console.log('washing machine id: ' + washingMachineId);
     console.log('current settings: ' + currentMode, currentDegree, currentSpin);
     console.log('auth token: ' + authToken);
-    const response = await fetch('http://localhost:1337/api/schedule/', {
-      method: 'POST',
-      headers: {
-        'Authorization': `${authToken}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        homeconnectrefresh: refreshSimulatorToken,
-        date: formattedDate,
-        washer_id: washingMachineId,
-        settings: {
-          data: {
-            key: currentMode,
-            options: [
-              { key: 'LaundryCare.Washer.Option.Temperature', value: currentDegree },
-              { key: 'LaundryCare.Washer.Option.SpinSpeed', value: currentSpin },
-            ],
-          },
-        },
-      }),
-    });
 
-    if (response.ok) {
+    const refreshSimulatorToken = window.localStorage.getItem('refresh_simulator_token');
+
+    try {
+      const response = await fetch('http://localhost:1337/api/schedule', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': getCookie("authorization")
+        },
+        body: JSON.stringify({
+          homeconnectrefresh: refreshSimulatorToken,
+          date: formattedDate,
+          washer_id: washingMachineId,
+          settings: {
+            data: {
+              key: currentMode,
+              options: [
+                { key: 'LaundryCare.Washer.Option.Temperature', value: currentDegree },
+                { key: 'LaundryCare.Washer.Option.SpinSpeed', value: currentSpin },
+              ],
+            },
+          },
+        }),
+      });
       const responseData = await response.json();
-      console.log('Schedule added successfully:', responseData);
-    } else {
-      console.error('Failed to add schedule:', response.status, response.statusText);
+      console.log(responseData);
+    }
+    catch (error) {
+      console.log(error);
     }
   };
 
   const handleTimePickerConfirm = (selectedTime) => {
     setScheduledTime(selectedTime);
-    // console.log("FIRST TIME SCHEDULED TIME: " + scheduledTime);
-    // console.log("Selected time: " + selectedTime);
-    // addScheduledWashingMachine(selectedTime);
     setDecreaseStartTimeHeight(true);
     setShowTimePicker(false);
   };
@@ -454,9 +452,9 @@ const DeviceDetails = () => {
               <label>Current Mode:</label>
             </div>
             <div className='started-setting-p'>
-            <p>{formatCamelCase((window.sessionStorage.getItem('currentMode')).split('.').slice(3).join('.'))}</p>
-          </div>
+              <p>{formatCamelCase((window.sessionStorage.getItem('currentMode')).split('.').slice(3).join('.'))}</p>
             </div>
+          </div>
           <div className='started-setting-container'>
             <div className='label-box'>
               <label>Temperature:</label>
@@ -479,7 +477,7 @@ const DeviceDetails = () => {
             </div>
             <div className='started-setting-p'>
               <p>{new Date(endTime).toLocaleTimeString()}</p>
-              </div>
+            </div>
           </div>
         </div>
       )}
@@ -568,13 +566,13 @@ const DeviceDetails = () => {
           {countdown !== null && (
             <div className={`countdown-timer ${countdown !== null ? 'centered-box' : ''}`}>
               <div className="countdown-box">
-                {/* Time until start: {formatCountdown(countdown)} */}
+                Time until start: {formatCountdown(countdown)}
                 Washing machine scheduled for: {scheduledTime.toLocaleString()}
               </div>
             </div>
           )}
-      </>
-    )}
+        </>
+      )}
 
       <div className="bottom-buttons">
         <button
