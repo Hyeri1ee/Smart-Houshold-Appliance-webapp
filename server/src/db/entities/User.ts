@@ -1,6 +1,6 @@
-import {Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn,} from "typeorm";
-import {Schedule} from "./Schedule";
-import {Location} from "./Location";
+import { Column, Entity, PrimaryGeneratedColumn, OneToMany, OneToOne, JoinColumn } from 'typeorm';
+import { Schedule } from './Schedule';
+import { Location } from './Location';
 
 @Entity()
 export class User {
@@ -19,9 +19,11 @@ export class User {
   @Column({ type: 'smallint', nullable: true })
   profile_type: number;
 
-  @Column({ type : 'boolean', nullable: false, default: true })
+  @Column({ type: 'boolean', nullable: false, default: true })
   ifFirstLogin: boolean;
 
+  @Column({ type: 'text', nullable: true })
+  subscription: string;
 
   @OneToOne(() => Location)
   @JoinColumn()
