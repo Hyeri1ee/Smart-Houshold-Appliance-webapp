@@ -27,11 +27,13 @@ interface JobData {
 
 const jobs: { [id: string]: JobData } = {};
 
-const checkValidInfo = async (req: Request, res: Response) => {
+const checkValidInfo = async (req: Request) => {
   if (!process.env.CLIENT_ID || !process.env.CLIENT_SECRET) {
     console.error('PLEASE (RE-)RUN \'./make-key.sh\'! You are missing the client_id and client_secret!\nif you ask about this on discord, you owe Nick a box of chocolates.')
-    return res
-      .sendStatus(500);
+    return {
+      statusCode: 500,
+      message: "internal server error",
+    }
   }
 
   const requestData = {
@@ -54,11 +56,10 @@ const checkValidInfo = async (req: Request, res: Response) => {
   );
 
   if (!resp.ok) {
-    return res
-      .status(400)
-      .json({
-        error: 'Something went wrong when refreshing homeconnect auth token. Your refresh token most likely expired.',
-      });
+    return {
+      statusCode: 400,
+      message: 'Something went wrong when refreshing homeconnect auth token. Your refresh token most likely expired.',
+    };
   }
 
   let accessToken: string;
@@ -66,12 +67,10 @@ const checkValidInfo = async (req: Request, res: Response) => {
   try {
     accessToken = (await resp.json()).access_token;
   } catch (e) {
-    res
-      .status(400)
-      .json({
-        error: "Something went wrong when getting access token. Please check your homeconnect refresh token!",
-      });
-    return false;
+    return {
+      statusCode: 400,
+      message: 'Something went wrong when getting access token. Please check your homeconnect refresh token!',
+    };
   }
 
   const response = await fetch(`https://simulator.home-connect.com/api/homeappliances/${req.body.washer_id}/programs/available`, {
@@ -83,13 +82,10 @@ const checkValidInfo = async (req: Request, res: Response) => {
   });
 
   if (!response.ok) {
-    res
-      .status(400)
-      .json({
-        error: 'Failed to fetch appliance available programs'
-      });
-
-    return false;
+    return {
+      statusCode: 400,
+      message: 'Failed to fetch appliance available programs',
+    };
   }
 
   const data = await response.json();
@@ -102,12 +98,10 @@ const checkValidInfo = async (req: Request, res: Response) => {
   }
 
   if (!valid) {
-    res
-      .status(400)
-      .json({
-        error: 'Invalid program key',
-      })
-    return false;
+    return {
+      statusCode: 400,
+      message: 'Invalid program key',
+    };
   }
 
   valid = false;
@@ -132,16 +126,14 @@ const checkValidInfo = async (req: Request, res: Response) => {
     }
 
     if (!valid) {
-      res
-        .status(400)
-        .json({
-          error: 'Invalid options',
-        })
-      return false;
+      return {
+        statusCode: 400,
+        message: 'Invalid options',
+      };
     }
   }
 
-  return true;
+  return undefined;
 }
 
 export const addScheduledWash = async (req: Request, res: Response) => {
@@ -170,8 +162,14 @@ export const addScheduledWash = async (req: Request, res: Response) => {
       });
   }
 
-  if (!(await checkValidInfo(req, res))) {
-    return; // means info is invalid and a response has already been sent
+  const infoCheck = await checkValidInfo(req);
+
+  if (infoCheck) {
+    return res
+      .status(infoCheck.statusCode)
+      .json({
+        error: infoCheck.message
+      });
   }
 
   let schedule_id = createUUID();
