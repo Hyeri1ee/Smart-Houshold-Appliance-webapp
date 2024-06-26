@@ -4,6 +4,8 @@ import dotenv from 'dotenv';
 import {getDataSource} from '../../db/DatabaseConnect';
 import {User} from "../../db/entities/User";
 import {handleJwt} from "../auth/JWTHelper";
+import {ScheduleOption} from "../../db/entities/ScheduleOption";
+import {ScheduleEntry} from "../../db/entities/ScheduleEntry";
 
 dotenv.config();
 // https://stackoverflow.com/questions/105034/how-do-i-create-a-guid-uuid
@@ -178,8 +180,10 @@ export const addScheduledWash = async (req: Request, res: Response) => {
 
   let schedule_id = createUUID();
 
+  let job;
+
   try {
-    schedule.scheduleJob(`user_id:${decoded.user_id}, washer_id:${req.body.washer_id} UUID:${schedule_id}`, req.body.date, async () => {
+    job = schedule.scheduleJob(`user_id:${decoded.user_id}, washer_id:${req.body.washer_id} UUID:${schedule_id}`, req.body.date, async () => {
       if (!process.env.CLIENT_ID || !process.env.CLIENT_SECRET) {
         console.error('PLEASE (RE-)RUN \'./make-key.sh\'! You are missing the client_id and client_secret!\nif you ask about this on discord, you owe Nick a box of chocolates.')
         return;
@@ -249,20 +253,57 @@ export const addScheduledWash = async (req: Request, res: Response) => {
 
   jobs[`user_id:${decoded.user_id}, washer_id:${req.body.washer_id} UUID:${schedule_id}`] = {
     isAdvice: req.body.isAdvice,
-    program: req.body.settings.key
+    program: req.body.settings.key,
   }
 
-  //TODO Add to database
+  const dataSource = await getDataSource();
+  const optionsRepo = dataSource.getRepository(ScheduleOption);
+  const optionEntities: ScheduleOption[] = [];
+
+  for (const option of req.body.settings.data.options) {
+    const newOption = await optionsRepo.save({
+      key: option.key,
+      value: option.value,
+    });
+
+    optionEntities.push(newOption);
+  }
+
+  const scheduleRepo = dataSource.getRepository(ScheduleEntry);
+  const userEntry =
+    await dataSource.getRepository(User).findOne({where: {user_id: decoded.user_id}});
+
+  if (!userEntry) {
+    return res
+      .status(400)
+      .json({
+        error: 'User does not exist',
+      });
+  }
+
+  const nextInvocation = job.nextInvocation();
+
+  const newSchedule = await scheduleRepo.save({
+    user_id: decoded.user_id,
+    dateTime: nextInvocation,
+    program: req.body.settings.data.key,
+    options: optionEntities,
+    user: userEntry,
+  });
+
+  for (const option of optionEntities) {
+    option.schedule = newSchedule;
+  }
 
   return res
     .status(200)
     .json({
-      message: "Timeslot successfully added.",
+      message: "Schedule successfully added.",
       schedule_id: schedule_id,
     });
 };
 
-export const deleteScheduledWash = (req: Request, res: Response) => {
+export const deleteScheduledWash = async (req: Request, res: Response) => {
   let decoded;
   try {
     decoded = handleJwt(req);
@@ -297,6 +338,34 @@ export const deleteScheduledWash = (req: Request, res: Response) => {
       });
   }
   //TODO: Delete from database
+  try {
+    const dataSource = await getDataSource();
+
+    const scheduleRepo = dataSource.getRepository(ScheduleEntry);
+    const optionsRepo = dataSource.getRepository(ScheduleOption);
+    const userRepo = dataSource.getRepository(User);
+
+    const userEntry = await userRepo.findOne({where: {user_id: decoded.user_id}});
+
+    if (!userEntry) {
+      return res.status(400).json({error: 'User does not exist'});
+    }
+
+    const scheduleId = req.body.schedule_id;
+    const scheduleEntry = await scheduleRepo.findOne({where: {schedule_id: scheduleId}, relations: ['options']});
+
+    if (!scheduleEntry) {
+      return res.status(404).json({error: 'Schedule entry not found'});
+    }
+
+    await optionsRepo.remove(scheduleEntry.options);
+    await scheduleRepo.remove(scheduleEntry);
+
+    res.status(200).json({message: 'Schedule job and associated data deleted successfully'});
+  } catch (error) {
+    console.error('Error deleting schedule job:', error);
+    res.status(500).json({error: 'Internal server error'});
+  }
 
   if (job.cancel()) {
     return res
@@ -313,10 +382,9 @@ export const deleteScheduledWash = (req: Request, res: Response) => {
   }
 }
 
-export const getScheduledWash = (req: Request, res: Response) => {
-  let decoded;
+export const getScheduledWash = async (req: Request, res: Response) => {
   try {
-    decoded = handleJwt(req);
+    handleJwt(req);
   } catch (e) {
     console.log(e);
     return res
@@ -328,10 +396,20 @@ export const getScheduledWash = (req: Request, res: Response) => {
 
 
   // TODO: instead retrieve from database
-  let job;
+  let schedule;
 
   try {
-    job = schedule.scheduledJobs[`user_id:${decoded.user_id}, washer_id:${req.body.washer_id} UUID:${req.params.id}`];
+    const dataSource = await getDataSource();
+    const scheduleRepo = dataSource.getRepository(ScheduleEntry);
+    const scheduleId = req.body.schedule_id;
+    const scheduleEntry = await scheduleRepo.findOne({where: {schedule_uuid: scheduleId}, relations: ['options']});
+    if (scheduleEntry) {
+      schedule = scheduleEntry;
+    } else {
+      const up = new Error()
+
+      throw up; // haha
+    }
   } catch (e) {
     if (e instanceof Error) {
       return res
@@ -348,42 +426,12 @@ export const getScheduledWash = (req: Request, res: Response) => {
         message: 'something went wrong when getting job',
       });
   }
-  console.log(JSON.stringify(jobs));
-  console.log(`Looking for job: user_id:${decoded.user_id}, washer_id:${req.body.washer_id} UUID:${req.params.id}`)
-  const date = job.nextInvocation()
-
-  const otherData = jobs[`user_id:${decoded.user_id}, washer_id:${req.body.washer_id} UUID:${req.params.id}`];
 
   return res
     .status(200)
     .json({
-      weekday: date.getDay(),
-      month: date.getMonth(),
-      day: date.getDate(),
-      startTime: date.getTime(),
-      isAdvice: otherData.isAdvice,
-      program: otherData.program,
+      date: schedule.datetime,
+      program: schedule.program,
+      options: schedule.options,
     });
 }
-
-export const getSchedule = async (req: Request, res: Response): Promise<void> => {
-  let decoded;
-  try {
-    decoded = handleJwt(req);
-  } catch (e) {
-    res
-      .status(400)
-      .json({
-        error: "authorization header missing!"
-      });
-    return;
-  }
-
-  const dataSource = await getDataSource();
-  const users = dataSource.getRepository(User);
-  const user = await users.findOne({where: {user_id: decoded.user_id}});
-  const profileType = (user?.profile_type);
-
-  res.status(200).json({profileType : profileType});
-
-};
