@@ -5,9 +5,7 @@ import {registerRoute} from './routers/RegisterRoute';
 import {timeslotRoute} from "./routers/TimeslotRoute";
 import {adviceRoute} from "./routers/AdviceRoute";
 import {userRoute} from "./routers/UserRoute";
-import {userProfileRoute} from './routers/UserProfileRoute';
-import {solarRoute} from "./routers/SolarRoute";
-import {washingScheduleRoute} from "./routers/ScheduledWashingController";
+import {washingScheduleRoute} from "./routers/ScheduledWashingRoute";
 
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
@@ -28,12 +26,10 @@ app.use(cookieParser())
 
 app.use('/api/register', registerRoute);
 app.use('/api/login', loginRoute);
-app.use('/api/solar', solarRoute);
-app.use('/api/timeslot', timeslotRoute);
-app.use('/api/advice', adviceRoute);
 app.use('/api/user', userRoute);
-app.use('/api/user/profile', userProfileRoute);
-app.use('/api/schedule/wash', washingScheduleRoute);
+app.use('/api/advice', adviceRoute);
+app.use('/api/schedule', washingScheduleRoute);
+app.use('/api/timeslot', timeslotRoute);
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
