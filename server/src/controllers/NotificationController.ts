@@ -1,9 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
 import { handleJwt } from './JWTHelper';
-import 'dotenv/config';
 import { getDataSource } from '../db/DatabaseConnect';
 import { User } from '../db/entities/User';
-import { sendPushNotification } from '../webPushService';
+import { sendPushNotification, getVapidPublicKey } from '../webPushService';
 
 export const sendRecommendationNotification = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
   let decoded;
@@ -15,7 +14,6 @@ export const sendRecommendationNotification = async (req: Request, res: Response
     return res.status(400).json({ message: 'Authentication failed' });
   }
 
-  // Log the request body to debug the issue
   console.log('Request body:', req.body);
 
   const { notificationToken, time, date } = req.body;
@@ -64,9 +62,13 @@ export const saveSubscription = async (req: Request, res: Response, next: NextFu
     return res.status(400).json({ error: 'User not found' });
   }
 
-  // Ensure proper handling of JSON objects
   user.subscription = JSON.stringify(subscription);
   await dataSource.getRepository(User).save(user);
 
   return res.status(200).json({ message: 'Subscription saved' });
+};
+
+export const getVapidPublicKeyController = (req: Request, res: Response): Response => {
+  const publicKey = getVapidPublicKey();
+  return res.json({ publicKey });
 };

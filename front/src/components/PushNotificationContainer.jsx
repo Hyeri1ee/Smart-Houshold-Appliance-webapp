@@ -1,16 +1,30 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { getCookie } from "../helpers/CookieHelper";
-
-const VAPID_PUBLIC_KEY = 'BJ8UyQy743ovPUSrBBUZEuMigZ0ihYD7_7JKmGAhM2vpKRvSILSPB5GhxJu4cbUsCm50hBIdVXRgnt7vp3nuNJw';
 
 function urlBase64ToUint8Array(base64String) {
   const padding = '='.repeat((4 - base64String.length % 4) % 4);
   const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
   const rawData = window.atob(base64);
-  return new Uint8Array(rawData.length).map((_, i) => rawData.charCodeAt(i));
+  return new Uint8Array([...rawData].map(char => char.charCodeAt(0)));
 }
 
 const PushNotificationComponent = () => {
+  const [vapidPublicKey, setVapidPublicKey] = useState(null);
+
+  useEffect(() => {
+    async function fetchVapidPublicKey() {
+      try {
+        const response = await fetch('http://localhost:1337/api/notification/vapid-public-key');
+        const data = await response.json();
+        setVapidPublicKey(data.publicKey);
+      } catch (error) {
+        console.error('Error fetching VAPID public key:', error);
+      }
+    }
+
+    fetchVapidPublicKey();
+  }, []);
+
   useEffect(() => {
     async function requestNotificationPermission() {
       if (!('Notification' in window)) {
@@ -27,13 +41,27 @@ const PushNotificationComponent = () => {
       }
     }
 
+    async function unsubscribeExistingSubscription(pushManager) {
+      const subscription = await pushManager.getSubscription();
+      if (subscription) {
+        await subscription.unsubscribe();
+      }
+    }
+
     async function subscribeToPushNotifications() {
       try {
+        if (!vapidPublicKey) {
+          return;
+        }
+
         const registration = await navigator.serviceWorker.register('/ServiceWorker.js');
+
+        // Unsubscribe from existing subscriptions with different keys
+        await unsubscribeExistingSubscription(registration.pushManager);
 
         const subscription = await registration.pushManager.subscribe({
           userVisibleOnly: true,
-          applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
+          applicationServerKey: urlBase64ToUint8Array(vapidPublicKey),
         });
 
         const authorization = getCookie("authorization");
@@ -87,8 +115,10 @@ const PushNotificationComponent = () => {
       await subscribeToPushNotifications();
     }
 
-    init();
-  }, []);
+    if (vapidPublicKey) {
+      init();
+    }
+  }, [vapidPublicKey]);
 
   return <div>Push Notification Component</div>;
 };
