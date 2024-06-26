@@ -49,24 +49,12 @@ h2 {
   display: block;
 }
 
-.running-section {
-  width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  padding: 10px;
-  border-radius: 0;
-}
-
 .controls-section,
 .start-time-section {
   display: flex;
   flex-direction: column;
   align-items: center;
   transition: filter 0.2s;
-}
-
-.start-time-section {
-  margin-bottom: 10px;
 }
 
 .adjusted {
@@ -87,24 +75,6 @@ select {
   pointer-events: none;
 }
 
-.control-button {
-  margin: 5px 0;
-  padding: 10px 20px;
-  background-color: var(--primary);
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  color: var(--text);
-  font-weight: bold;
-  width: 100%;
-  max-width: 250px;
-  text-align: left;
-}
-
-.control-button:hover {
-  background-color: var(--secondary);
-}
-
 .start-time-section label {
   display: flex;
   flex-direction: row;
@@ -114,7 +84,7 @@ select {
 }
 
 .start-time-section label:first-of-type {
-  margin-bottom: 0.5em;
+  margin-bottom: 0.6em;
 }
 
 .scheduled-time {
@@ -144,8 +114,10 @@ input[type='radio'] {
 
 .bottom-buttons {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+  height: 10%;
 }
 
 .bottom-button {
@@ -164,9 +136,20 @@ input[type='radio'] {
   background-color: var(--secondary);
 }
 
-.stop-button {
-  background-color: red;
+.start-button {
+  background-color: var(--primary);
   color: white;
+  width: 80%;
+  height: 60%;
+  font-size: 1.3em;
+}
+
+.stop-button {
+  background-color: var(--red);
+  color: white;
+  width: 80%;
+  height: 60%;
+  font-size: 1.3em;
 }
 
 .overlay {
@@ -218,3 +201,25 @@ select {
   min-width: 16vh;
 }
 
+.running-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin: 0 auto;
+  font-size: 1.3em;
+}
+
+.started-setting-container {
+  width: 80%;
+  display: flex;
+  justify-content: center;
+}
+
+.started-setting-p {
+  display: flex;
+  flex-direction: column;
+  width: 40%;
+  margin: auto;
+}
