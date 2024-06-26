@@ -1,9 +1,8 @@
-import {Column, Entity, ManyToOne, OneToMany, PrimaryColumn, PrimaryGeneratedColumn, Unique} from "typeorm";
+import {Column, Entity, ManyToOne, OneToMany, PrimaryColumn, PrimaryGeneratedColumn} from "typeorm";
 import {User} from "./User";
 import {TimeslotTime} from "./TimeslotTime";
 
 @Entity()
-@Unique(["user_id", "weekday"])
 export class Timeslot {
   @PrimaryGeneratedColumn()
   schedule_id: number;

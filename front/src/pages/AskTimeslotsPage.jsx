@@ -26,8 +26,7 @@ function AskTimeslotsPage() {
   const [currentDay, setCurrentDay] = useState(null);
   const [timeSlots, setTimeSlots] = useState([]);
   const [allDay, setAllDay] = useState(false); //  for tracking "All Day" selection
-  const navigate = useNavigate();
-  const userProfileType = null;
+  useNavigate();
 
   useEffect(() => {
     profileTypeDefault();
@@ -71,8 +70,8 @@ function AskTimeslotsPage() {
           }))
     }));
   
-    const resp = await fetch('http://localhost:1337/api/schedule', {
-      method: 'POST',
+    const resp = await fetch('http://localhost:1337/api/user/timeslots', {
+      method: 'PUT',
       headers: {
         'Authorization': auth,
         'Content-Type': 'application/json'
@@ -84,14 +83,13 @@ function AskTimeslotsPage() {
       console.error("Fetch failed!");
       return;
     }
-    
-    console.log(scheduleData);
 
+    window.location.href="/dashboard"
   };
 
   const profileTypeDefault = async () => {
     const accessToken = getCookie('authorization');
-    const resp = await fetch('http://localhost:1337/api/schedule', {
+    const resp = await fetch('http://localhost:1337/api/timeslots', {
       method: 'GET',
       headers: {
         'Authorization': accessToken,
@@ -114,7 +112,7 @@ function AskTimeslotsPage() {
         break;
       case 1:
         // Set timeslots and weekday for user profile type 1
-        setSelectedDays(prevDays => {
+        setSelectedDays(() => {
           const newDays = ["Tu", "Fr", "Sa"];
           return [...new Set(newDays)];
         });
@@ -127,7 +125,7 @@ function AskTimeslotsPage() {
 
       case 2:
         // Set timeslots and weekday for user profile type 2
-        setSelectedDays(prevDays => {
+        setSelectedDays(() => {
           const newDays = ["Tu", "Fr", "Sa"];
           return [...new Set(newDays)];
         });
@@ -140,7 +138,7 @@ function AskTimeslotsPage() {
 
       case 3:
         // Set timeslots and weekday for user profile type 3
-        setSelectedDays(prevDays => {
+        setSelectedDays(() => {
           const newDays = ["Mo","We","Fr","Sa", "Su"];
           return [...new Set(newDays)];
         });
@@ -185,7 +183,7 @@ function AskTimeslotsPage() {
           }))
     }));
   
-    const resp = await fetch('http://localhost:1337/api/schedule', {
+    const resp = await fetch('http://localhost:1337/api/user/timeslots', {
 
       method: 'PUT',
       headers: {
@@ -197,7 +195,6 @@ function AskTimeslotsPage() {
     
     if (!resp.ok) {
       console.error("Fetch failed!");
-      return;
     }
 
   };

@@ -1,8 +1,8 @@
 import {Request, Response} from 'express';
-import {handleJwt} from "./JWTHelper";
-import {getDataSource} from "../db/DatabaseConnect";
-import {User} from "../db/entities/User";
-import { Timeslot } from '../db/entities/Timeslot';
+import {handleJwt} from "../auth/JWTHelper";
+import {getDataSource} from "../../db/DatabaseConnect";
+import {User} from "../../db/entities/User";
+import { Timeslot } from '../../db/entities/Timeslot';
 
 export const checkUserInfo = async (req: Request, res: Response) => {
   let decoded

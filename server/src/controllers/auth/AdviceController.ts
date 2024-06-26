@@ -1,9 +1,9 @@
 import {Request, Response} from 'express';
 import {handleJwt} from "./JWTHelper";
 import 'dotenv/config';
-import {getDataSource} from "../db/DatabaseConnect";
-import {Timeslot} from "../db/entities/Timeslot";
-import {TimeslotTime} from "../db/entities/TimeslotTime";
+import {getDataSource} from "../../db/DatabaseConnect";
+import {Timeslot} from "../../db/entities/Timeslot";
+import {TimeslotTime} from "../../db/entities/TimeslotTime";
 
 interface WeatherData {
   epoch: number;

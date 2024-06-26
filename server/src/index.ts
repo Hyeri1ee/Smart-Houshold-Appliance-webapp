@@ -4,7 +4,7 @@ import {loginRoute} from './routers/LoginRoute';
 import {registerRoute} from './routers/RegisterRoute';
 import {adviceRoute} from "./routers/AdviceRoute";
 import {userRoute} from "./routers/UserRoute";
-import {washingScheduleRoute} from "./routers/ScheduledWashingRoute";
+import {washingScheduleRoute} from "./routers/ScheduleRoute";
 
 import cors from 'cors';
 import cookieParser from 'cookie-parser';

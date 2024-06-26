@@ -3,8 +3,12 @@ import '../styles/pages/DeviceDetails.css';
 import washingMachineImage from "../assets/device/machine.png";
 import TimePicker from '../components/generic/TimePicker';
 import { GlobalStateContext } from '../components/generic/GlobalStateContext';
+import {checkUserInfo} from "../helpers/CheckUserInfo";
 
 const DeviceDetails = () => {
+  checkUserInfo().then(
+  () => { // indentation here is wrong but i dont want to have the entire code indented
+
   const accessToken = window.sessionStorage.getItem('homeconnect_simulator_auth_token');
   const { washingMachineId, setwashingMachineId, programs, setPrograms } = useContext(GlobalStateContext);
   const [startOption, setStartOption] = useState('now');
@@ -524,7 +528,7 @@ const DeviceDetails = () => {
         </button>
       </div>
     </div>
-  );
+  );})
 };
 
 export default DeviceDetails;

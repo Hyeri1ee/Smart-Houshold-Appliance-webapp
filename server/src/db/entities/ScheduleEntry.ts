@@ -10,7 +10,7 @@ export class ScheduleEntry {
   @PrimaryColumn({nullable: false})
   user_id: number;
 
-  @Column({type: 'timestamp with local time zone', nullable: false})
+  @Column({type: 'timestamptz', nullable: false})
   datetime: Date;
 
   @OneToMany(() => ScheduleOption, (scheduleOption) => scheduleOption.schedule)

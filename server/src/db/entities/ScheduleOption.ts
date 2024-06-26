@@ -6,10 +6,10 @@ export class ScheduleOption {
   @PrimaryGeneratedColumn()
   schedule_option_id: number;
 
-  @Column({type: 'string', nullable: false})
+  @Column({type: 'text', nullable: false})
   key: string;
 
-  @Column({type: 'string', nullable: false})
+  @Column({type: 'text', nullable: false})
   value: string;
 
   @ManyToOne(() => ScheduleEntry, (schedule) => schedule.options)

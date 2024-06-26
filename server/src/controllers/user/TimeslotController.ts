@@ -1,16 +1,33 @@
 import {Request, Response} from 'express';
 import {Repository} from 'typeorm'
-import {Timeslot} from '../db/entities/Timeslot';
-import {getDataSource} from '../db/DatabaseConnect';
-import {User} from "../db/entities/User";
-import {TimeslotTime} from "../db/entities/TimeslotTime";
-import {handleJwt} from "./JWTHelper";
+import {Timeslot} from '../../db/entities/Timeslot';
+import {getDataSource} from '../../db/DatabaseConnect';
+import {User} from "../../db/entities/User";
+import {TimeslotTime} from "../../db/entities/TimeslotTime";
+import {handleJwt} from "../auth/JWTHelper";
 
 const timeRegex = /^(?:[01]\d|2[0-3]):[0-5]\d$/;
 
 interface timeRange {
   start_time: string;
   end_time: string;
+}
+
+const handleTimes = async (times: TimeslotTime[], timeRepository: Repository<TimeslotTime>, schedule: Timeslot) => {
+  const timeDatabaseEntries: TimeslotTime[] = [];
+
+  for (let i = 0; i < times.length; i++) {
+    const time: TimeslotTime = new TimeslotTime();
+    time.schedule = schedule;
+    time.schedule_id = schedule.schedule_id;
+    time.start_time = times[i].start_time;
+    time.end_time = times[i].end_time;
+    timeDatabaseEntries.push(time);
+    console.log(time);
+    await timeRepository.save(time);
+  }
+
+  return timeDatabaseEntries;
 }
 
 export const checkTimeslots = async (req: Request, res: Response): Promise<void> => {
@@ -49,23 +66,6 @@ export const checkTimeslots = async (req: Request, res: Response): Promise<void>
     res.status(500).json({error: 'Internal Server Error'});
   }
 };
-
-const handleTimes = async (times: TimeslotTime[], timeRepository: Repository<TimeslotTime>, schedule: Timeslot) => {
-  const timeDatabaseEntries: TimeslotTime[] = [];
-
-  for (let i = 0; i < times.length; i++) {
-    const time: TimeslotTime = new TimeslotTime();
-    time.schedule = schedule;
-    time.schedule_id = schedule.schedule_id;
-    time.start_time = times[i].start_time;
-    time.end_time = times[i].end_time;
-    timeDatabaseEntries.push(time);
-    console.log(time);
-    await timeRepository.save(time);
-  }
-
-  return timeDatabaseEntries;
-}
 
 export const putTimeslots = async (req: Request, res: Response) => {
   let decoded;
