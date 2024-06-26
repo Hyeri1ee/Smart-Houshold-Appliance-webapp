@@ -20,7 +20,7 @@ export const checkUserInfo = async () => {
     redirect("/login")
   }
 
-  const resp = await fetch('http://localhost:1337/api/user/info', {
+  const resp = await fetch(`${import.meta.env.VITE_REACT_APP_SERVER}/api/user/info`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',

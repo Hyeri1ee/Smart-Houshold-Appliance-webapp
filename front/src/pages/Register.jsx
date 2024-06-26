@@ -17,7 +17,7 @@ function RegisterPage() {
             return;
         }
 
-        const resp = await fetch('http://localhost:1337/api/register', {
+        const resp = await fetch(`${import.meta.env.VITE_REACT_APP_SERVER}/api/register`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

@@ -70,7 +70,7 @@ function AskTimeslotsPage() {
 
     const auth = getCookie('authorization');
 
-    const resp = await fetch('http://localhost:1337/api/user/timeslots', {
+    const resp = await fetch(`${import.meta.env.VITE_REACT_APP_SERVER}/api/user/timeslots`, {
       method: 'PUT',
       headers: {
         'Authorization': auth,
@@ -91,7 +91,6 @@ function AskTimeslotsPage() {
     
     if (!resp.ok) {
       console.error("Fetch failed!");
-      return;
     }
   };
 

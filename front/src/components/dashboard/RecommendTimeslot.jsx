@@ -1,7 +1,7 @@
 import "../../styles/components/TimeslotRecommendation.css"
 import {getCookie} from "../../helpers/CookieHelper";
 
-const resp = await fetch('http://localhost:1337/api/advice', {
+const resp = await fetch(`${import.meta.env.VITE_REACT_APP_SERVER}/api/advice`, {
   method: 'GET',
   headers: {
     authorization: getCookie("authorization"),

@@ -15,7 +15,7 @@ import axios from 'axios';
 import TimeslotAsking from "./pages/AskTimeslotsPage";
 import { GlobalStateProvider } from './components/generic/GlobalStateContext';
 
-axios.defaults.baseURL = 'http://localhost:1337';
+axios.defaults.baseURL = `${import.meta.env.VITE_REACT_APP_SERVER}`;
 axios.defaults.withCredentials = true;
 
 if ("serviceWorker" in navigator) {

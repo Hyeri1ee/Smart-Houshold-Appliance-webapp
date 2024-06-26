@@ -11,7 +11,7 @@ function LoginPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const resp = await fetch('http://localhost:1337/api/login', {
+    const resp = await fetch(`${import.meta.env.VITE_REACT_APP_SERVER}/api/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -28,9 +28,7 @@ function LoginPage() {
 
     const data = await resp.json();
     document.cookie = `authorization=${data.token}`;
-    const isFirstLogin = data.isFirstLogin;
     window.location.href = '/dashboard';
-
   }
 
   return (
