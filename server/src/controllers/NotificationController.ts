@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { handleJwt } from './JWTHelper';
 import { getDataSource } from '../db/DatabaseConnect';
 import { User } from '../db/entities/User';
-import { sendPushNotification, getVapidPublicKey } from '../webPushService';
+import { sendPushNotification, getVapidPublicKey } from '../WebPushService';
 
 export const sendRecommendationNotification = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
   let decoded;
