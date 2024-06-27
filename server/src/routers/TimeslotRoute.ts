@@ -1,7 +1,9 @@
 import express from "express";
-import {checkTimeslots, putTimeslots} from "../controllers/user/TimeslotController";
+import { putTimeslots, checkTimeslot, deleteTimeslot, deleteDayTimeslot } from "../controllers/user/TimeslotController";
 
 export const timeslotRoute = express.Router();
 
-timeslotRoute.get('/', checkTimeslots)
-timeslotRoute.post('/', putTimeslots);
+timeslotRoute.get("/timeslots", checkTimeslot);
+timeslotRoute.put("/timeslots/:timeslotId", putTimeslots);
+timeslotRoute.delete("/timeslots/:timeslotId", deleteTimeslot);
+timeslotRoute.delete("/days/:dayId/timeslots", deleteDayTimeslot);

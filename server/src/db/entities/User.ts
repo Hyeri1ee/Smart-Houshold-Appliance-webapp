@@ -19,6 +19,11 @@ export class User {
   @Column({ type: 'smallint', nullable: true })
   profile_type: number;
 
+  @Column({ type: 'boolean', nullable: false, default: true })
+  ifFirstLogin: boolean;
+
+  @Column({ type: 'text', nullable: true })
+  subscription: string;
   @OneToMany(() => Timeslot, (schedule) => schedule.user)
   timeslots: Timeslot[];
 

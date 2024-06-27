@@ -1,7 +1,8 @@
-import {Request, Response} from 'express';
-import {handleJwt} from "./JWTHelper";
+import { NextFunction, Request, Response } from 'express';
+import { handleJwt } from './JWTHelper';
 import 'dotenv/config';
-import {getDataSource} from "../../db/DatabaseConnect";
+import { getDataSource } from '../../db/DatabaseConnect';
+import { User } from '../../db/entities/User';
 import {Timeslot} from "../../db/entities/Timeslot";
 import {TimeslotTime} from "../../db/entities/TimeslotTime";
 
@@ -13,28 +14,18 @@ interface WeatherData {
 const peakPercentage = 0.25;
 
 const months = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December"
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December'
 ];
 
-function calculateBellCurveEnergy(hour: number, peakHour: number, peakEnergy: number, spread: number) {
+function calculateBellCurveEnergy(hour: number, peakHour: number, peakEnergy: number, spread: number): number {
   const exponent = -Math.pow(hour - peakHour, 2) / (2 * Math.pow(spread, 2));
   const energy = peakEnergy * Math.exp(exponent);
   return Math.round(energy);
 }
 
-function generateWeatherData() {
-  const weatherData = [];
+function generateWeatherData(): WeatherData[] {
+  const weatherData: WeatherData[] = [];
   const baseDate = new Date();
   baseDate.setHours(0, 0, 0, 0);
 
@@ -52,8 +43,6 @@ function generateWeatherData() {
 }
 
 const dummyWeatherData = generateWeatherData();
-console.log(dummyWeatherData);
-
 
 const washerRunTime = 5400000;
 
@@ -67,42 +56,40 @@ const getTimeIndex = (weatherData: WeatherData[], epoch: number): number => {
 };
 
 const parseTime = (timeStr: string): number => {
-  const [hours, minutes, seconds] = timeStr.split(':').map(Number);
-  return hours * 3600 + minutes * 60 + seconds;
+  const [hours, minutes] = timeStr.split(':').map(Number);
+  return hours * 3600 + minutes * 60;
 };
 
 const formatTime = (epoch: number): string => {
   const date = new Date(epoch);
   const hours = date.getHours();
   const minutes = date.getMinutes();
-  const seconds = date.getSeconds();
-  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
 };
 
-const formatDate = () => {
+const formatDate = (): string => {
   const date = new Date();
   const day = date.getUTCDate();
   const month = months[date.getUTCMonth()];
 
   const formattedDate = `${day}${findSuffix(day)} ${month}`;
 
-  const currentDate = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
-  const timeDiff = currentDate.getTime() - currentDate.getTime();
-  const daysUntilTarget = Math.ceil(timeDiff / (1000 * 3600 * 24));
+  return `${formattedDate}`;
+};
 
-  let daysUntilText: string;
-  if (daysUntilTarget === 0) {
-    daysUntilText = "today";
-  } else if (daysUntilTarget === 1) {
-    daysUntilText = "tomorrow";
-  } else if (daysUntilTarget > 1) {
-    daysUntilText = `in ${daysUntilTarget} days`;
-  } else {
-    daysUntilText = `${Math.abs(daysUntilTarget)} day(s) ago`;
+const findSuffix = (day: number): string => {
+  if (day > 11 && day < 13) return 'th';
+  switch (day % 10) {
+    case 1:
+      return 'st';
+    case 2:
+      return 'nd';
+    case 3:
+      return 'rd';
+    default:
+      return 'th';
   }
-
-  return `${formattedDate} (${daysUntilText})`;
-}
+};
 
 const findOptimal = (data: WeatherData[]): WeatherData | null => {
   if (data.length === 0) {
@@ -118,48 +105,33 @@ const findOptimal = (data: WeatherData[]): WeatherData | null => {
   }
 
   return highestEnergyData;
-}
+};
 
-export const assignSchedulesToPeakTimes = async (req: Request, res: Response) => {
+export const assignSchedulesToPeakTimes = async (req: Request, res: Response, next: NextFunction): Promise<Response> => {
   let decoded;
   try {
     decoded = handleJwt(req);
   } catch (e) {
-    return res
-      .status(400)
-      .json({
-        message: 'Authentication failed',
-      });
+    return res.status(400).json({ message: 'Authentication failed' });
   }
 
-  const peakTimes =
-    findPeakTimes(dummyWeatherData).sort((a, b) => a.epoch - b.epoch);
-
-  const weatherDataCopy: WeatherData[] = dummyWeatherData.map(data => ({...data}));
+  const peakTimes = findPeakTimes(dummyWeatherData).sort((a, b) => a.epoch - b.epoch);
+  const weatherDataCopy: WeatherData[] = dummyWeatherData.map(data => ({ ...data }));
 
   const dataSource = await getDataSource();
 
-  const schedule=
-    await dataSource.getRepository(Timeslot).findOne({where: {user_id: decoded.user_id}});
-
-  console.log(schedule);
+  const schedule = await dataSource.getRepository(Timeslot).findOne({ where: { user_id: decoded.user_id } });
+  const user = await dataSource.getRepository(User).findOne({ where: { user_id: decoded.user_id } });
 
   if (!schedule) {
-    return res
-      .status(400)
-      .json({
-        error: 'Timeslot not found',
-      });
+    return res.status(400).json({ error: 'Schedule not found' });
   }
 
-  const times =
+  const times = await dataSource.getRepository(TimeslotTime).find({ where: { schedule_id: schedule.schedule_id } });
   await dataSource.getRepository(TimeslotTime).find({where: {schedule_id: schedule.schedule_id}})
 
   let maxOverlapSeconds = -1;
-  let recommendation = {
-    start: '' as string,
-    end: '' as string,
-  };
+  let recommendation = { start: '', end: '' };
 
   const date = formatDate();
 
@@ -169,7 +141,9 @@ export const assignSchedulesToPeakTimes = async (req: Request, res: Response) =>
 
     for (const peak of peakTimes) {
       const peakStartIndex = getTimeIndex(weatherDataCopy, peak.epoch);
-      if (peakStartIndex === -1) { break; }
+      if (peakStartIndex === -1) {
+        break;
+      }
 
       let remainingScheduleSeconds = scheduleEndSeconds - scheduleStartSeconds;
 
@@ -190,51 +164,21 @@ export const assignSchedulesToPeakTimes = async (req: Request, res: Response) =>
     }
   }
 
+  let time;
   if (maxOverlapSeconds !== -1) {
-    // Overlap between peaks and schedule found!
-    const time = `${recommendation.start} - ${recommendation.end}`
-
-    return res
-      .status(200)
-      .json({
-        time,
-        date
-      });
+    time = `${recommendation.start} - ${recommendation.end}`;
+  } else {
+    const peak = findOptimal(dummyWeatherData);
+    if (!peak) {
+      return res.sendStatus(500);
+    }
+    const secondsEpoch = peak.epoch;
+    const start = formatTime(secondsEpoch);
+    const end = formatTime(secondsEpoch + washerRunTime);
+    time = `${start} - ${end}`;
   }
 
-  const peak = findOptimal(dummyWeatherData);
-  if (!peak) {
-    return res.sendStatus(500);
-  }
+  const message = `The best time to use your washing machine is ${time} on ${date}`;
 
-  const secondsEpoch = peak.epoch;
-
-  const start = formatTime(secondsEpoch);
-  const end = formatTime(secondsEpoch + washerRunTime);
-
-  const time = `${start} - ${end}`
-
-  console.log("recommending absolute best")
-
-  return res
-    .status(200)
-    .json({
-      time,
-      date
-    });
+  return res.status(200).json({ time, date });
 };
-
-const findSuffix = (day: number) => {
-  if (day > 11 && day < 13) return 'th';
-  switch (day % 10) {
-    case 1:
-      return "st";
-    case 2:
-      return "nd";
-    case 3:
-      return "rd";
-    default:
-      return "th";
-  }
-}
-

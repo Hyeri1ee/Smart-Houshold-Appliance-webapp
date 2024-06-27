@@ -2,8 +2,10 @@ import express from 'express';
 import * as dbConnect from './db/DatabaseConnect';
 import {loginRoute} from './routers/LoginRoute';
 import {registerRoute} from './routers/RegisterRoute';
-import {adviceRoute} from "./routers/AdviceRoute";
+import {timeslotRoute} from "./routers/TimeslotRoute";
+import adviceRoute from "./routers/AdviceRoute";
 import {userRoute} from "./routers/UserRoute";
+import notificationRoute from './routers/NotificationRoute';
 import {washingScheduleRoute} from "./routers/ScheduleRoute";
 
 import cors from 'cors';
@@ -26,6 +28,8 @@ app.use(cookieParser())
 app.use('/api/register', registerRoute);
 app.use('/api/login', loginRoute);
 app.use('/api/user', userRoute);
+app.use('/api/timeslot', timeslotRoute);
+app.use('/api/notification', notificationRoute);
 app.use('/api/advice', adviceRoute);
 app.use('/api/schedule', washingScheduleRoute);
 
