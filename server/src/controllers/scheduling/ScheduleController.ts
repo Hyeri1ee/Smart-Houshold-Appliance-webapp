@@ -174,10 +174,6 @@ export const addScheduledWash = async (req: Request, res: Response) => {
       });
   }
 
-  if (!(await checkValidInfo(req, res))) {
-    return; // means info is invalid and a response has already been sent
-  }
-
   let schedule_id = createUUID();
 
   let job;
@@ -282,10 +278,12 @@ export const addScheduledWash = async (req: Request, res: Response) => {
   }
 
   const nextInvocation = job.nextInvocation();
+  const nextInvocationDate = new Date(nextInvocation.getTime());
 
   const newSchedule = await scheduleRepo.save({
     user_id: decoded.user_id,
-    dateTime: nextInvocation,
+    schedule_uuid: schedule_id,
+    datetime: nextInvocationDate,
     program: req.body.settings.data.key,
     options: optionEntities,
     user: userEntry,
@@ -383,8 +381,9 @@ export const deleteScheduledWash = async (req: Request, res: Response) => {
 }
 
 export const getScheduledWash = async (req: Request, res: Response) => {
+  let decoded;
   try {
-    handleJwt(req);
+    decoded = handleJwt(req);
   } catch (e) {
     console.log(e);
     return res
@@ -394,44 +393,20 @@ export const getScheduledWash = async (req: Request, res: Response) => {
       });
   }
 
-
-  // TODO: instead retrieve from database
-  let schedule;
+  let schedules;
 
   try {
     const dataSource = await getDataSource();
     const scheduleRepo = dataSource.getRepository(ScheduleEntry);
-    const scheduleId = req.body.schedule_id;
-    const scheduleEntry = await scheduleRepo.findOne({where: {schedule_uuid: scheduleId}, relations: ['options']});
-    if (scheduleEntry) {
-      schedule = scheduleEntry;
-    } else {
-      const up = new Error()
-
-      throw up; // haha
-    }
-  } catch (e) {
-    if (e instanceof Error) {
-      return res
-        .status(400)
-        .json({
-          message: 'something went wrong when getting job',
-          error: e.message
+    schedules = await scheduleRepo.find({where: { user_id: decoded.user_id }, relations: ['options']});
+  } catch (error) {
+    return res.
+        status(400)
+        .json({ 
+          message: 'something went wrong with getting schedules for a user' 
         });
-    }
-
-    return res
-      .status(400)
-      .json({
-        message: 'something went wrong when getting job',
-      });
   }
-
-  return res
-    .status(200)
-    .json({
-      date: schedule.datetime,
-      program: schedule.program,
-      options: schedule.options,
-    });
+  return res.
+        status(200)
+        .json(schedules);
 }
