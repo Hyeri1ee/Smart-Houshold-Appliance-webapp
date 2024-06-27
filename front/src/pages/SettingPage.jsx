@@ -1,33 +1,32 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import "../styles/global.css";
-
 import Button from "../components/generic/Button";
 import { getCookie } from "../helpers/CookieHelper";
 
 function SettingPage() {
   const [profileType, setProfileType] = useState('');
-  const [storedProfileType] = useState('');
+  const [storedProfileType, setStoredProfileType] = useState('');
   const [showSaveButton, setShowSaveButton] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserProfile = async () => {
-
       try {
         const accessToken = getCookie('authorization');
+        console.log(accessToken);
         const response = await fetch('http://localhost:1337/api/setting', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `${accessToken}`,
           },
-      
         });
 
         if (response.ok) {
           const data = await response.json();
           setProfileType(data.profileType);
+          setStoredProfileType(data.profileType);
         } else {
           console.error('Failed to fetch user profile');
         }
@@ -43,11 +42,8 @@ function SettingPage() {
     setShowSaveButton(parseInt(profileType) !== parseInt(storedProfileType));
   }, [profileType, storedProfileType]);
 
-
   const handleProfileTypeChange = (event) => {
     const newProfileType = event.target.value;
-    console.log('STORED USER TYPE', storedProfileType);
-    console.log('SELECTED USER TYPE', newProfileType);
     setProfileType(newProfileType);
   };
 
@@ -55,7 +51,6 @@ function SettingPage() {
     if (profileType) {
       try {
         const accessToken = getCookie('authorization');
-        console.log(accessToken);
         const response = await fetch('http://localhost:1337/api/user/profile', {
           method: 'POST',
           headers: {
@@ -67,15 +62,16 @@ function SettingPage() {
         });
 
         if (response.ok) {
+          setStoredProfileType(profileType);
           setShowSaveButton(false);
         } else {
-            console.error('Failed to update profile type');
-          }
-        } catch (error) {
-          console.error('Error updating profile type:', error);
+          console.error('Failed to update profile type');
         }
+      } catch (error) {
+        console.error('Error updating profile type:', error);
       }
-    };
+    }
+  };
 
   return (
     <div style={styles.appContainer}>
@@ -124,7 +120,6 @@ function SettingPage() {
       </div>
     </div>
   );
-
 }
 
 const styles = {
@@ -147,6 +142,7 @@ const styles = {
     alignItems: "center",
     justifyContent: "space-between",
     width: '90%',
+    // outline: '1px solid pink'
   },
   settingLabel: {
     textAlign: 'center',
@@ -161,6 +157,7 @@ const styles = {
   },
   secondBox: {
     width: '60%',
+    // border: '1px solid blue'
   },
   dropdown: {
     padding: "3px 5px",
@@ -173,11 +170,11 @@ const styles = {
     justifyContent: 'flex-end',
     gap: '20px',
     margin: '20px 0',
-  },
+    // border: '1px solid orange'
+  }, 
   button: {
     width: '60%'
   }
 };
-
 
 export default SettingPage;
