@@ -15,6 +15,7 @@ import "./styles/global.css";
 import axios from 'axios';
 import TimeslotAsking from "./pages/AskTimeslotsPage";
 import { GlobalStateProvider } from './components/generic/GlobalStateContext';
+import SettingPage from './pages/SettingPage';
 import PushNotificationComponent from "./components/PushNotificationContainer";
 import SettingPage from './pages/SettingPage';
 
