@@ -5,7 +5,6 @@ import {registerRoute} from './routers/RegisterRoute';
 import {timeslotRoute} from "./routers/TimeslotRoute";
 import adviceRoute from "./routers/AdviceRoute";
 import {userRoute} from "./routers/UserRoute";
-import {washingScheduleRoute} from "./routers/ScheduledWashingRoute";
 import notificationRoute from './routers/NotificationRoute';
 import {washingScheduleRoute} from "./routers/ScheduleRoute";
 
