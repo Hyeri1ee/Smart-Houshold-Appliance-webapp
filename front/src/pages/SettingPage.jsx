@@ -1,4 +1,4 @@
-import { useState,useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import "../styles/global.css";
 
@@ -6,15 +6,14 @@ import Button from "../components/generic/Button";
 import { getCookie } from "../helpers/CookieHelper";
 
 function SettingPage() {
-    const [profileType, setProfileType] = useState('');
-    const [profileLabel, setProfileLabel] = useState('');
-    const [showSaveButton, setShowSaveButton] = useState(false);
-    const [initialProfileType, setInitialProfileType] = useState('');
-    const navigate = useNavigate();
+  const [profileType, setProfileType] = useState('');
+  const [storedProfileType, setStoredProfileType] = useState('');
+  const [showSaveButton, setShowSaveButton] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserProfile = async () => {
-      console.log('fetching user profile')
+      console.log('fetching user profile');
       try {
         const accessToken = getCookie('authorization');
         console.log(accessToken);
@@ -24,13 +23,12 @@ function SettingPage() {
             'Content-Type': 'application/json',
             'Authorization': `${accessToken}`,
           },
-      
         });
 
         if (response.ok) {
           const data = await response.json();
           setProfileType(data.profileType);
-          setInitialProfileType(data.profileType);
+          setStoredProfileType(data.profileType);
         } else {
           console.error('Failed to fetch user profile');
         }
@@ -43,29 +41,14 @@ function SettingPage() {
   }, []);
 
   useEffect(() => {
-    setShowSaveButton(profileType !== initialProfileType);
-  }, [profileType, initialProfileType]);
+    setShowSaveButton(parseInt(profileType) !== parseInt(storedProfileType));
+  }, [profileType, storedProfileType]);
 
-  const getProfileLabel = (type) => {
-    switch (type) {
-      case 1:
-        return 'I live by myself';
-      case 2:
-        return 'I live with partner/housemate';
-      case 3:
-        return 'I live with family';
-      case 4:
-        return 'not choose';
-      default:
-        return 'Select profile type';
-    }
-  };
-
-  const handleProfileTypeChange = async (event) => {
+  const handleProfileTypeChange = (event) => {
     const newProfileType = event.target.value;
+    console.log('STORED USER TYPE', storedProfileType);
+    console.log('SELECTED USER TYPE', newProfileType);
     setProfileType(newProfileType);
-    setProfileLabel(getProfileLabel(parseInt(newProfileType)));
-    
   };
 
   const handleSaveButtonClick = async () => {
@@ -84,112 +67,119 @@ function SettingPage() {
         });
 
         if (response.ok) {
-          setInitialProfileType(profileType);
+          setStoredProfileType(profileType);
           setShowSaveButton(false);
         } else {
-            console.error('Failed to update profile type');
-          }
-        } catch (error) {
-          console.error('Error updating profile type:', error);
+          console.error('Failed to update profile type');
         }
+      } catch (error) {
+        console.error('Error updating profile type:', error);
       }
-    };
+    }
+  };
 
   return (
-    <div className="app-container">
-      <div className="fixed-header" style={styles.fixedHeader}>
-        <h3 className="header2" style={styles.header2}>
-          Settings
-        </h3>
-        <div style={styles.profileSelection}>
-          <h2 className="header1" style={styles.header1}>
+    <div style={styles.appContainer}>
+      <h2 style={styles.title}>
+        Settings
+      </h2>
+      <div style={styles.settingBox}>
+        <div style={styles.labelContainer}>
+          <p style={styles.settingLabel}>
             User profile:
-          </h2>
-          <select 
-            value={profileType} 
+          </p>
+        </div>
+        <div style={styles.secondBox}>
+          <select
+            value={profileType}
             onChange={handleProfileTypeChange}
             style={styles.dropdown}
           >
-            <option value="">Select profile type</option>
             <option value="1">I live by myself</option>
             <option value="2">I live with partner/housemate</option>
             <option value="3">I live with family</option>
-            <option value="4">not choose</option>
+            <option value="4">Prefer not to say</option>
           </select>
         </div>
-        <div style={styles.buttonContainer}>
+      </div>
+      <div style={styles.buttonContainer}>
+        <div style={styles.button}>
           {showSaveButton && (
-            <Button onClick={handleSaveButtonClick} style={{...styles.button, ...styles.fadeIn}}>
-              save userProfile
+            <Button onClick={handleSaveButtonClick} style={{ ...styles.button, ...styles.fadeIn }}>
+              Save User Profile
             </Button>
           )}
         </div>
-        <div style={styles.timeslotsContainer}>
-        <h2 className="header3" style={styles.header3}>
-          Timeslots:
-        </h2>
-        <Button onClick={() => navigate('/user/timeslots')} style={styles.button}>
-          addTimeslots
-        </Button>
+      </div>
+      <div style={styles.settingBox}>
+        <div style={styles.labelContainer}>
+          <p style={styles.settingLabel}>
+            Timeslots:
+          </p>
+        </div>
+        <div style={styles.secondBox}>
+          <Button onClick={() => navigate('/user/timeslots')} style={styles.button}>
+            View Timeslots
+          </Button>
+        </div>
       </div>
     </div>
-  </div>
   );
 }
 
 const styles = {
-    fixedHeader: {
-      position: "relative",
-      top: "50px",
-      textAlign: "center",
-    },
-    header1: {
-      fontSize: 18,
-      fontWeight: "bold",
-      marginRight: 10,
-      display: "inline-block",
-    },
-    header2: {
-        fontSize: 26,
-        fontWeight: "bold",
-        marginBottom: 20,
-      },
-      header3: {
-        fontSize: 18,
-        fontWeight: "bold",
-        marginRight: 20,
-        marginLeft: 30,
-        display: "inline-block",
-      },
-      timeslotsContainer: {
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: '20px',
-        marginTop: 20,
-      },
-      profileSelection: {
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        marginBottom: 20,
-      },
-      dropdown: {
-        padding: "3px 5px",
-        fontSize: 16,
-      },
-      buttonContainer: {
-        display: 'flex',
-        justifyContent: 'center',
-        gap: '20px', 
-        marginTop: 20,
-        marginBottom: 20,
-      },
-      button: {
-        width: '150px', 
-        fontSize: '14px',
-        padding: '5px 10px',
-        marginRight: '30px',
-      },
-    };
+  appContainer: {
+    height: '100vh',
+    width: '100vw',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    padding: '20px 10px'
+  },
+  title: {
+    fontSize: 26,
+    fontWeight: "bold",
+    marginBottom: 20,
+    textAlign: 'center'
+  },
+  settingBox: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: '90%',
+    // outline: '1px solid pink'
+  },
+  settingLabel: {
+    textAlign: 'center',
+    fontSize: 20
+  },
+  labelContainer: {
+    height: '100%',
+    width: '36%',
+    display: 'flex',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+  },
+  secondBox: {
+    width: '60%',
+    // border: '1px solid blue'
+  },
+  dropdown: {
+    padding: "3px 5px",
+    fontSize: 16,
+    width: '100%'
+  },
+  buttonContainer: {
+    width: '90%',
+    display: 'flex',
+    justifyContent: 'flex-end',
+    gap: '20px',
+    margin: '20px 0',
+    // border: '1px solid orange'
+  }, 
+  button: {
+    width: '60%'
+  }
+};
+
 export default SettingPage;

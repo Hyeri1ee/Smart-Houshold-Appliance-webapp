@@ -1,7 +1,7 @@
 import {Request, Response} from 'express';
 import jwt from 'jsonwebtoken';
-import {User} from '../db/entities/User';
-import {getDataSource} from '../db/DatabaseConnect';
+import {User} from '../../db/entities/User';
+import {getDataSource} from '../../db/DatabaseConnect';
 import 'dotenv/config';
 
 interface DecodedToken {
@@ -50,7 +50,6 @@ export const setProfiletype = async (req: Request, res: Response): Promise<void>
 
     const userObj = user as User;
     userObj.profile_type = profileType;
-    userObj.ifFirstLogin = false;
     await userRepository.save(userObj);
 
     res.status(200).json({message: 'User profile type updated successfully'});

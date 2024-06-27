@@ -1,5 +1,5 @@
 import express from "express";
-import {checkUserExist} from "../controllers/LoginController";
+import {checkUserExist} from "../controllers/auth/LoginController";
 
 export const  loginRoute = express.Router();
 

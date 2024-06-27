@@ -5,10 +5,9 @@ import RecommendedTimeslot from "../components/dashboard/RecommendTimeslot";
 import Carousel from "../components/generic/Carousel";
 import {checkUserInfo} from "../helpers/CheckUserInfo";
 
-const Dashboard = () => {
-  checkUserInfo();
-
-  return (<div className="page-container">
+function HtmlCode () {
+  return (
+    <div className="page-container">
       <div id="dashboard-wrapper">
         <Header/>
         <RecommendedTimeslot/>
@@ -16,7 +15,16 @@ const Dashboard = () => {
         <h2>Devices</h2>
         <Carousel/>
       </div>
-    </div>)
+    </div>
+  )
+}
+
+function Dashboard () {
+  checkUserInfo().then(
+    () => {
+      return HtmlCode
+    }
+  )
 }
 
 export default Dashboard;
