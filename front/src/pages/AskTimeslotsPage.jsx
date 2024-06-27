@@ -380,7 +380,7 @@ function AskTimeslotsPage() {
                         />
                       </div>
                     </div>
-                    <RemoveButton onRemove={() => handleRemoveTimeSlot(index)}  index={}/>
+                    <RemoveButton onRemove={() => handleRemoveTimeSlot(index)}/>
                   </div>
                 ))}
               </div>
