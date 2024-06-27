@@ -1,6 +1,8 @@
-import express from "express";
-import { assignSchedulesToPeakTimes } from "../controllers/AdviceController";
+import express from 'express';
+import { assignSchedulesToPeakTimes } from '../controllers/auth/AdviceController';
 
-export const  adviceRoute = express.Router();
+const adviceRoute = express.Router();
 
-adviceRoute.get("/", assignSchedulesToPeakTimes);
+adviceRoute.get('/', assignSchedulesToPeakTimes);
+
+export default adviceRoute;

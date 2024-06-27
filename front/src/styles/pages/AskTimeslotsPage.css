@@ -4,8 +4,8 @@ body {
   justify-content: flex-start;
   align-items: center;
   height: 100vh;
+  width: 100vw;
   margin: 0;
-  overflow: hidden;
 }
 
 .app-container {
@@ -19,7 +19,7 @@ h2 {
   padding: 20px;
   text-transform: none;
   font-weight: bold;
-  font-size: 3em;
+  font-size: 1.3em !important;
   line-height: 1.4;
 }
 
@@ -38,8 +38,10 @@ h3 {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 10px;
   z-index: 1;
+  width: 100%;
 }
 
 .day-box {
@@ -141,7 +143,6 @@ button:hover {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  /* border: 1px solid var(--whitesmoke); */
   border-radius: 8px;
   margin: 10px 0;
 }
@@ -158,11 +159,9 @@ button:hover {
   justify-content: space-between;
   align-items: center;
   padding: 0 0 5px 0;
-  /* border: 2px solid red; */
 }
 
 .inputs {
-  /* border: 2px solid green; */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -210,4 +209,36 @@ input {
 
 .day-circle.selected {
   background-color: var(--accent);
+}
+.selected-days-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.day-container {
+  height: 100%;
+  width: 92%;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 5px 0;
+}
+
+.day-box {
+  /* flex-grow: 1; */
+  cursor: pointer;
+}
+
+.separator {
+  height: 1px;
+  background-color: var(--whitesmoke);
+  margin: 5px 0;
+}
+
+.primary-color {
+  font-weight: bold;
+}
+
+.secondary-color {
+  color: var(--text);
 }

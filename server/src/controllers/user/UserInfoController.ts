@@ -1,8 +1,8 @@
 import {Request, Response} from 'express';
-import {handleJwt} from "./JWTHelper";
-import {getDataSource} from "../db/DatabaseConnect";
-import {User} from "../db/entities/User";
-import { Schedule } from '../db/entities/Schedule';
+import {handleJwt} from "../auth/JWTHelper";
+import {getDataSource} from "../../db/DatabaseConnect";
+import {User} from "../../db/entities/User";
+import { Timeslot } from '../../db/entities/Timeslot';
 
 export const checkUserInfo = async (req: Request, res: Response) => {
   let decoded
@@ -20,7 +20,7 @@ export const checkUserInfo = async (req: Request, res: Response) => {
 
   const dataSource = await getDataSource(); // get data source
   const userRepository = dataSource.getRepository(User);
-  const scheduleRepository = dataSource.getRepository(Schedule);
+  const scheduleRepository = dataSource.getRepository(Timeslot);
   const user = await userRepository.findOne({ where: { user_id: decoded.user_id } });
 
   if (!user) {

@@ -2,8 +2,8 @@ import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import {UserJwtPayload} from './JWTHelper';
-import { getDataSource } from '../db/DatabaseConnect';
-import { User } from '../db/entities/User';
+import { getDataSource } from '../../db/DatabaseConnect';
+import { User } from '../../db/entities/User';
 import dotenv from 'dotenv';
 dotenv.config();
 
