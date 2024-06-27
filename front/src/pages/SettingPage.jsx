@@ -65,29 +65,7 @@ function SettingPage() {
     const newProfileType = event.target.value;
     setProfileType(newProfileType);
     setProfileLabel(getProfileLabel(parseInt(newProfileType)));
-    if (newProfileType) {
-        try {
-          const accessToken = getCookie('authorization');
-          console.log(accessToken);
-          const response = await fetch('http://localhost:1337/api/user/profile', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${accessToken}`,
-            },
-            body: JSON.stringify({ profile_type: newProfileType }),
-            credentials: "include",
-          });
-  
-          if (response.ok) {
-            navigate('/dashboard');
-          } else {
-            console.error('Failed to update profile type');
-          }
-        } catch (error) {
-          console.error('Error updating profile type:', error);
-        }
-      }
+    
   };
 
   const handleSaveButtonClick = async () => {
@@ -121,11 +99,11 @@ function SettingPage() {
     <div className="app-container">
       <div className="fixed-header" style={styles.fixedHeader}>
         <h3 className="header2" style={styles.header2}>
-          settings
+          Settings
         </h3>
         <div style={styles.profileSelection}>
           <h2 className="header1" style={styles.header1}>
-            user profile:
+            User profile:
           </h2>
           <select 
             value={profileType} 
@@ -147,9 +125,9 @@ function SettingPage() {
           )}
         </div>
         <div style={styles.timeslotsContainer}>
-        <h3 className="header3" style={styles.header3}>
-          timeslots:
-        </h3>
+        <h2 className="header3" style={styles.header3}>
+          Timeslots:
+        </h2>
         <Button onClick={() => navigate('/user/timeslots')} style={styles.button}>
           addTimeslots
         </Button>
@@ -160,57 +138,58 @@ function SettingPage() {
 }
 
 const styles = {
-  fixedHeader: {
-    position: "relative",
-    top: "50px",
-    textAlign: "center",
-  },
-  header1: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginRight: 10,
-    display: "inline-block",
-  },
-  header2: {
-    fontSize: 26,
-    fontWeight: "bold",
-    marginBottom: 20,
-  },
-  timeslotsContainer: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: '20px',
-    marginTop: 20,
-  },
-  header3: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginLeft: 30,
-  },
-  profileSelection: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 20,
-  },
-  dropdown: {
-    padding: "3px 5px",
-    fontSize: 16,
-  },
-  buttonContainer: {
-    display: 'flex',
-    justifyContent: 'center',
-    gap: '20px', 
-    marginTop: 20,
-    marginBottom: 20,
-  },
-  button: {
-    width: '150px', 
-    fontSize: '14px',
-    padding: '5px 10px',
-    marginRight : '30px',
-  },
-};
-
+    fixedHeader: {
+      position: "relative",
+      top: "50px",
+      textAlign: "center",
+    },
+    header1: {
+      fontSize: 18,
+      fontWeight: "bold",
+      marginRight: 10,
+      display: "inline-block",
+    },
+    header2: {
+        fontSize: 26,
+        fontWeight: "bold",
+        marginBottom: 20,
+      },
+      header3: {
+        fontSize: 18,
+        fontWeight: "bold",
+        marginRight: 20,
+        marginLeft: 30,
+        display: "inline-block",
+      },
+      timeslotsContainer: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '20px',
+        marginTop: 20,
+      },
+      profileSelection: {
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        marginBottom: 20,
+      },
+      dropdown: {
+        padding: "3px 5px",
+        fontSize: 16,
+      },
+      buttonContainer: {
+        display: 'flex',
+        justifyContent: 'center',
+        gap: '20px', 
+        marginTop: 20,
+        marginBottom: 20,
+      },
+      button: {
+        width: '150px', 
+        fontSize: '14px',
+        padding: '5px 10px',
+        marginRight: '30px',
+      },
+    };
 export default SettingPage;
