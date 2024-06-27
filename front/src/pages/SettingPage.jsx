@@ -47,8 +47,6 @@ function SettingPage() {
 
   const handleProfileTypeChange = (event) => {
     const newProfileType = event.target.value;
-    console.log('STORED USER TYPE', storedProfileType);
-    console.log('SELECTED USER TYPE', newProfileType);
     setProfileType(newProfileType);
   };
 
