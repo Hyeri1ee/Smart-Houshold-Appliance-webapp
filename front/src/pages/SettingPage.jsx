@@ -11,21 +11,24 @@ function SettingPage() {
 
   useEffect(() => {
     const fetchUserProfile = async () => {
+      console.log('fetching user profile')
       try {
         const accessToken = getCookie('authorization');
+        console.log(accessToken);
         const response = await fetch('http://localhost:1337/api/setting', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${accessToken}`,
+            'Authorization': `${accessToken}`,
           },
       
         });
 
         if (response.ok) {
           const data = await response.json();
-          console.log(data.profile_type);
-          setProfileType(data.profile_type.toString());
+          console.log('data: ', data);
+          setProfileType(data.profileType);
+          console.log('current user profile type is', data.profileType)
         } else {
           console.error('Failed to fetch user profile');
         }

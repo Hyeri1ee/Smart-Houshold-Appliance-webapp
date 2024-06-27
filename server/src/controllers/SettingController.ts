@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import {User} from '../db/entities/User';
 import {getDataSource} from '../db/DatabaseConnect';
 import 'dotenv/config';
+import { handleJwt } from './JWTHelper';
 
 interface DecodedToken {
   user_id: number;
@@ -12,11 +13,12 @@ interface DecodedToken {
 }
 
 export const getProfiletype = async (req: Request, res: Response): Promise<void> => {
-
+  
   try {
-    const accessToken = req.cookies.authorization;
+    const accessToken = req.headers.authorization
 
     if (!accessToken) {
+      console.log('no access token')
       res.status(401).json({message: 'Access token is missing'});
       return;
     }
@@ -27,6 +29,7 @@ export const getProfiletype = async (req: Request, res: Response): Promise<void>
     try {
       decodedToken = jwt.verify(accessToken, jwtKey || '') as DecodedToken;
     } catch (err) {
+      console.log('invalid access token')
       res.status(403).json({message: 'Invalid access token'});
       return;
     }
@@ -38,7 +41,8 @@ export const getProfiletype = async (req: Request, res: Response): Promise<void>
     const user = await userRepository.findOneBy({user_id: userId});
 
     if (!user) {
-      res.status(401).json({error: 'Invalid token'});
+      console.log('user not found')
+      res.status(401).json({error: 'user not found'});
       return;
     }
 
