@@ -27,7 +27,7 @@ function UserProfilePage() {
       case 'family':
         return 3;
       default:
-        return 4;
+        return null;
     }
   };
 
