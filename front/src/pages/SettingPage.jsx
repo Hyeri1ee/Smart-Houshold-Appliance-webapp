@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import "../styles/global.css";
 
@@ -8,6 +8,34 @@ import { getCookie } from "../helpers/CookieHelper";
 function SettingPage() {
   const [profileType, setProfileType] = useState('');
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const accessToken = getCookie('authorization');
+        const response = await fetch('http://localhost:1337/api/setting', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`,
+          },
+      
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          console.log(data.profile_type);
+          setProfileType(data.profile_type.toString());
+        } else {
+          console.error('Failed to fetch user profile');
+        }
+      } catch (error) {
+        console.error('Error fetching user profile:', error);
+      }
+    };
+
+    fetchUserProfile();
+  }, []);
 
   const handleProfileTypeChange = (event) => {
     setProfileType(event.target.value);
@@ -64,12 +92,18 @@ function SettingPage() {
           </select>
         </div>
         <div style={styles.buttonContainer}>
-          <Button onClick={() => navigate('/user/timeslots')} style={styles.button}>
-            addTimeslots
-          </Button>
+          
           <Button onClick={handleSaveButtonClick} style={styles.button}>
             save userProfile
           </Button>
+        </div>
+        <h3 className="header3" style={styles.header3}>
+          timeslots
+        </h3>
+        <div style={styles.buttonContainer}>
+        <Button onClick={() => navigate('/user/timeslots')} style={styles.button}>
+            addTimeslots
+        </Button>
         </div>
       </div>
     </div>
@@ -93,6 +127,11 @@ const styles = {
     fontWeight: "bold",
     marginBottom: 20,
   },
+  header3:{
+    fontSize: 18,
+    fontWeight: "bold",
+    marginTop: 20,
+  },
   profileSelection: {
     display: "flex",
     alignItems: "center",
@@ -108,6 +147,7 @@ const styles = {
     justifyContent: 'center',
     gap: '20px', 
     marginTop: 20,
+    marginBottom: 20,
   },
   button: {
     width: '150px', 
