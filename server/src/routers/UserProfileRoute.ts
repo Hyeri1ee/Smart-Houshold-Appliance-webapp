@@ -1,5 +1,5 @@
 import express from "express";
-import {setProfiletype} from "../controllers/UserProfileController";
+import {setProfiletype} from "../controllers/user/UserProfileController";
 
 export const  userProfileRoute = express.Router();
 

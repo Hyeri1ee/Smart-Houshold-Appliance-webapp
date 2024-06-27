@@ -1,8 +1,8 @@
 import express from "express";
-import {addScheduledWash, deleteScheduledWash, getScheduledWash} from "../controllers/ScheduleController";
+import { addScheduledWash, deleteScheduledWash, getScheduledWash } from "../controllers/scheduling/ScheduleController";
 
-export const scheduleRoute = express.Router();
+export const washingScheduleRoute = express.Router();
 
-scheduleRoute.get('/', getScheduledWash)
-scheduleRoute.post('/', addScheduledWash);
-scheduleRoute.delete('/', deleteScheduledWash);
+washingScheduleRoute.post("/", addScheduledWash);
+washingScheduleRoute.get("/", getScheduledWash);
+washingScheduleRoute.delete("/", deleteScheduledWash)

@@ -1,11 +1,5 @@
 import {DataSource} from 'typeorm';
 import fs from 'fs/promises';
-import {User} from "./entities/User";
-import {RevokedToken} from "./entities/RevokedToken";
-import {SolarSetup} from "./entities/SolarSetup";
-import {Schedule} from "./entities/Schedule";
-import {Time} from "./entities/Time";
-import {Location} from "./entities/Location";
 
 interface Settings {
   host: string;
@@ -37,14 +31,7 @@ const generateDataSource = async (settings: Settings): Promise<DataSource> => {
     username: settings.username,
     password: settings.password,
     database: settings.dbName,
-    entities: [
-      User,
-      Location,
-      SolarSetup,
-      Schedule,
-      Time,
-      RevokedToken,
-    ],
+    entities: [__dirname + "/entities/*.ts"],
     synchronize: settings.synchronize,
     logging: settings.logging,
   });

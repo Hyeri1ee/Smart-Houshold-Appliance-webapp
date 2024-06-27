@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { handleJwt } from './JWTHelper';
+import { handleJwt } from './auth/JWTHelper';
 import { getDataSource } from '../db/DatabaseConnect';
 import { User } from '../db/entities/User';
 import { sendPushNotification, getVapidPublicKey } from '../WebPushService';

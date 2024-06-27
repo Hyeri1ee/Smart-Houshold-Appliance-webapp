@@ -1,10 +1,10 @@
-import { Request, Response } from 'express';
-import { Repository, DataSource } from 'typeorm';
-import { Schedule } from '../db/entities/Schedule';
-import { getDataSource } from '../db/DatabaseConnect';
-import { User } from "../db/entities/User";
-import { Time } from "../db/entities/Time";
-import { handleJwt } from "./JWTHelper";
+import {Request, Response} from 'express';
+import {Repository} from 'typeorm'
+import {getDataSource} from '../../db/DatabaseConnect';
+import {User} from "../../db/entities/User";
+import {handleJwt} from "../auth/JWTHelper";
+import {Timeslot} from '../../db/entities/Timeslot';
+import {TimeslotTime} from "../../db/entities/TimeslotTime";
 
 const timeRegex = /^(?:[01]\d|2[0-3]):[0-5]\d$/;
 
@@ -24,21 +24,21 @@ export const checkTimeslot = async (req: Request, res: Response): Promise<void> 
 
   try {
     const dataSource = await getDataSource();
-    const scheduleRepository = dataSource.getRepository(Schedule);
-    const timeRepository = dataSource.getRepository(Time);
+    const timeslotRepository = dataSource.getRepository(Timeslot);
+    const timeslotTimeRepository = dataSource.getRepository(TimeslotTime);
 
-    const schedules = await scheduleRepository.find({ where: { user_id: decoded.user_id } });
+    const timeslots = await timeslotRepository.find({ where: { user_id: decoded.user_id } });
 
-    if (!schedules.length) {
+    if (!timeslots.length) {
       res.status(404).json({ error: "No schedule found for user." });
       return;
     }
 
-    for (const schedule of schedules) {
-      schedule.times = await timeRepository.find({ where: { schedule_id: schedule.schedule_id } });
+    for (const timeslot of timeslots) {
+      timeslot.times = await timeslotTimeRepository.find({ where: { schedule_id: timeslot.schedule_id } });
     }
 
-    res.status(200).json({ schedules: schedules });
+    res.status(200).json({ schedules: timeslots });
 
   } catch (error) {
     console.error('Error fetching schedule data:', error);
@@ -46,11 +46,11 @@ export const checkTimeslot = async (req: Request, res: Response): Promise<void> 
   }
 };
 
-const handleTimes = async (times: TimeRange[], timeRepository: Repository<Time>, schedule: Schedule) => {
-  const timeDatabaseEntries: Time[] = [];
+const handleTimes = async (times: TimeRange[], timeRepository: Repository<TimeslotTime>, schedule: Timeslot) => {
+  const timeDatabaseEntries: TimeslotTime[] = [];
 
   for (const timeEntry of times) {
-    const time = new Time();
+    const time = new TimeslotTime();
     time.schedule = schedule;
     time.schedule_id = schedule.schedule_id;
     time.start_time = timeEntry.start_time;
@@ -62,7 +62,7 @@ const handleTimes = async (times: TimeRange[], timeRepository: Repository<Time>,
   return timeDatabaseEntries;
 }
 
-export const putTimeslot = async (req: Request, res: Response) => {
+export const putTimeslots = async (req: Request, res: Response) => {
   let decoded;
 
   try {
@@ -103,8 +103,8 @@ export const putTimeslot = async (req: Request, res: Response) => {
 
     const dataSource = await getDataSource();
     const userRepository = dataSource.getRepository(User);
-    const scheduleRepository = dataSource.getRepository(Schedule);
-    const timesRepository = dataSource.getRepository(Time);
+    const scheduleRepository = dataSource.getRepository(Timeslot);
+    const timesRepository = dataSource.getRepository(TimeslotTime);
 
     const user: User | null = await userRepository.findOne({ where: { user_id: decoded.user_id } });
 
@@ -112,7 +112,7 @@ export const putTimeslot = async (req: Request, res: Response) => {
       return res.status(400).json({ error: "user_id does not match any existing user." });
     }
 
-    const existingScheduleForWeekday = await scheduleRepository.findOne({
+    const existingScheduleForWeekday: Timeslot | null = await scheduleRepository.findOne({
       where: {
         user_id: decoded.user_id,
         weekday: weekday
@@ -121,8 +121,8 @@ export const putTimeslot = async (req: Request, res: Response) => {
 
     await dataSource.transaction(async transactionalEntityManager => {
       if (existingScheduleForWeekday !== null) {
-        await transactionalEntityManager.delete(Time, { schedule_id: existingScheduleForWeekday.schedule_id });
-        await transactionalEntityManager.delete(Schedule, { schedule_id: existingScheduleForWeekday.schedule_id });
+        await transactionalEntityManager.delete(TimeslotTime, { schedule_id: existingScheduleForWeekday.schedule_id });
+        await transactionalEntityManager.delete(Timeslot, { schedule_id: existingScheduleForWeekday.schedule_id });
       }
 
       const newSchedule = scheduleRepository.create({
@@ -132,7 +132,7 @@ export const putTimeslot = async (req: Request, res: Response) => {
       });
 
       const savedSchedule = await transactionalEntityManager.save(newSchedule);
-      await handleTimes(times, transactionalEntityManager.getRepository(Time), savedSchedule);
+      await handleTimes(times, transactionalEntityManager.getRepository(TimeslotTime), savedSchedule);
     });
   }
 
@@ -150,8 +150,8 @@ export const deleteTimeslot = async (req: Request, res: Response) => {
 
   try {
     const dataSource = await getDataSource();
-    const scheduleRepository = dataSource.getRepository(Schedule);
-    const timeRepository = dataSource.getRepository(Time);
+    const scheduleRepository = dataSource.getRepository(Timeslot);
+    const timeRepository = dataSource.getRepository(TimeslotTime);
 
     const schedules = await scheduleRepository.find({ where: { user_id: decoded.user_id } });
 
@@ -198,8 +198,8 @@ export const deleteDayTimeslot = async (req: Request, res: Response) => {
 
   try {
     const dataSource = await getDataSource();
-    const scheduleRepository = dataSource.getRepository(Schedule);
-    const timeRepository = dataSource.getRepository(Time);
+    const scheduleRepository = dataSource.getRepository(Timeslot);
+    const timeRepository = dataSource.getRepository(TimeslotTime);
 
     const schedule = await scheduleRepository.findOne({
       where: {
