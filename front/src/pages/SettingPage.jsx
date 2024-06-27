@@ -6,8 +6,11 @@ import Button from "../components/generic/Button";
 import { getCookie } from "../helpers/CookieHelper";
 
 function SettingPage() {
-  const [profileType, setProfileType] = useState('');
-  const navigate = useNavigate();
+    const [profileType, setProfileType] = useState('');
+    const [profileLabel, setProfileLabel] = useState('');
+    const [showSaveButton, setShowSaveButton] = useState(false);
+    const [initialProfileType, setInitialProfileType] = useState('');
+    const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -26,9 +29,8 @@ function SettingPage() {
 
         if (response.ok) {
           const data = await response.json();
-          console.log('data: ', data);
           setProfileType(data.profileType);
-          console.log('current user profile type is', data.profileType)
+          setInitialProfileType(data.profileType);
         } else {
           console.error('Failed to fetch user profile');
         }
@@ -40,8 +42,52 @@ function SettingPage() {
     fetchUserProfile();
   }, []);
 
-  const handleProfileTypeChange = (event) => {
-    setProfileType(event.target.value);
+  useEffect(() => {
+    setShowSaveButton(profileType !== initialProfileType);
+  }, [profileType, initialProfileType]);
+
+  const getProfileLabel = (type) => {
+    switch (type) {
+      case 1:
+        return 'I live by myself';
+      case 2:
+        return 'I live with partner/housemate';
+      case 3:
+        return 'I live with family';
+      case 4:
+        return 'not choose';
+      default:
+        return 'Select profile type';
+    }
+  };
+
+  const handleProfileTypeChange = async (event) => {
+    const newProfileType = event.target.value;
+    setProfileType(newProfileType);
+    setProfileLabel(getProfileLabel(parseInt(newProfileType)));
+    if (newProfileType) {
+        try {
+          const accessToken = getCookie('authorization');
+          console.log(accessToken);
+          const response = await fetch('http://localhost:1337/api/user/profile', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${accessToken}`,
+            },
+            body: JSON.stringify({ profile_type: newProfileType }),
+            credentials: "include",
+          });
+  
+          if (response.ok) {
+            navigate('/dashboard');
+          } else {
+            console.error('Failed to update profile type');
+          }
+        } catch (error) {
+          console.error('Error updating profile type:', error);
+        }
+      }
   };
 
   const handleSaveButtonClick = async () => {
@@ -60,17 +106,16 @@ function SettingPage() {
         });
 
         if (response.ok) {
-          navigate('/dashboard');
+          setInitialProfileType(profileType);
+          setShowSaveButton(false);
         } else {
-          console.error('Failed to update profile type');
+            console.error('Failed to update profile type');
+          }
+        } catch (error) {
+          console.error('Error updating profile type:', error);
         }
-      } catch (error) {
-        console.error('Error updating profile type:', error);
       }
-    } else {
-      alert('Please select a household type.');
-    }
-  };
+    };
 
   return (
     <div className="app-container">
@@ -95,21 +140,22 @@ function SettingPage() {
           </select>
         </div>
         <div style={styles.buttonContainer}>
-          
-          <Button onClick={handleSaveButtonClick} style={styles.button}>
-            save userProfile
-          </Button>
+          {showSaveButton && (
+            <Button onClick={handleSaveButtonClick} style={{...styles.button, ...styles.fadeIn}}>
+              save userProfile
+            </Button>
+          )}
         </div>
+        <div style={styles.timeslotsContainer}>
         <h3 className="header3" style={styles.header3}>
-          timeslots
+          timeslots:
         </h3>
-        <div style={styles.buttonContainer}>
         <Button onClick={() => navigate('/user/timeslots')} style={styles.button}>
-            addTimeslots
+          addTimeslots
         </Button>
-        </div>
       </div>
     </div>
+  </div>
   );
 }
 
@@ -130,10 +176,17 @@ const styles = {
     fontWeight: "bold",
     marginBottom: 20,
   },
-  header3:{
+  timeslotsContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '20px',
+    marginTop: 20,
+  },
+  header3: {
     fontSize: 18,
     fontWeight: "bold",
-    marginTop: 20,
+    marginLeft: 30,
   },
   profileSelection: {
     display: "flex",
@@ -156,6 +209,7 @@ const styles = {
     width: '150px', 
     fontSize: '14px',
     padding: '5px 10px',
+    marginRight : '30px',
   },
 };
 
