@@ -142,7 +142,6 @@ const styles = {
     alignItems: "center",
     justifyContent: "space-between",
     width: '90%',
-    // outline: '1px solid pink'
   },
   settingLabel: {
     textAlign: 'center',
@@ -157,7 +156,6 @@ const styles = {
   },
   secondBox: {
     width: '60%',
-    // border: '1px solid blue'
   },
   dropdown: {
     padding: "3px 5px",
@@ -170,7 +168,6 @@ const styles = {
     justifyContent: 'flex-end',
     gap: '20px',
     margin: '20px 0',
-    // border: '1px solid orange'
   }, 
   button: {
     width: '60%'
