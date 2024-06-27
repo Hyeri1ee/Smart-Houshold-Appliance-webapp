@@ -27,7 +27,6 @@ function SettingPage() {
 
         if (response.ok) {
           const data = await response.json();
-          console.log('data: ', data);
           setProfileType(data.profileType);
         } else {
           console.error('Failed to fetch user profile');
@@ -68,17 +67,15 @@ function SettingPage() {
         });
 
         if (response.ok) {
-          navigate('/dashboard');
+          setShowSaveButton(false);
         } else {
-          console.error('Failed to update profile type');
+            console.error('Failed to update profile type');
+          }
+        } catch (error) {
+          console.error('Error updating profile type:', error);
         }
-      } catch (error) {
-        console.error('Error updating profile type:', error);
       }
-    } else {
-      alert('Please select a household type.');
-    }
-  };
+    };
 
   return (
     <div style={styles.appContainer}>
