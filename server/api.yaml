@@ -13,13 +13,14 @@ paths:
       tags:
         - Auth
       summary: 'Register into the system'
-      operationId: 47976b44-3df7-4b70-a00e-ef416f2c5e85
+      operationId: handleRegister
       requestBody:
         description: 'User registration data'
         required: true
         content:
           application/json:
             schema:
+              type: object
               required:
                 - first_name
                 - email
@@ -45,24 +46,37 @@ paths:
                   maxLength: 255
                   minLength: 8
                   example: password123
-              type: object
       responses:
-        '204':
+        '200':
           description: 'User registered successfully'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  token:
+                    type: string
+        '400':
+          description: 'User already exists'
         '422':
-          description: 'Validation error'
+          description: 'Passwords do not match'
+        '500':
+          description: 'Internal server error'
   /api/login:
     post:
       tags:
         - Auth
       summary: 'Login to the system'
-      operationId: 16bce8a2-9240-48ef-b533-96512d7a0b66
+      operationId: checkUserExist
       requestBody:
         description: 'User login data'
         required: true
         content:
           application/json:
             schema:
+              type: object
               required:
                 - email
                 - password
@@ -77,273 +91,268 @@ paths:
                   maxLength: 255
                   minLength: 8
                   example: password123
-              type: object
       responses:
-        '204':
+        '200':
           description: 'User logged in successfully'
-        '422':
-          description: 'Validation error'
-  /api/logout:
-    post:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+        '401':
+          description: 'Invalid email or password'
+        '500':
+          description: 'Server error'
+  /api/advice:
+    get:
       tags:
-        - Auth
-      summary: 'Logout from the system'
-      operationId: 4b32f07c-e395-496e-9ae8-424ec0a025ca
-      security:
-        - BearerAuth: []
+        - Advice
+      summary: 'Assign schedules to peak times'
+      operationId: assignSchedulesToPeakTimes
       responses:
-        '204':
-          description: 'User logged out successfully'
-  /api/user/location:
+        '200':
+          description: 'Best time to use washing machine'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  time:
+                    type: string
+                  date:
+                    type: string
+        '400':
+          description: 'Authentication failed'
+        '500':
+          description: 'Server error'
+  /api/notification/send-notification:
     post:
       tags:
-        - Location
-      summary: "Upload user's location"
-      security:
-        - BearerAuth: []
-      operationId: 7dbc6fbb-e288-49fd-919d-afcdb05a908d
+        - Notification
+      summary: 'Send recommendation notification'
+      operationId: sendRecommendationNotification
       requestBody:
-        description: 'Location data'
+        description: 'Notification data'
         required: true
         content:
           application/json:
             schema:
-              required:
-                - longitude
-                - latitude
-              properties:
-                longitude:
-                  type: number
-                  format: float
-                  example: 19.455982
-                latitude:
-                  type: number
-                  format: float
-                  example: 51.759247
               type: object
+              properties:
+                notificationToken:
+                  type: string
+                time:
+                  type: string
+                date:
+                  type: string
       responses:
         '200':
-          description: 'Success response'
+          description: 'Notification sent successfully'
+        '400':
+          description: 'No notification token provided or Authentication failed'
+        '500':
+          description: 'Server error'
+  /api/notification/save-subscription:
+    post:
+      tags:
+        - Notification
+      summary: 'Save subscription'
+      operationId: saveSubscription
+      requestBody:
+        description: 'Subscription data'
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                subscription:
+                  type: object
+      responses:
+        '200':
+          description: 'Subscription saved successfully'
+        '400':
+          description: 'No subscription provided or Authentication failed'
+        '500':
+          description: 'Server error'
+  /api/notification/vapid-public-key:
     get:
       tags:
-        - Location
-      summary: "Get user's location"
-      security:
-        - BearerAuth: []
-      operationId: 10bdae83-4ce7-4b48-a231-405cc7549340
+        - Notification
+      summary: 'Get Vapid public key'
+      operationId: getVapidPublicKeyController
       responses:
         '200':
-          description: 'Success response'
+          description: 'Vapid public key retrieved successfully'
           content:
             application/json:
               schema:
-                properties:
-                  data: { $ref: '#/components/schemas/LocationResource' }
                 type: object
-        '404':
-          description: 'Not found'
+                properties:
+                  publicKey:
+                    type: string
   /api/schedule:
     post:
       tags:
         - Schedule
-      summary: 'Upload schedule with times'
-      security:
-        - BearerAuth: []
-      operationId: 6e7b2889-1a5e-4362-bf46-96e290aad399
+      summary: 'Add a scheduled wash'
+      operationId: addScheduledWash
       requestBody:
-        description: 'Schedule data'
+        description: 'Scheduled wash data'
         required: true
         content:
           application/json:
             schema:
-              required:
-                - weekday
-                - times
-              properties:
-                weekday:
-                  type: integer
-                  format: int32
-                  example: 2
-                times:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      start_time:
-                        type: integer
-                        format: int64
-                        description: 'Epoch timestamp for the start time'
-                        example: 1622559600
-                      end_time:
-                        type: integer
-                        format: int64
-                        description: 'Epoch timestamp for the end time'
-                        example: 1622584800
               type: object
+              required:
+                - homeconnectrefresh
+                - date
+                - washer_id
+                - settings
+              properties:
+                homeconnectrefresh:
+                  type: string
+                date:
+                  type: string
+                  format: date-time
+                washer_id:
+                  type: string
+                settings:
+                  type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        key:
+                          type: string
+                        options:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              key:
+                                type: string
+                              value:
+                                type: string
       responses:
         '200':
-          description: 'Schedule created successfully'
+          description: 'Schedule successfully added'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  schedule_id:
+                    type: string
         '400':
-          description: 'Invalid data'
+          description: 'Invalid request or User not signed in'
+        '500':
+          description: 'Server error'
     get:
       tags:
         - Schedule
-      summary: "Get all user's schedules"
-      security:
-        - BearerAuth: []
-      operationId: 051ca7b6-b055-45da-b354-116c2d4d47fa
+      summary: "Get user's schedules"
+      operationId: getScheduledWash
       responses:
         '200':
-          description: 'Success response'
+          description: 'Schedules retrieved successfully'
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ScheduleResource'
-        '404':
-          description: 'Not found'
-  /api/schedule/{schedule_id}:
-    get:
-      tags:
-        - Schedule
-      summary: 'Get specific schedule'
-      security:
-        - BearerAuth: []
-      operationId: 25df81b4-5ae5-4c75-a380-a897b4782a31
-      parameters:
-        - $ref: '#/components/parameters/schedule_id_param'
-      responses:
-        '200':
-          description: 'Success response'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ScheduleResource'
-        '404':
-          description: 'Schedule not found'
-    put:
-      tags:
-        - Schedule
-      summary: 'Update a specific schedule with times'
-      security:
-        - BearerAuth: []
-      operationId: 0e1982f4-0e79-4519-8666-f743010c8fce
-      parameters:
-        - $ref: '#/components/parameters/schedule_id_param'
-      requestBody:
-        description: 'Updated schedule data'
-        required: true
-        content:
-          application/json:
-            schema:
-              required:
-                - weekday
-                - times
-              properties:
-                weekday:
-                  type: integer
-                  format: int32
-                  example: 2
-                times:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      start_time:
-                        type: integer
-                        format: int64
-                        description: 'Epoch timestamp for the start time'
-                        example: 1622559600
-                      end_time:
-                        type: integer
-                        format: int64
-                        description: 'Epoch timestamp for the end time'
-                        example: 1622584800
-              type: object
-      responses:
-        '200':
-          description: 'Schedule updated successfully'
-        '404':
-          description: 'Schedule not found'
+                  $ref: '#/components/schemas/ScheduleEntry'
         '400':
-          description: 'Invalid data'
+          description: 'Authentication failed'
+  /api/schedule/{schedule_id}:
     delete:
       tags:
         - Schedule
       summary: 'Delete a specific schedule'
-      security:
-        - BearerAuth: []
-      operationId: bc931cd0-6ad3-4023-a2b2-0cc61bc0b362
+      operationId: deleteScheduledWash
       parameters:
-        - $ref: '#/components/parameters/schedule_id_param'
+        - name: schedule_id
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         '200':
           description: 'Schedule deleted successfully'
+        '400':
+          description: 'Authentication failed'
         '404':
           description: 'Schedule not found'
-  /api/solar:
+  /api/setting/profiletype:
+    get:
+      tags:
+        - Setting
+      summary: 'Get profile type'
+      operationId: getProfiletype
+      responses:
+        '200':
+          description: 'Profile type retrieved successfully'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  profileType:
+                    type: string
+        '401':
+          description: 'Access token is missing'
+        '403':
+          description: 'Invalid access token'
+        '500':
+          description: 'Internal server error'
+  /api/user/info:
+    get:
+      tags:
+        - User
+      summary: 'Get user info'
+      operationId: checkUserInfo
+      responses:
+        '200':
+          description: 'User info retrieved successfully'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  redirect:
+                    type: string
+        '400':
+          description: 'User not signed in'
     post:
       tags:
-        - Solar
-      summary: "Upload solar setup for a user"
-      security:
-        - BearerAuth: []
-      operationId: 0e63ebbb-96ef-47e7-9c33-a737167e786f
+        - User
+      summary: 'Set profile type'
+      operationId: setProfiletype
       requestBody:
-        description: 'Solar setup data'
+        description: 'Profile type data'
         required: true
         content:
           application/json:
             schema:
-              required:
-                - panel_count
-                - panel_type
-                - panel_area
-                - tilt
-                - azimuth
-                - peak_power
-              properties:
-                panel_count:
-                  type: integer
-                panel_type:
-                  type: integer
-                panel_area:
-                  type: number
-                  format: float
-                tilt:
-                  type: number
-                  format: float
-                azimuth:
-                  type: number
-                  format: float
-                peak_power:
-                  type: number
-                  format: float
               type: object
+              properties:
+                profile_type:
+                  type: string
       responses:
         '200':
-          description: 'Success response'
-    get:
-      tags:
-        - Solar
-      summary: "Get user's solar setup"
-      security:
-        - BearerAuth: []
-      operationId: c7af7655-71cd-450a-95d6-e5c5ac9b2745
-      responses:
-        '200':
-          description: 'Success response'
-          content:
-            application/json:
-              schema:
-                properties:
-                  data:
-                    items:
-                      $ref: '#/components/schemas/SolarResource'
-                type: object
-        '404':
-          description: 'Not found'
+          description: 'Profile type updated successfully'
+        '401':
+          description: 'Access token is missing'
+        '403':
+          description: 'Invalid access token'
+        '500':
+          description: 'Internal server error'
 components:
   securitySchemes:
     BearerAuth:
@@ -351,16 +360,12 @@ components:
       scheme: bearer
       bearerFormat: JWT
   schemas:
-    UserResource:
-      title: UserResource
+    User:
+      type: object
       properties:
         user_id:
           type: integer
-          format: int64
           example: 1
-        location_id:
-          type: integer
-          format: int64
         first_name:
           type: string
           maxLength: 20
@@ -374,105 +379,78 @@ components:
           type: string
           maxLength: 255
           example: 'password123'
-      type: object
-    LocationResource:
-      title: LocationResource
-      properties:
-        location_id:
+        profile_type:
           type: integer
-          format: int64
           example: 1
-        longitude:
-          type: number
-          format: float
-          example: 19.455982
-        latitude:
-          type: number
-          format: float
-          example: 51.759247
+        ifFirstLogin:
+          type: boolean
+          example: true
+        subscription:
+          type: string
+          example: '{"endpoint":"https://example.com","keys":{"p256dh":"example","auth":"example"}}'
+    ScheduleEntry:
       type: object
-    ScheduleResource:
-      title: ScheduleResource
       properties:
         schedule_id:
           type: integer
-          format: int64
+          example: 1
+        schedule_uuid:
+          type: string
+          example: '10000000-1000-4000-8000-100000000000'
+        user_id:
+          type: integer
+          example: 1
+        datetime:
+          type: string
+          format: date-time
+          example: '2023-01-01T00:00:00Z'
+        program:
+          type: string
+          example: 'washing_program_1'
+        options:
+          type: array
+          items:
+            $ref: '#/components/schemas/ScheduleOption'
+    ScheduleOption:
+      type: object
+      properties:
+        schedule_option_id:
+          type: integer
+          example: 1
+        key:
+          type: string
+          example: 'temperature'
+        value:
+          type: string
+          example: '60'
+    Timeslot:
+      type: object
+      properties:
+        schedule_id:
+          type: integer
           example: 1
         user_id:
           type: integer
-          format: int64
           example: 1
         weekday:
           type: integer
-          format: int32
           example: 2
         times:
           type: array
           items:
-            $ref: '#/components/schemas/TimeResource'
+            $ref: '#/components/schemas/TimeslotTime'
+    TimeslotTime:
       type: object
-    SolarResource:
-      title: SolarResource
-      properties:
-        solar_id:
-          type: integer
-          format: int64
-          example: 1
-        location_id:
-          type: integer
-          format: int64
-        panel_count:
-          type: integer
-          format: int32
-          example: 10
-        panel_type:
-          type: integer
-          format: int32
-          example: 10
-        panel_area:
-          type: number
-          format: float
-          example: 25.5
-        tilt:
-          type: number
-          format: float
-          example: 30.0
-        azimuth:
-          type: number
-          format: float
-          example: 180.0
-        peak_power:
-          type: number
-          format: float
-          example: 10.5
-      type: object
-    TimeResource:
-      title: TimeResource
       properties:
         time_id:
           type: integer
-          format: int32
           example: 1
         schedule_id:
           type: integer
-          format: int32
+          example: 1
         start_time:
-          type: integer
-          format: int64
-          description: 'Epoch timestamp for the start time'
-          example: 1622559600
+          type: string
+          example: '08:00'
         end_time:
-          type: integer
-          format: int64
-          description: 'Epoch timestamp for the end time'
-          example: 1622584800
-      type: object
-  parameters:
-    schedule_id_param:
-      name: schedule_id
-      in: path
-      required: true
-      schema:
-        type: integer
-        format: int64
-        example: 1
+          type: string
+          example: '10:00'
