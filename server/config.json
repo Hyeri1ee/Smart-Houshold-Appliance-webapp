@@ -1,6 +1,6 @@
 {
   "host": "localhost",
-  "port": 5433,
+  "port": 5432,
   "username": "postgres",
   "password": "0",
   "dbName": "doom-toaster",
