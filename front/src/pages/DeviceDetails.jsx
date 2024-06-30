@@ -3,13 +3,11 @@ import '../styles/pages/DeviceDetails.css';
 import washingMachineImage from "../assets/device/machine.png";
 import TimePicker from '../components/generic/TimePicker';
 import { GlobalStateContext } from '../components/generic/GlobalStateContext';
-import {checkUserInfo} from "../helpers/CheckUserInfo";
+import { getCookie } from "../helpers/CookieHelper";
 
 const DeviceDetails = () => {
-  checkUserInfo().then(
-  () => { // indentation here is wrong but i dont want to have the entire code indented
-
   const accessToken = window.sessionStorage.getItem('homeconnect_simulator_auth_token');
+  const authToken = getCookie("authorization");
   const { washingMachineId, setwashingMachineId, programs, setPrograms } = useContext(GlobalStateContext);
   const [startOption, setStartOption] = useState('now');
   const [isRunning, setIsRunning] = useState(() => {
@@ -295,6 +293,64 @@ const DeviceDetails = () => {
     setShowTimePicker(false);
   };
 
+  const addScheduledWashingMachine = async (scheduledTime) => {
+    if (!scheduledTime) {
+      console.error("Scheduled time is not defined");
+      return;
+    }
+    console.log('scheduled time: ' + scheduledTime);
+
+    //minute hour day month weekday
+    //so 6/23/2024, 7:30:00 PM would be:
+    //30 19 23 6 *
+    //the weekday should always be *
+    const date = new Date(scheduledTime);
+    const minutes = date.getMinutes();
+    const hours = date.getHours();
+    const day = date.getDate();
+    const month = date.getMonth() + 1;
+    const weekday = '*'; //any
+
+    const formattedDate = `${minutes} ${hours} ${day} ${month} ${weekday}`;
+    console.log('formattedDate: ' + formattedDate);
+
+    // TODO: here is my added code to schedule the washing machine
+    console.log('washing machine id: ' + washingMachineId);
+    console.log('current settings: ' + currentMode, currentDegree, currentSpin);
+    console.log('auth token: ' + authToken);
+
+    const refreshSimulatorToken = window.localStorage.getItem('refresh_simulator_token');
+
+    try {
+      const response = await fetch('http://localhost:1337/api/schedule', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': getCookie("authorization")
+        },
+        body: JSON.stringify({
+          homeconnectrefresh: refreshSimulatorToken,
+          date: formattedDate,
+          washer_id: washingMachineId,
+          settings: {
+            data: {
+              key: currentMode,
+              options: [
+                { key: 'LaundryCare.Washer.Option.Temperature', value: currentDegree },
+                { key: 'LaundryCare.Washer.Option.SpinSpeed', value: currentSpin },
+              ],
+            },
+          },
+        }),
+      });
+      const responseData = await response.json();
+      console.log(responseData);
+    }
+    catch (error) {
+      console.log(error);
+    }
+  };
+
   const handleTimePickerConfirm = (selectedTime) => {
     setScheduledTime(selectedTime);
     setDecreaseStartTimeHeight(true);
@@ -396,9 +452,9 @@ const DeviceDetails = () => {
               <label>Current Mode:</label>
             </div>
             <div className='started-setting-p'>
-            <p>{formatCamelCase((window.sessionStorage.getItem('currentMode')).split('.').slice(3).join('.'))}</p>
-          </div>
+              <p>{formatCamelCase((window.sessionStorage.getItem('currentMode')).split('.').slice(3).join('.'))}</p>
             </div>
+          </div>
           <div className='started-setting-container'>
             <div className='label-box'>
               <label>Temperature:</label>
@@ -421,7 +477,7 @@ const DeviceDetails = () => {
             </div>
             <div className='started-setting-p'>
               <p>{new Date(endTime).toLocaleTimeString()}</p>
-              </div>
+            </div>
           </div>
         </div>
       )}
@@ -507,28 +563,35 @@ const DeviceDetails = () => {
             </div>
           )}
 
-        {/* TODO:
-        //Countdown is never null, so something here is wrong! */}
-      {countdown !== null && (
-        <div className={`countdown-timer ${countdown !== null ? 'centered-box' : ''}`}>
-          <div className="countdown-box">
-            Time until start: {formatCountdown(countdown)}
-          </div>
-        </div>
+          {countdown !== null && (
+            <div className={`countdown-timer ${countdown !== null ? 'centered-box' : ''}`}>
+              <div className="countdown-box">
+                Time until start: {formatCountdown(countdown)}
+                Washing machine scheduled for: {scheduledTime.toLocaleString()}
+              </div>
+            </div>
+          )}
+        </>
       )}
-      </>
-    )}
 
       <div className="bottom-buttons">
         <button
           className={`bottom-button ${isRunning ? 'stop-button' : 'start-button'}`}
-          onClick={countdown !== null ? handleCancelSchedule : handleStartStop}
+          onClick={() => {
+            if (countdown !== null) {
+              handleCancelSchedule();
+            } else if (startOption === 'schedule' && !isRunning) {
+              addScheduledWashingMachine(scheduledTime);
+            } else {
+              handleStartStop();
+            }
+          }}
         >
-          {isRunning ? 'Stop' : countdown !== null ? 'Cancel' : startOption === 'schedule' ? 'Timeslot Start' : 'Start'}
+          {isRunning ? 'Stop' : countdown !== null ? 'Cancel' : startOption === 'schedule' ? 'Schedule Start' : 'Start'}
         </button>
       </div>
     </div>
-  );})
+  );
 };
 
 export default DeviceDetails;
