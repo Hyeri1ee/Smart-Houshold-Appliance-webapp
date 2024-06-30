@@ -20,9 +20,9 @@ export const checkUserInfo = async () => {
     redirect("/login")
   }
 
-  if (!localStorage.getItem('refresh_token') && !localStorage.getItem('refresh_simulator_token')) {
-    redirect("/login/homeconnect");
-  }
+  // if (!localStorage.getItem('refresh_token') && !localStorage.getItem('refresh_simulator_token')) {
+  //   redirect("/login/homeconnect");
+  // }
 
   const resp = await fetch('http://localhost:1337/api/user/info', {
     method: 'GET',
