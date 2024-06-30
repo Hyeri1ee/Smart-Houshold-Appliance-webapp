@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import {User} from '../db/entities/User';
 import {getDataSource} from '../db/DatabaseConnect';
 import 'dotenv/config';
-import { handleJwt } from './JWTHelper';
+import { handleJwt } from './auth/JWTHelper';
 
 interface DecodedToken {
   user_id: number;
